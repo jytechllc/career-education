@@ -211,6 +211,30 @@ export default function CollegeCoachingForm({ locale }: { locale: string }) {
   const c = locale === "en" ? en : zh;
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
+  // Uploads one file straight to R2 via a presigned URL, bypassing our own
+  // API route's body entirely — a Vercel Serverless Function's request body
+  // is capped at 4.5MB, which a real phone photo routinely exceeds, and the
+  // platform rejects the whole request (FUNCTION_PAYLOAD_TOO_LARGE) before
+  // our code ever runs. Only the resulting R2 key travels through /submit.
+  async function uploadFileDirect(file: File, kind: string) {
+    const presignRes = await fetch("/api/college-coaching/presign", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind, fileName: file.name, contentType: file.type }),
+    });
+    if (!presignRes.ok) throw new Error("presign failed");
+    const { url, r2Key } = await presignRes.json();
+
+    const uploadRes = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file,
+    });
+    if (!uploadRes.ok) throw new Error("upload failed");
+
+    return { r2Key, fileName: file.name, fileSize: file.size };
+  }
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // Capture the form element before the first `await` — React nulls out
@@ -222,7 +246,26 @@ export default function CollegeCoachingForm({ locale }: { locale: string }) {
     setStatus("submitting");
     const formData = new FormData(form);
     formData.set("locale", locale);
+
     try {
+      const transcriptFile = formData.get("transcriptFile");
+      const testScoresFile = formData.get("testScoresFile");
+      formData.delete("transcriptFile");
+      formData.delete("testScoresFile");
+
+      if (transcriptFile instanceof File && transcriptFile.size > 0) {
+        const uploaded = await uploadFileDirect(transcriptFile, "transcript");
+        formData.set("transcriptR2Key", uploaded.r2Key);
+        formData.set("transcriptFileName", uploaded.fileName);
+        formData.set("transcriptFileSize", String(uploaded.fileSize));
+      }
+      if (testScoresFile instanceof File && testScoresFile.size > 0) {
+        const uploaded = await uploadFileDirect(testScoresFile, "test_scores");
+        formData.set("test_scoresR2Key", uploaded.r2Key);
+        formData.set("test_scoresFileName", uploaded.fileName);
+        formData.set("test_scoresFileSize", String(uploaded.fileSize));
+      }
+
       const res = await fetch("/api/college-coaching/submit", {
         method: "POST",
         body: formData,

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { collegeCoachingApplications, applicationFiles, partners } from "@/lib/schema";
-import { uploadApplicationFile } from "@/lib/r2";
 
 const PARTNER_SLUG = "awesome-college-coaching";
 
@@ -93,22 +92,27 @@ export async function POST(request: Request) {
       })
       .returning();
 
-    // File uploads (transcript, test scores) — optional, one of each.
-    const fileFields: { field: string; kind: string }[] = [
-      { field: "transcriptFile", kind: "transcript" },
-      { field: "testScoresFile", kind: "test_scores" },
+    // Files were already uploaded straight to R2 client-side (see
+    // CollegeCoachingForm's presign step) — a Vercel Serverless Function's
+    // request body is capped at 4.5MB, which real phone photos exceed, so
+    // we never accept raw file bytes here. Only the resulting R2 key comes
+    // through as a plain form field.
+    const fileFields: { kind: string }[] = [
+      { kind: "transcript" },
+      { kind: "test_scores" },
     ];
 
-    for (const { field, kind } of fileFields) {
-      const file = form.get(field);
-      if (file instanceof File && file.size > 0) {
-        const { r2Key, fileName, fileSize } = await uploadApplicationFile(file, kind);
+    for (const { kind } of fileFields) {
+      const r2Key = str(form, `${kind}R2Key`);
+      const fileName = str(form, `${kind}FileName`);
+      const fileSizeRaw = str(form, `${kind}FileSize`);
+      if (r2Key && fileName) {
         await db.insert(applicationFiles).values({
           applicationId: application.id,
           kind,
           fileName,
           r2Key,
-          fileSize,
+          fileSize: fileSizeRaw ? parseInt(fileSizeRaw, 10) : null,
         });
       }
     }
