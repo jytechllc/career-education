@@ -213,8 +213,14 @@ export default function CollegeCoachingForm({ locale }: { locale: string }) {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Capture the form element before the first `await` — React nulls out
+    // `e.currentTarget` once the synthetic event's dispatch finishes, which
+    // happens as soon as this handler yields. Reading it afterward throws,
+    // and that throw was being swallowed by the catch below and silently
+    // flipping a successful submission to an "error" status.
+    const form = e.currentTarget;
     setStatus("submitting");
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     formData.set("locale", locale);
     try {
       const res = await fetch("/api/college-coaching/submit", {
@@ -223,7 +229,7 @@ export default function CollegeCoachingForm({ locale }: { locale: string }) {
       });
       if (!res.ok) throw new Error("failed");
       setStatus("success");
-      e.currentTarget.reset();
+      form.reset();
     } catch {
       setStatus("error");
     }
