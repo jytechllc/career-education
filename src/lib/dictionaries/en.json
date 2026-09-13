@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "title": "JY Education and Career Center | 杰圆职场教育",
+    "description": "Professional career planning, resume polishing and interview coaching to help you build your ideal career."
+  },
+  "nav": {
+    "home": "Home",
+    "service": "Services",
+    "successStories": "Success Stories",
+    "about": "About",
+    "contact": "Contact",
+    "cases": "Cases",
+    "login": "Log in",
+    "logout": "Log out",
+    "dashboard": "Dashboard",
+    "blog": "Insights",
+    "etiquette": "Etiquette",
+    "phdAdmission": "PhD Admissions"
+  },
+  "hero": {
+    "badge": "Professional Career Services",
+    "title1": "Build Your",
+    "title2": "Ideal Career",
+    "subtitle": "Professional career-planning guidance that helps you stand out in a competitive job market.",
+    "cta": "Book a Consultation"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "End-to-end career support, from planning to landing the offer.",
+    "items": [
+      {
+        "title": "Career Planning",
+        "description": "Tailored career development plans that clarify your goals and direction.",
+        "highlight": "1-on-1 Custom Plans"
+      },
+      {
+        "title": "Resume Polishing",
+        "description": "Professionally written resumes that highlight your strengths.",
+        "highlight": "Pro Writers"
+      },
+      {
+        "title": "Interview Coaching",
+        "description": "Mock-interview training to improve your performance and success rate.",
+        "highlight": "Real-world Drills"
+      }
+    ]
+  },
+  "stats": [
+    {
+      "value": 98,
+      "suffix": "%",
+      "label": "Client Satisfaction"
+    },
+    {
+      "value": 500,
+      "suffix": "+",
+      "label": "Success Stories"
+    },
+    {
+      "value": 85,
+      "suffix": "%",
+      "label": "Interview Pass Rate"
+    }
+  ],
+  "successStories": {
+    "title": "Success Stories",
+    "subtitle": "Real client stories — proof of the power of professional service.",
+    "items": [
+      {
+        "title": "Student J's Career Journey",
+        "content": "Commissioned by J's mother, we tailored a career path based on his interests and schedule, matched him with corporate and on-campus partner projects, exposed him to top-tier research programs and big-tech opportunities, and trained him on interview technique. J landed an offer at his dream big-tech company.",
+        "achievement": "Joined a Top-tier Company",
+        "tag": "Student"
+      },
+      {
+        "title": "Professional L's Comeback",
+        "content": "After being laid off and rejected over 100 times, we overhauled L's interview approach — positioning, technique, and storytelling — and helped him return to the workforce with a strong offer.",
+        "achievement": "Returned to the Workforce",
+        "tag": "Professional"
+      }
+    ]
+  },
+  "whyChooseUs": {
+    "title": "Why Choose Us",
+    "subtitle": "We win trust through expertise and dedication — focused on career education.",
+    "items": [
+      "Expert career-planning advisors",
+      "Personalized job-search strategy",
+      "Rich corporate network",
+      "Long-term career tracking",
+      "Flexible consultation scheduling",
+      "Premium after-service support"
+    ]
+  },
+  "cta": {
+    "title": "Ready to start your next chapter?",
+    "subtitle": "Book a free consultation now and let our team craft a career plan tailored to you.",
+    "button": "Book a Free Consultation"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Reach out anytime — let's start your career journey.",
+    "phoneTitle": "Phone",
+    "wechatTitle": "WeChat",
+    "addressTitle": "Office",
+    "address": "Suite 1903, Zhuoyue Tower, 98 Fuhua 1st Rd, Futian, Shenzhen",
+    "hoursTitle": "Hours",
+    "hoursWeekday": "Mon–Fri: 9:00 – 18:00",
+    "hoursSaturday": "Sat: 10:00 – 16:00",
+    "formTitle": "Book a Free Consultation",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "Your email address",
+    "phone": "Phone",
+    "phonePlaceholder": "Your phone number",
+    "message": "Message",
+    "messagePlaceholder": "Briefly describe what you'd like to consult about",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "successMessage": "Submitted! We'll get back to you shortly.",
+    "errorMessage": "Submission failed. Please try again, or contact us directly at 17318011997."
+  },
+  "footer": {
+    "tagline": "Professional career-development consulting that helps you reach your goals.",
+    "contactTitle": "Contact Us",
+    "hoursTitle": "Hours",
+    "linksTitle": "Quick Links",
+    "rights": "All rights reserved"
+  },
+  "chatbot": {
+    "title": "Career Assistant",
+    "welcome": "Hi! I'm your career-planning assistant. How can I help?",
+    "suggestion1": "How should I prepare for interviews?",
+    "suggestion2": "Tell me about your career-planning service",
+    "placeholder": "Type your question...",
+    "thinking": "Thinking...",
+    "errorMessage": "Sorry, something went wrong. Please try again later.",
+    "fallback": "Sorry, I can't answer that right now."
+  },
+  "blog": {
+    "title": "Career Insights",
+    "subtitle": "Automatically tracking and decoding the latest job-market trends and job-search strategies.",
+    "readMore": "Read more",
+    "empty": "No posts yet — check back soon.",
+    "back": "← Back to Career Insights",
+    "by": "JY Career",
+    "disclaimer": "This article was AI-assisted and is for reference only; it is not career or legal advice."
+  },
+  "etiquette": {
+    "badge": "Workplace Training · Soft Skills",
+    "title": "Workplace Etiquette",
+    "subtitle": "From your first introduction to cross-team collaboration, business dining and cross-cultural communication — nine modules on what \"appropriate\" actually looks like at work, with scenarios, scripts and boundaries.",
+    "start": "Start module",
+    "minutes": "min read",
+    "moduleLabel": "Module",
+    "empty": "Lessons are being written — check back soon.",
+    "back": "← Back to Workplace Etiquette",
+    "prev": "Previous module",
+    "next": "Next module",
+    "disclaimer": "This curriculum offers general workplace-etiquette guidance. Adapt it to your company culture, industry norms and local law. For harassment or discrimination matters, follow your employer's HR policy and applicable law.",
+    "ctaTitle": "Want one-on-one etiquette and communication coaching?",
+    "ctaText": "Mock interviews, first-90-days support and cross-cultural communication practice — tailored by a human advisor to your industry and target role.",
+    "ctaButton": "Book a consultation"
+  }
+}

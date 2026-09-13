@@ -1,44 +1,63 @@
 # career-education
 
-[Edit in StackBlitz next generation editor ⚡️](https://stackblitz.com/~/github.com/dotku/career-education)
+杰圆职场教育 / JY Career — Next.js 16 marketing site for jytech.
 
-## 介绍
+Migrated from a Vite SPA to match the jytech monorepo conventions:
+Next.js 16 + React 19 + Tailwind 4 + Auth0 v4 (`@auth0/nextjs-auth0`).
 
-杰圆职场教育是一个专门提供职业规划指导和职业发展服务的平台。我们拥有专业的职业规划顾问团队，提供个性化的求职策略制定，丰富的企业资源网络，持续的职业发展跟踪，灵活的咨询时间安排和优质的售后服务保障。
+## Setup
 
-## 我们的服务
+```bash
+cp .env.example .env.local
+# fill in AUTH0_*, XAI_API_KEY, REVO_API_KEY
+npm install
+npm run dev
+```
 
-* 职业规划指导
-* 简历优化服务
-* 面试辅导培训
+## Auth0
 
-## 成功案例
+Uses the same `@auth0/nextjs-auth0` v4 pattern as `easy-site`:
 
-* 学生 J 的职业规划之旅
-  
-  收到学生 J 的妈妈的委托，为 J 量身设计他的职业发展方向，根据对方的兴趣偏好与作息表时间，提供针对性的企业或在校合作项目匹配，为学生 J 提供丰富的课外项目选择，让他可以在校就可以接触找全球顶尖的科研项目与大厂的工作机会，提供面试技巧培训和实战项目机会，为其以后的职业发展做铺垫。目前 J 已经成功拿到大厂的 Offer，顺利进入自己心仪的公司。
+- `src/lib/auth0.ts` — `Auth0Client` instance.
+- `src/proxy.ts` — middleware. Exposes the SDK-managed routes:
+  - `/auth/login`
+  - `/auth/logout`
+  - `/auth/callback`
+  - `/auth/profile`
 
-* 职员 L 的职场重返之路
-  
-  在职员工 L 被裁员后，屡投不第，在失败了100多次被拒的情况下，我们针对其面试中的错误进行全方面的改造，包括建立、面试技巧等内容，为他提升了面试机会，最终成功拿到 Offer 回到职场。
+Set in your Auth0 application:
 
-## 为什么选择我们
+- Allowed Callback URLs: `http://localhost:3000/auth/callback`, plus prod URL
+- Allowed Logout URLs: `http://localhost:3000`, plus prod URL
 
-* 专业的职业规划顾问团队
-* 个性化的求职策略制定
-* 丰富的企业资源网络
-* 持续的职业发展跟踪
-* 灵活的咨询时间安排
-* 优质的售后服务保障
+## i18n
 
-## 联系我们
+URL-based locale routing under `src/app/[locale]`. Supported locales: `zh`
+(default), `en`. Add a locale by adding it to `src/lib/i18n.ts` and dropping
+`<locale>.json` in `src/lib/dictionaries/`.
 
-* 电话：17318011997
-* 微信：HELENLAN998
-* 工作时间
-  * 周一至周五：9:00-18:00
-  * 周六：10:00-16:00
+## Database
 
-## 版权信息
+Neon Postgres + Drizzle ORM (matches `easy-site`).
 
- 2025 杰圆职场教育. 保留所有权利。
+Set `DATABASE_URL` (pooled) and `DATABASE_URL_UNPOOLED` (for migrations) in
+`.env.local`, then push the schema:
+
+```bash
+npm run db:push        # apply schema (use during dev)
+npm run db:generate    # generate SQL migrations
+npm run db:studio      # open Drizzle Studio
+```
+
+Schema lives in [src/lib/schema.ts](src/lib/schema.ts). The `candidates` table
+stores per-user job-application info, keyed by `auth0_id`.
+
+## Routes
+
+- `/[locale]` — marketing home
+- `/[locale]/cases` — case index
+- `/[locale]/sydney-industry-report`
+- `/[locale]/singapore-work-visa-guide`
+- `/[locale]/profile` — **gated**, candidate profile form
+- `/api/chat` — Grok-powered chatbot
+- `/api/contact` — Brevo email form

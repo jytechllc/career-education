@@ -1,0 +1,22 @@
+name = "career-blog-cron"
+main = "src/index.ts"
+compatibility_date = "2026-02-18"
+
+[observability.logs]
+enabled = true
+
+# ── Production (default) ──
+# Deploy:  npx wrangler deploy
+# Secrets: npx wrangler secret put APP_BASE_URL   (e.g. https://career.jytech.us)
+#          npx wrangler secret put CRON_SECRET     (must match the Next.js env)
+# Triggers: daily Chinese post @ 01:00 UTC, weekly English post Mon @ 02:00 UTC
+[triggers]
+crons = ["0 1 * * *", "0 2 * * 1"]
+
+# ── Dev environment ──
+# Deploy:  npx wrangler deploy --env dev
+[env.dev]
+name = "career-blog-cron-dev"
+
+[env.dev.triggers]
+crons = ["0 1 * * *"]
