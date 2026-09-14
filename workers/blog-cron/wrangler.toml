@@ -9,9 +9,10 @@ enabled = true
 # Deploy:  npx wrangler deploy
 # Secrets: npx wrangler secret put APP_BASE_URL   (e.g. https://career.jytech.us)
 #          npx wrangler secret put CRON_SECRET     (must match the Next.js env)
-# Triggers: daily Chinese post @ 01:00 UTC, weekly English post Mon @ 02:00 UTC
+# Triggers: daily Chinese post @ 01:00 UTC, weekly English post Mon @ 02:00 UTC,
+#           daily trash purge (30-day retention) @ 03:00 UTC
 [triggers]
-crons = ["0 1 * * *", "0 2 * * 1"]
+crons = ["0 1 * * *", "0 2 * * 1", "0 3 * * *"]
 
 # ── Dev environment ──
 # Deploy:  npx wrangler deploy --env dev

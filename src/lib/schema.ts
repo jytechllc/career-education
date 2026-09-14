@@ -162,6 +162,10 @@ export const collegeCoachingApplications = pgTable(
     otherSource: text("other_source"),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    // Soft delete — partners move an application to trash instead of
+    // deleting it outright. A daily cron (api/cron/purge-trash) permanently
+    // removes anything trashed more than 30 days ago (row + R2 files).
+    deletedAt: timestamp("deleted_at"),
   }
 );
 
