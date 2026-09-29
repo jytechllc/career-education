@@ -8,6 +8,7 @@ import {
   Briefcase,
   GraduationCap,
   Sparkles,
+  BarChart3,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
 
@@ -65,6 +66,15 @@ const COPY = {
 const CASES: Record<"zh" | "en", CaseItem[]> = {
   zh: [
     {
+      title: "中国学生赴美研究生留学市场研究报告（2026）",
+      description:
+        "硕士、博士分开统计：在美中国研究生规模与趋势、专业分布、资助与留美情况、目的地竞争与签证政策环境，基于 Open Doors、NSF、SEVIS 等官方数据。",
+      path: "/china-us-grad-market",
+      Icon: BarChart3,
+      tags: ["市场研究", "美国研究生", "硕士 / 博士"],
+      color: "blue",
+    },
+    {
       title: "会计专业留美规划建议书（就业方向）",
       description:
         "会计专业如何兼顾美国就业与长期身份：专业组合、H-1B 加权抽签影响、美国高校选校名单，以及硕士与博士的留美比较。",
@@ -111,6 +121,15 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
     },
   ],
   en: [
+    {
+      title: "Chinese Graduate Students in the US: Market Report 2026",
+      description:
+        "Master's vs PhD: enrollment trends, fields, funding, stay rates, competing destinations and visa policy, from Open Doors, NSF and SEVIS data (in Chinese).",
+      path: "/china-us-grad-market",
+      Icon: BarChart3,
+      tags: ["Market Research", "US Graduate", "Master's / PhD"],
+      color: "blue",
+    },
     {
       title: "Accounting Major: US Career & Visa Plan (Industry Track)",
       description:

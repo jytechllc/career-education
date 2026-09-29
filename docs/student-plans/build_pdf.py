@@ -5,6 +5,7 @@ import sys
 #   (default) 就业方向版: body_only.html -> proposal_branded.html
 #   phd       博士方向版: body_only_phd.html -> proposal_branded_phd.html
 #   arts      舞蹈表演指南: body_only_arts.html -> proposal_branded_arts.html
+#   market    市场研究报告: body_only_market.html -> proposal_branded_market.html
 VARIANT = sys.argv[1] if len(sys.argv) > 1 else "career"
 SUFFIX = "" if VARIANT == "career" else f"_{VARIANT}"
 
@@ -294,6 +295,21 @@ ARTS_TOC = [
     ("十", "下一步"),
 ]
 
+MARKET_TOC = [
+    ("", "核心数据一览"),
+    ("一", "研究说明与数据口径"),
+    ("二", "市场总量：从峰值回落近三成"),
+    ("三", "学历结构：硕士、博士分开看"),
+    ("四", "硕士市场：规模大、学制短、以自费为主"),
+    ("五", "博士市场：规模稳定、全额资助、留美意愿高"),
+    ("六", "硕士与博士对比"),
+    ("七", "院校类型与地区分布"),
+    ("八", "目的地竞争：美国不再是唯一首选"),
+    ("九", "政策环境：签证和就业政策不确定性上升"),
+    ("十", "趋势判断与对留学家庭的建议"),
+    ("十一", "研究局限"),
+]
+
 ACCOUNTING_META = [
     ("学生背景", "会计专业 · 国内大二"),
     ("文件性质", "阶段性方向建议，非最终决定"),
@@ -327,11 +343,23 @@ COVER = {
             ("文件性质", "选校与规划参考，以学校当年公布为准"),
         ],
     },
+    "market": {
+        "title": "中国学生赴美研究生<span class=\"accent\">留学市场研究报告</span>",
+        "sub": "硕士、博士分开统计<br>规模趋势、专业分布、资助与留美、政策环境",
+        "goal": "为留学家庭提供数据参考",
+        "goal_label": "报告用途",
+        "doc_title": "赴美研究生留学市场研究报告",
+        "eyebrow": "Market Research · 2026",
+        "meta": [
+            ("研究对象", "在美攻读硕士、博士学位的中国学生"),
+            ("数据时点", "2024/25 学年为主，截至 2026 年 9 月"),
+        ],
+    },
 }[VARIANT]
-TOC_ITEMS = {"career": CAREER_TOC, "phd": PHD_TOC, "arts": ARTS_TOC}[VARIANT]
+TOC_ITEMS = {"career": CAREER_TOC, "phd": PHD_TOC, "arts": ARTS_TOC, "market": MARKET_TOC}[VARIANT]
 meta_html = "\n      ".join(
     f"<div><b>{k}</b>{v}</div>"
-    for k, v in [COVER["meta"][0], ("长期目标", COVER["goal"]), *COVER["meta"][1:],
+    for k, v in [COVER["meta"][0], (COVER.get("goal_label", "长期目标"), COVER["goal"]), *COVER["meta"][1:],
                  ("出品", "JYEdu 杰圆教育 · JY Tech LLC")]
 )
 toc_html = "\n".join(
