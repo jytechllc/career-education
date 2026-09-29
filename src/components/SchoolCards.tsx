@@ -64,7 +64,7 @@ function parse(table: HastElement): Parsed {
 
 const SCHOOL = /学校/;
 const LONG = /优势|理由/;
-const BADGE = /^(档位|STEM)$/;
+const BADGE = /^(档位|资助程度|STEM)$/;
 
 // A school list is a table with a 学校 column and a long 优势/理由 column;
 // comparison tables (cost bands, application mix) stay as tables.
@@ -81,7 +81,9 @@ export function asSchoolTable(node: unknown): Parsed | null {
 function tierTone(text: string) {
   if (text.includes("冲刺")) return "bg-rose-100 text-rose-800";
   if (text.includes("主申")) return "bg-blue-100 text-blue-800";
-  if (text.includes("保底")) return "bg-emerald-100 text-emerald-800";
+  if (text.includes("保底") || text.includes("全额")) return "bg-emerald-100 text-emerald-800";
+  if (text.includes("高额")) return "bg-blue-100 text-blue-800";
+  if (text.includes("部分")) return "bg-amber-50 text-amber-800 ring-1 ring-amber-200";
   return "bg-gray-100 text-gray-700";
 }
 

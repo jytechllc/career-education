@@ -1,11 +1,12 @@
 import re
 import sys
 
-# Usage: python3 build_pdf.py [phd]
+# Usage: python3 build_pdf.py [phd|arts]
 #   (default) 就业方向版: body_only.html -> proposal_branded.html
 #   phd       博士方向版: body_only_phd.html -> proposal_branded_phd.html
+#   arts      舞蹈表演指南: body_only_arts.html -> proposal_branded_arts.html
 VARIANT = sys.argv[1] if len(sys.argv) > 1 else "career"
-SUFFIX = "_phd" if VARIANT == "phd" else ""
+SUFFIX = "" if VARIANT == "career" else f"_{VARIANT}"
 
 body = open(f"body_only{SUFFIX}.html", encoding="utf-8").read()
 body = body.replace("<hr />\n", "")
@@ -22,7 +23,8 @@ def _text(h):
 
 
 def _tier_class(t):
-    for k, c in (("冲刺", "reach"), ("主申", "target"), ("保底", "safety")):
+    for k, c in (("冲刺", "reach"), ("主申", "target"), ("保底", "safety"),
+                 ("全额", "safety"), ("高额", "target"), ("部分", "partial")):
         if k in t:
             return c
     return "other"
@@ -39,7 +41,7 @@ def _card_table(m):
     long_i = next((i for i, h in enumerate(headers) if "优势" in h or "理由" in h), -1)
     if name_i < 0 or long_i < 0:
         return table
-    badge = {i for i, h in enumerate(headers) if h in ("档位", "STEM")}
+    badge = {i for i, h in enumerate(headers) if h in ("档位", "资助程度", "STEM")}
     cards = []
     for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", rows[0], re.S):
         cells = _cells(tr, "td")
@@ -66,7 +68,7 @@ def _card_table(m):
     return f'<div class="cards">{"".join(cards)}</div>'
 
 
-body = re.sub(r"<table>.*?</table>", _card_table, body, flags=re.S)
+body = re.sub(r"<table[^>]*>.*?</table>", _card_table, body, flags=re.S)
 
 CSS = r"""
 @font-face { font-family: 'PingFang SC'; }
@@ -230,6 +232,7 @@ pre code { background: none; padding: 0; }
 .tag.tier-reach { background: #FDE2E4; color: #9F1239; }
 .tag.tier-target { background: #DBEAFE; color: #1E40AF; }
 .tag.tier-safety { background: #D1FAE5; color: #065F46; }
+.tag.tier-partial { background: #FEF3C7; color: #92400E; }
 .tag.tier-other { background: #EEF0F4; color: #374151; }
 .tag.stem-ok { background: #DCFCE7; color: #166534; }
 .tag.stem-check { background: #FEF3C7; color: #92400E; }
@@ -277,19 +280,60 @@ PHD_TOC = [
     ("十二", "下一步"),
 ]
 
+ARTS_TOC = [
+    ("", "结论先行"),
+    ("一", "先弄清三种学位：MFA、MA、PhD"),
+    ("二", "舞蹈 MFA：全额或高额资助的项目"),
+    ("三", "表演（戏剧）MFA：顶尖项目已免学费"),
+    ("四", "研究型 PhD：5 年全额资助"),
+    ("五", "申请要求：与普通学科完全不同"),
+    ("六", "奖学金之外：生活费还能从哪里来"),
+    ("七", "职业发展：收入、前景与出路"),
+    ("八", "毕业后怎么留在美国"),
+    ("九", "怎么选：三类学生、三条路线"),
+    ("十", "下一步"),
+]
+
+ACCOUNTING_META = [
+    ("学生背景", "会计专业 · 国内大二"),
+    ("文件性质", "阶段性方向建议，非最终决定"),
+]
+
 COVER = {
     "career": {
         "title": "专业方向<span class=\"accent\">规划建议书</span>",
         "sub": "会计专业 · 美国就业与长期身份路径规划<br>本科到硕士（乃至博士）主路线建议",
         "goal": "美国就业 + 长期身份",
+        "doc_title": "专业方向规划建议书",
+        "eyebrow": "Academic &amp; Career Planning · 家长版",
+        "meta": ACCOUNTING_META,
     },
     "phd": {
         "title": "博士方向<span class=\"accent\">规划建议书</span>",
         "sub": "会计专业 · 美国会计学博士就学与就业路径规划<br>读博衔接、研究方向、毕业去向与身份路线",
         "goal": "美国高校教职 + 长期身份",
+        "doc_title": "博士方向规划建议书",
+        "eyebrow": "Academic &amp; Career Planning · 家长版",
+        "meta": ACCOUNTING_META,
+    },
+    "arts": {
+        "title": "舞蹈与表演<span class=\"accent\">全额奖学金指南</span>",
+        "sub": "美国舞蹈 / 表演研究生项目<br>全额奖学金、生活补贴、职业发展与留美路径",
+        "goal": "免学费读研 + 留美发展",
+        "doc_title": "舞蹈表演全额奖学金指南",
+        "eyebrow": "Graduate Funding Guide · 舞蹈与表演",
+        "meta": [
+            ("适用对象", "舞蹈、表演方向学生与职业舞者、演员"),
+            ("文件性质", "选校与规划参考，以学校当年公布为准"),
+        ],
     },
 }[VARIANT]
-TOC_ITEMS = PHD_TOC if VARIANT == "phd" else CAREER_TOC
+TOC_ITEMS = {"career": CAREER_TOC, "phd": PHD_TOC, "arts": ARTS_TOC}[VARIANT]
+meta_html = "\n      ".join(
+    f"<div><b>{k}</b>{v}</div>"
+    for k, v in [COVER["meta"][0], ("长期目标", COVER["goal"]), *COVER["meta"][1:],
+                 ("出品", "JYEdu 杰圆教育 · JY Tech LLC")]
+)
 toc_html = "\n".join(
     f'<li><span><span class="no">{n}</span>{t}</span></li>' for n, t in TOC_ITEMS
 )
@@ -298,7 +342,7 @@ html = f"""<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>{"博士方向规划建议书" if VARIANT == "phd" else "专业方向规划建议书"}</title>
+<title>{COVER["doc_title"]}</title>
 <style>{CSS}</style>
 </head>
 <body>
@@ -307,16 +351,13 @@ html = f"""<!doctype html>
   <div class="cover-inner">
     <div class="cover-brand"><span class="mark">J</span>JYEDU · 杰圆教育</div>
     <div class="cover-title-block">
-      <div class="cover-eyebrow">Academic &amp; Career Planning · 家长版</div>
+      <div class="cover-eyebrow">{COVER["eyebrow"]}</div>
       <div class="cover-title">{COVER["title"]}</div>
       <div class="cover-rule"></div>
       <div class="cover-sub">{COVER["sub"]}</div>
     </div>
     <div class="cover-meta">
-      <div><b>学生背景</b>会计专业 · 国内大二</div>
-      <div><b>长期目标</b>{COVER["goal"]}</div>
-      <div><b>文件性质</b>阶段性方向建议，非最终决定</div>
-      <div><b>出品</b>JYEdu 杰圆教育 · JY Tech LLC</div>
+      {meta_html}
     </div>
   </div>
 </div>

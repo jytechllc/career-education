@@ -7,6 +7,7 @@ import {
   Globe,
   Briefcase,
   GraduationCap,
+  Sparkles,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
 
@@ -82,6 +83,15 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
       color: "blue",
     },
     {
+      title: "舞蹈与表演专业：美国研究生全额奖学金指南",
+      description:
+        "美国舞蹈 / 表演 MFA 与 PhD 的全额资助项目、奖学金之外的生活补贴、职业发展与收入，以及 O-1B 艺术人才签证等留美路径与概率。",
+      path: "/performing-arts-funding",
+      Icon: Sparkles,
+      tags: ["美国留学", "舞蹈表演", "全额奖学金"],
+      color: "yellow",
+    },
+    {
       title: "悉尼就业市场分析报告",
       description:
         "深入了解 2024 年悉尼就业市场的最新趋势，包括热门行业分析、薪资水平、就业趋势与机遇，以及成功案例分享。",
@@ -118,6 +128,15 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
       Icon: GraduationCap,
       tags: ["US PhD", "Accounting", "Academic Track"],
       color: "blue",
+    },
+    {
+      title: "Dance & Performance: Fully Funded US Graduate Programs",
+      description:
+        "Funded dance/acting MFAs and PhDs, living-cost support beyond tuition, career outlook, and O-1B routes to stay in the US (in Chinese).",
+      path: "/performing-arts-funding",
+      Icon: Sparkles,
+      tags: ["US Study", "Dance & Acting", "Full Funding"],
+      color: "yellow",
     },
     {
       title: "Sydney Job Market Report",
