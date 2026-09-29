@@ -1,3 +1,4 @@
+import re
 import sys
 
 # Usage: python3 build_pdf.py [phd]
@@ -8,6 +9,64 @@ SUFFIX = "_phd" if VARIANT == "phd" else ""
 
 body = open(f"body_only{SUFFIX}.html", encoding="utf-8").read()
 body = body.replace("<hr />\n", "")
+
+
+# School lists (a 学校 column plus a long 优势/理由 column) read better as
+# cards than as 6-column tables; same rule as src/components/SchoolCards.tsx.
+def _cells(row_html, tag):
+    return [c.strip() for c in re.findall(rf"<{tag}[^>]*>(.*?)</{tag}>", row_html, re.S)]
+
+
+def _text(h):
+    return re.sub(r"<[^>]+>", "", h).strip()
+
+
+def _tier_class(t):
+    for k, c in (("冲刺", "reach"), ("主申", "target"), ("保底", "safety")):
+        if k in t:
+            return c
+    return "other"
+
+
+def _card_table(m):
+    table = m.group(0)
+    head = re.search(r"<thead>(.*?)</thead>", table, re.S)
+    rows = re.findall(r"<tbody>(.*?)</tbody>", table, re.S)
+    if not head or not rows:
+        return table
+    headers = [_text(h) for h in _cells(head.group(1), "th")]
+    name_i = next((i for i, h in enumerate(headers) if "学校" in h), -1)
+    long_i = next((i for i, h in enumerate(headers) if "优势" in h or "理由" in h), -1)
+    if name_i < 0 or long_i < 0:
+        return table
+    badge = {i for i, h in enumerate(headers) if h in ("档位", "STEM")}
+    cards = []
+    for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", rows[0], re.S):
+        cells = _cells(tr, "td")
+        if len(cells) != len(headers):
+            continue
+        tags = []
+        for i in sorted(badge):
+            if headers[i] == "STEM":
+                t = _text(cells[i])
+                cls = "ok" if "已核实" in t else ("na" if "不适用" in t else "check")
+                tags.append(f'<span class="tag stem-{cls}">STEM：{cells[i]}</span>')
+            else:
+                tags.append(f'<span class="tag tier-{_tier_class(_text(cells[i]))}">{cells[i]}</span>')
+        facts = "".join(
+            f'<div class="fact"><div class="k">{headers[i]}</div><div class="v">{cells[i]}</div></div>'
+            for i in range(len(headers))
+            if i not in badge and i not in (name_i, long_i)
+        )
+        cards.append(
+            f'<div class="card"><div class="tags">{"".join(tags)}</div>'
+            f'<div class="name">{cells[name_i]}</div><div class="facts">{facts}</div>'
+            f'<div class="long"><div class="k">{headers[long_i]}</div>{cells[long_i]}</div></div>'
+        )
+    return f'<div class="cards">{"".join(cards)}</div>'
+
+
+body = re.sub(r"<table>.*?</table>", _card_table, body, flags=re.S)
 
 CSS = r"""
 @font-face { font-family: 'PingFang SC'; }
@@ -159,6 +218,30 @@ pre code { background: none; padding: 0; }
   padding: 10px 0; border-bottom: 1px dashed #DAD5C6; font-size: 14px; color: var(--navy-800); font-weight: 600;
 }
 .toc-list li span.no { color: var(--gold-500); font-weight: 800; margin-right: 10px; }
+
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 18px 0; }
+.card {
+  border: 1px solid #E8DDB5; border-top: 3px solid var(--gold-500); border-radius: 8px;
+  padding: 10px 12px; background: white; font-size: 11.5px; line-height: 1.6;
+  break-inside: avoid; page-break-inside: avoid;
+}
+.card .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.card .tag { border-radius: 999px; padding: 1px 8px; font-size: 10px; font-weight: 600; }
+.tag.tier-reach { background: #FDE2E4; color: #9F1239; }
+.tag.tier-target { background: #DBEAFE; color: #1E40AF; }
+.tag.tier-safety { background: #D1FAE5; color: #065F46; }
+.tag.tier-other { background: #EEF0F4; color: #374151; }
+.tag.stem-ok { background: #DCFCE7; color: #166534; }
+.tag.stem-check { background: #FEF3C7; color: #92400E; }
+.tag.stem-na { background: #EEF0F4; color: #4B5563; }
+.card .tags:empty { display: none; }
+.card .name { font-size: 13.5px; font-weight: 800; color: var(--navy-800); margin: 6px 0 4px 0; line-height: 1.4; }
+.card .name strong { color: var(--navy-800); }
+.card .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+.card .k { font-size: 9.5px; color: var(--muted); }
+.card .v { color: var(--ink); }
+.card .long { margin-top: 6px; padding-top: 6px; border-top: 1px dashed #E8DDB5; color: var(--ink); }
+.card .long .k { color: #9A7B12; font-weight: 600; }
 
 @page { size: A4; margin: 18mm 16mm 16mm 16mm; }
 @page :first { margin: 0; }

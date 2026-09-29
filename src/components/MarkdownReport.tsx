@@ -4,6 +4,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import SchoolCards, { asSchoolTable } from "@/components/SchoolCards";
 
 // Long-form reports authored in-repo under content/reports/ (sources and PDF
 // build live in docs/student-plans/), rendered as-is so the web version and
@@ -87,11 +88,15 @@ export default function MarkdownReport({
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            table: ({ children }) => (
-              <div className="overflow-x-auto">
-                <table>{children}</table>
-              </div>
-            ),
+            table: ({ node, children }) => {
+              const schools = asSchoolTable(node);
+              if (schools) return <SchoolCards {...schools} />;
+              return (
+                <div className="overflow-x-auto">
+                  <table>{children}</table>
+                </div>
+              );
+            },
             a: ({ href, children }) => (
               <a href={href} target="_blank" rel="noopener noreferrer">
                 {children}

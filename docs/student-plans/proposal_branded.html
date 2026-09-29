@@ -154,6 +154,30 @@ pre code { background: none; padding: 0; }
 }
 .toc-list li span.no { color: var(--gold-500); font-weight: 800; margin-right: 10px; }
 
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 18px 0; }
+.card {
+  border: 1px solid #E8DDB5; border-top: 3px solid var(--gold-500); border-radius: 8px;
+  padding: 10px 12px; background: white; font-size: 11.5px; line-height: 1.6;
+  break-inside: avoid; page-break-inside: avoid;
+}
+.card .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.card .tag { border-radius: 999px; padding: 1px 8px; font-size: 10px; font-weight: 600; }
+.tag.tier-reach { background: #FDE2E4; color: #9F1239; }
+.tag.tier-target { background: #DBEAFE; color: #1E40AF; }
+.tag.tier-safety { background: #D1FAE5; color: #065F46; }
+.tag.tier-other { background: #EEF0F4; color: #374151; }
+.tag.stem-ok { background: #DCFCE7; color: #166534; }
+.tag.stem-check { background: #FEF3C7; color: #92400E; }
+.tag.stem-na { background: #EEF0F4; color: #4B5563; }
+.card .tags:empty { display: none; }
+.card .name { font-size: 13.5px; font-weight: 800; color: var(--navy-800); margin: 6px 0 4px 0; line-height: 1.4; }
+.card .name strong { color: var(--navy-800); }
+.card .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+.card .k { font-size: 9.5px; color: var(--muted); }
+.card .v { color: var(--ink); }
+.card .long { margin-top: 6px; padding-top: 6px; border-top: 1px dashed #E8DDB5; color: var(--ink); }
+.card .long .k { color: #9A7B12; font-weight: 600; }
+
 @page { size: A4; margin: 18mm 16mm 16mm 16mm; }
 @page :first { margin: 0; }
 </style>
@@ -583,82 +607,29 @@ STEM。</li>
 </ul>
 <h3 id="最合适的顶校会计学术声誉-stem-认证-顶级雇主认可">8.1
 最合适的顶校（会计学术声誉 + STEM 认证 + 顶级雇主认可）</h3>
-<table>
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 15%" />
-<col style="width: 12%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th>学校 / 项目</th>
-<th>STEM</th>
-<th>学制</th>
-<th>学费（国际生）</th>
-<th>生活费参考</th>
-<th>核心优势</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>UIUC</strong>（伊利诺伊大学厄巴纳-香槟分校）MS in
-Accountancy（MSA）</td>
-<td>已核实</td>
-<td>1 年</td>
-<td><strong>$61,171</strong>（2025–26，学费 $53,496 + 校园费
+<div class="cards"><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实</span></div><div class="name"><strong>UIUC</strong>（伊利诺伊大学厄巴纳-香槟分校）MS in
+Accountancy（MSA）</div><div class="facts"><div class="fact"><div class="k">学制</div><div class="v">1 年</div></div><div class="fact"><div class="k">学费（国际生）</div><div class="v"><strong>$61,171</strong>（2025–26，学费 $53,496 + 校园费
 $7,675）（<a
-href="https://gies.illinois.edu/msa/tuition">Gies</a>）</td>
-<td>大学城，估算约 $18,000–$22,000</td>
-<td>会计专业全美公认第一梯队；Big 4 录用总人数全美领先；设 Data
+href="https://gies.illinois.edu/msa/tuition">Gies</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">大学城，估算约 $18,000–$22,000</div></div></div><div class="long"><div class="k">核心优势</div>会计专业全美公认第一梯队；Big 4 录用总人数全美领先；设 Data
 Analytics 方向，与本建议书”会计 +
-分析”路线完全吻合；本科非会计背景也可申请</td>
-</tr>
-<tr>
-<td><strong>UT Austin</strong>（德州大学奥斯汀分校）Master in
-Professional Accounting（MPA）</td>
-<td>已核实（2024 年获认证）（<a
+分析”路线完全吻合；本科非会计背景也可申请</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实（2024 年获认证）（<a
 href="https://thedailytexan.com/2024/11/02/mccombs-master-in-professional-accounting-program-receives-stem-designation">Daily
-Texan</a>）</td>
-<td>2–4 个学期</td>
-<td><strong>$49,020</strong>（31 学分，秋春两学期）至
+Texan</a>）</span></div><div class="name"><strong>UT Austin</strong>（德州大学奥斯汀分校）Master in
+Professional Accounting（MPA）</div><div class="facts"><div class="fact"><div class="k">学制</div><div class="v">2–4 个学期</div></div><div class="fact"><div class="k">学费（国际生）</div><div class="v"><strong>$49,020</strong>（31 学分，秋春两学期）至
 <strong>$70,453</strong>（43 学分，含两个夏季学期），2025–26 非州内（<a
-href="https://www.mccombs.utexas.edu/graduate/specialized-masters/mpa/traditional/tuition-financial-aid/">McCombs</a>）</td>
-<td>奥斯汀，估算约 $22,000–$28,000</td>
-<td>会计专业全美第一梯队；德州为 Big
+href="https://www.mccombs.utexas.edu/graduate/specialized-masters/mpa/traditional/tuition-financial-aid/">McCombs</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">奥斯汀，估算约 $22,000–$28,000</div></div></div><div class="long"><div class="k">核心优势</div>会计专业全美第一梯队；德州为 Big
 4、能源与科技企业重镇；学分可按已修课程减免，会计本科背景可走 31
-学分短学制</td>
-</tr>
-<tr>
-<td><strong>University of Michigan</strong>（密歇根大学 Ross
-商学院）Master of Accounting（MAcc）</td>
-<td>已核实</td>
-<td>8 个月</td>
-<td><strong>$61,090</strong>（2025–26 非州内）（<a
-href="https://rossweb.bus.umich.edu/financial-aid/program-overview/macc">Ross</a>）</td>
-<td>安娜堡，估算约 $20,000–$24,000</td>
-<td>综合名校 + 会计强校；与 MBA 学生共同选课；可加 Accounting Analytics
-方向；<strong>8 个月学制，总成本最可控</strong></td>
-</tr>
-<tr>
-<td><strong>USC</strong>（南加州大学 Leventhal 会计学院）Master of
-Accounting（MAcc）</td>
-<td><strong>已核实</strong>（2020 年秋起）（<a
-href="https://www.marshall.usc.edu/macc">USC Marshall</a>）</td>
-<td>2–3 个学期</td>
-<td>约 <strong>$76,230</strong>/年（第三方，按 $2,541/学分计）（<a
-href="https://www.mastersportal.com/studies/100637/accounting.html">Mastersportal</a>）</td>
-<td>洛杉矶，估算约 $30,000–$40,000</td>
-<td>2025 届毕业前 <strong>92%</strong> 拿到全职或实习
+学分短学制</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实</span></div><div class="name"><strong>University of Michigan</strong>（密歇根大学 Ross
+商学院）Master of Accounting（MAcc）</div><div class="facts"><div class="fact"><div class="k">学制</div><div class="v">8 个月</div></div><div class="fact"><div class="k">学费（国际生）</div><div class="v"><strong>$61,090</strong>（2025–26 非州内）（<a
+href="https://rossweb.bus.umich.edu/financial-aid/program-overview/macc">Ross</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">安娜堡，估算约 $20,000–$24,000</div></div></div><div class="long"><div class="k">核心优势</div>综合名校 + 会计强校；与 MBA 学生共同选课；可加 Accounting Analytics
+方向；<strong>8 个月学制，总成本最可控</strong></div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：<strong>已核实</strong>（2020 年秋起）（<a
+href="https://www.marshall.usc.edu/macc">USC Marshall</a>）</span></div><div class="name"><strong>USC</strong>（南加州大学 Leventhal 会计学院）Master of
+Accounting（MAcc）</div><div class="facts"><div class="fact"><div class="k">学制</div><div class="v">2–3 个学期</div></div><div class="fact"><div class="k">学费（国际生）</div><div class="v">约 <strong>$76,230</strong>/年（第三方，按 $2,541/学分计）（<a
+href="https://www.mastersportal.com/studies/100637/accounting.html">Mastersportal</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">洛杉矶，估算约 $30,000–$40,000</div></div></div><div class="long"><div class="k">核心优势</div>2025 届毕业前 <strong>92%</strong> 拿到全职或实习
 offer；平均基本年薪 <strong>$84,915</strong>、中位数
 <strong>$88,000</strong>（<a
 href="https://www.marshall.usc.edu/macc">USC
-Marshall</a>）；洛杉矶就业市场与华人校友网络强；私立校，总成本最高</td>
-</tr>
-</tbody>
-</table>
+Marshall</a>）；洛杉矶就业市场与华人校友网络强；私立校，总成本最高</div></div></div>
 <p><strong>若走方案 A（硕士转 Business
 Analytics）</strong>，顶校梯队另有 MIT（MBAn）、Carnegie
 Mellon（MSBA）、UT Austin（MSBA）、UCLA（MSBA）等，这些项目普遍为 STEM
@@ -671,85 +642,31 @@ Statistics、SQL、Python 的原因之一。</p>
 school）名单</strong>，在目标学校里有校园招聘、宣讲、内推渠道，不在名单上的学校也能进，但难度明显更高。（<a
 href="https://gmatclub.com/forum/how-to-get-in-to-big-4-audit-tax-97581.html">GMAT
 Club 讨论</a>）</p>
-<table>
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 9%" />
-<col style="width: 16%" />
-<col style="width: 12%" />
-<col style="width: 41%" />
-</colgroup>
-<thead>
-<tr>
-<th>学校 / 项目</th>
-<th>STEM</th>
-<th>学费（国际生）</th>
-<th>生活费参考</th>
-<th>就业优势</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Wake Forest University</strong>（维克森林大学）MS in
-Accountancy</td>
-<td>已核实（<a
-href="https://business.wfu.edu/masters-in-accounting/application-deadlines/">WFU</a>）</td>
-<td><strong>$53,748</strong> + 杂费
+<div class="cards"><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实（<a
+href="https://business.wfu.edu/masters-in-accounting/application-deadlines/">WFU</a>）</span></div><div class="name"><strong>Wake Forest University</strong>（维克森林大学）MS in
+Accountancy</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v"><strong>$53,748</strong> + 杂费
 $1,172（2024–25，两学期；学校提示每年上调 3%–5%）（<a
-href="https://business.wfu.edu/masters-in-accounting/tuition-fees-living-expenses">WFU</a>）</td>
-<td>学校官方估算 <strong>$28,186</strong>（两学期）（<a
-href="https://business.wfu.edu/masters-in-accounting/tuition-fees-living-expenses">WFU</a>）</td>
-<td>学校公布：Big 4 录用率全美第一、CPA 通过率全美第一，2025 届毕业 6
+href="https://business.wfu.edu/masters-in-accounting/tuition-fees-living-expenses">WFU</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">学校官方估算 <strong>$28,186</strong>（两学期）（<a
+href="https://business.wfu.edu/masters-in-accounting/tuition-fees-living-expenses">WFU</a>）</div></div></div><div class="long"><div class="k">就业优势</div>学校公布：Big 4 录用率全美第一、CPA 通过率全美第一，2025 届毕业 6
 个月就业率 <strong>99%</strong>（<a
 href="https://business.wfu.edu/masters-in-accounting/application-deadlines/">WFU</a>）；第三方统计会计毕业生约
 26% 进入 Big 4（<a
-href="https://www.accountingedu.org/best-accounting-masters-big-four-placement/">AccountingEDU</a>）；可选带薪实习的三学期制</td>
-</tr>
-<tr>
-<td><strong>UIUC</strong> MSA</td>
-<td>已核实</td>
-<td>$61,171（见 8.1）</td>
-<td>大学城</td>
-<td>Big 4 录用<strong>总人数</strong>全美领先；芝加哥为主要就业市场（<a
-href="https://www.accountingedu.org/best-accounting-masters-big-four-placement/">AccountingEDU</a>）</td>
-</tr>
-<tr>
-<td><strong>Indiana University</strong>（印第安纳大学 Kelley 商学院）MS
-in Accounting with Data and Analytics</td>
-<td><strong>已核实</strong>（<a
-href="https://kelley.iu.edu/programs/ms-accounting/index.html">Kelley</a>）</td>
-<td><strong>$45,472</strong>（2025–26 国际生，12
+href="https://www.accountingedu.org/best-accounting-masters-big-four-placement/">AccountingEDU</a>）；可选带薪实习的三学期制</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实</span></div><div class="name"><strong>UIUC</strong> MSA</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">$61,171（见 8.1）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">大学城</div></div></div><div class="long"><div class="k">就业优势</div>Big 4 录用<strong>总人数</strong>全美领先；芝加哥为主要就业市场（<a
+href="https://www.accountingedu.org/best-accounting-masters-big-four-placement/">AccountingEDU</a>）</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：<strong>已核实</strong>（<a
+href="https://kelley.iu.edu/programs/ms-accounting/index.html">Kelley</a>）</span></div><div class="name"><strong>Indiana University</strong>（印第安纳大学 Kelley 商学院）MS
+in Accounting with Data and Analytics</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v"><strong>$45,472</strong>（2025–26 国际生，12
 个月制，另有国际生附加费）（<a
-href="https://yocket.com/universities/indiana-kelley-school-of-business/accounting-with-data-and-analytics-82925">Kelley</a>）</td>
-<td>大学城，估算约 $18,000–$22,000</td>
-<td>毕业 90 天内 <strong>100%</strong> 获得 offer；每年
+href="https://yocket.com/universities/indiana-kelley-school-of-business/accounting-with-data-and-analytics-82925">Kelley</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">大学城，估算约 $18,000–$22,000</div></div></div><div class="long"><div class="k">就业优势</div>毕业 90 天内 <strong>100%</strong> 获得 offer；每年
 <strong>175+</strong> 家企业到校招聘研究生（<a
 href="https://kelley.iu.edu/programs/ms-accounting/index.html">Kelley</a>）；项目名称即包含
-Data and Analytics，与本案例路线高度一致</td>
-</tr>
-<tr>
-<td><strong>Ohio State University</strong>（俄亥俄州立大学 Fisher
-商学院）Master of Accounting</td>
-<td>已核实（全美最早一批）（<a
-href="https://fisher.osu.edu/graduate/macc/stem-designation">Fisher</a>）</td>
-<td><strong>$63,012</strong>（2025–26 非州内，31 学分）（<a
-href="https://fisher.osu.edu/graduate/macc/admissions/tuition-funding">Fisher</a>）</td>
-<td>学校官方估算约 <strong>$22,466</strong>（食宿 $12,096 + 书本 $1,082
+Data and Analytics，与本案例路线高度一致</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实（全美最早一批）（<a
+href="https://fisher.osu.edu/graduate/macc/stem-designation">Fisher</a>）</span></div><div class="name"><strong>Ohio State University</strong>（俄亥俄州立大学 Fisher
+商学院）Master of Accounting</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v"><strong>$63,012</strong>（2025–26 非州内，31 学分）（<a
+href="https://fisher.osu.edu/graduate/macc/admissions/tuition-funding">Fisher</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">学校官方估算约 <strong>$22,466</strong>（食宿 $12,096 + 书本 $1,082
 + 个人 $5,922 + 医保 $3,366）（<a
-href="https://fisher.osu.edu/graduate/macc/admissions/tuition-funding">Fisher</a>）</td>
-<td>中西部 Big 4 与大型企业稳定招聘；<strong>2024 年 88%
+href="https://fisher.osu.edu/graduate/macc/admissions/tuition-funding">Fisher</a>）</div></div></div><div class="long"><div class="k">就业优势</div>中西部 Big 4 与大型企业稳定招聘；<strong>2024 年 88%
 的学生获得奖学金</strong>，实际成本通常低于标价（<a
-href="https://fisher.osu.edu/graduate/macc/admissions/tuition-funding">Fisher</a>）</td>
-</tr>
-<tr>
-<td><strong>UT Austin / Texas A&amp;M</strong></td>
-<td>见 8.1 / 8.3</td>
-<td>见 8.1 / 8.3</td>
-<td>—</td>
-<td>德州各 Big 4 办公室的核心目标学校</td>
-</tr>
-</tbody>
-</table>
+href="https://fisher.osu.edu/graduate/macc/admissions/tuition-funding">Fisher</a>）</div></div><div class="card"><div class="tags"><span class="tag stem-check">STEM：见 8.1 / 8.3</span></div><div class="name"><strong>UT Austin / Texas A&amp;M</strong></div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">见 8.1 / 8.3</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">—</div></div></div><div class="long"><div class="k">就业优势</div>德州各 Big 4 办公室的核心目标学校</div></div></div>
 <p>⚠️
 <strong>需要提醒家长的一点</strong>：以上”就业容易”指的是<strong>拿到
 offer</strong>这一步。按第四节的分析，国际学生能否留下来还取决于 H-1B
@@ -757,96 +674,28 @@ offer</strong>这一步。按第四节的分析，国际学生能否留下来还
 + STEM 认证项目”两个条件要同时满足，缺一不可。</p>
 <h3 id="最具性价比的学校学费较低-奖学金多-地理位置好">8.3
 最具性价比的学校（学费较低 / 奖学金多 / 地理位置好）</h3>
-<table>
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 9%" />
-<col style="width: 16%" />
-<col style="width: 12%" />
-<col style="width: 41%" />
-</colgroup>
-<thead>
-<tr>
-<th>学校 / 项目</th>
-<th>STEM</th>
-<th>学费（国际生）</th>
-<th>生活费参考</th>
-<th>性价比理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Indiana University</strong> MS in Accounting with Data and
-Analytics</td>
-<td>已核实</td>
-<td><strong>$45,472</strong>（见 8.2）</td>
-<td>大学城，估算约 $18,000–$22,000</td>
-<td><strong>会计 + 数据分析 + STEM +
-就业率</strong>四项俱全，而学费在已核实项目中最低</td>
-</tr>
-<tr>
-<td><strong>UIC</strong>（伊利诺伊大学芝加哥分校）MS in Accounting</td>
-<td>已核实（2025 年 1 月起）（<a
-href="https://business.uic.edu/graduate/degrees/master-science-accounting/">UIC</a>）</td>
-<td>约 <strong>$43,530</strong>/年（第三方，需核实）（<a
-href="https://www.hotcoursesabroad.com/study/course/us-usa/master-of-science-msc-accounting/59005547/program.html">Hotcourses</a>）</td>
-<td>芝加哥，估算约 $25,000–$32,000</td>
-<td>位于芝加哥市中心商务区附近，Big 4 与 RSM 等雇主集中；1–2 年学制、32
+<div class="cards"><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实</span></div><div class="name"><strong>Indiana University</strong> MS in Accounting with Data and
+Analytics</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v"><strong>$45,472</strong>（见 8.2）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">大学城，估算约 $18,000–$22,000</div></div></div><div class="long"><div class="k">性价比理由</div><strong>会计 + 数据分析 + STEM +
+就业率</strong>四项俱全，而学费在已核实项目中最低</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实（2025 年 1 月起）（<a
+href="https://business.uic.edu/graduate/degrees/master-science-accounting/">UIC</a>）</span></div><div class="name"><strong>UIC</strong>（伊利诺伊大学芝加哥分校）MS in Accounting</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">约 <strong>$43,530</strong>/年（第三方，需核实）（<a
+href="https://www.hotcoursesabroad.com/study/course/us-usa/master-of-science-msc-accounting/59005547/program.html">Hotcourses</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">芝加哥，估算约 $25,000–$32,000</div></div></div><div class="long"><div class="k">性价比理由</div>位于芝加哥市中心商务区附近，Big 4 与 RSM 等雇主集中；1–2 年学制、32
 学分；伊利诺伊州”最佳性价比”第 2 名（学校公布）（<a
 href="https://business.uic.edu/graduate/degrees/master-science-accounting/">UIC</a>）；录取难度明显低于
-UIUC</td>
-</tr>
-<tr>
-<td><strong>Georgia Tech</strong>（佐治亚理工学院）MS in
-Analytics（校园版）</td>
-<td>申请前核实</td>
-<td>约 <strong>$44,658</strong>/年（第三方）（<a
-href="https://www.mastersportal.com/studies/310419/analytics.html">Mastersportal</a>）</td>
-<td>亚特兰大，估算约 $22,000–$28,000</td>
-<td>理工名校的分析硕士，适合方案 A；亚特兰大就业市场大</td>
-</tr>
-<tr>
-<td><strong>Texas A&amp;M</strong>（德州农工大学 Mays 商学院）MS in
-Accounting</td>
-<td>申请前核实</td>
-<td>第三方资料约 $22,000（2021 年数据，口径可能为州内，需核实）（<a
-href="https://poetsandquants.com/specialized-master/texas-universitys-mays-business-school-ms-accounting/">Poets&amp;Quants</a>）</td>
-<td>大学城，估算约 $18,000–$22,000</td>
-<td>德州公立校；15–18 个月学制；Big 4 招聘强</td>
-</tr>
-<tr>
-<td><strong>Tulane University</strong>（杜兰大学）Master of
-Accounting</td>
-<td>已核实（<a
-href="https://tulane-university.gradright.com/master-of-accounting">Tulane</a>）</td>
-<td>约 <strong>$60,330</strong>/年（2025–26，$2,011/学分 × 每学期 15
+UIUC</div></div><div class="card"><div class="tags"><span class="tag stem-check">STEM：申请前核实</span></div><div class="name"><strong>Georgia Tech</strong>（佐治亚理工学院）MS in
+Analytics（校园版）</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">约 <strong>$44,658</strong>/年（第三方）（<a
+href="https://www.mastersportal.com/studies/310419/analytics.html">Mastersportal</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">亚特兰大，估算约 $22,000–$28,000</div></div></div><div class="long"><div class="k">性价比理由</div>理工名校的分析硕士，适合方案 A；亚特兰大就业市场大</div></div><div class="card"><div class="tags"><span class="tag stem-check">STEM：申请前核实</span></div><div class="name"><strong>Texas A&amp;M</strong>（德州农工大学 Mays 商学院）MS in
+Accounting</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">第三方资料约 $22,000（2021 年数据，口径可能为州内，需核实）（<a
+href="https://poetsandquants.com/specialized-master/texas-universitys-mays-business-school-ms-accounting/">Poets&amp;Quants</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">大学城，估算约 $18,000–$22,000</div></div></div><div class="long"><div class="k">性价比理由</div>德州公立校；15–18 个月学制；Big 4 招聘强</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实（<a
+href="https://tulane-university.gradright.com/master-of-accounting">Tulane</a>）</span></div><div class="name"><strong>Tulane University</strong>（杜兰大学）Master of
+Accounting</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">约 <strong>$60,330</strong>/年（2025–26，$2,011/学分 × 每学期 15
 学分）（<a
-href="https://studentaccounts.tulane.edu/sites/default/files/2025-04/Business_Grad_Rate_2025-2026_20250401.pdf">Tulane</a>）</td>
-<td>新奥尔良，估算约 $20,000–$25,000</td>
-<td>STEM
-已认证的私立校，适合作为保底；奖学金后实际成本可能明显低于标价</td>
-</tr>
-<tr>
-<td><strong>University of San Diego</strong>（圣地亚哥大学）MS in
-Accountancy</td>
-<td>已核实（<a
-href="https://www.sandiego.edu/newscenter/96513">USD</a>）</td>
-<td>约 <strong>$47,850</strong>（第三方，30 学分）（<a
-href="https://www.mastersportal.com/studies/126419/accountancy.html">Mastersportal</a>）</td>
-<td>圣地亚哥，估算约 $25,000–$32,000</td>
-<td>STEM 已认证、加州就业市场；私立校中学费较低</td>
-</tr>
-<tr>
-<td><strong>University of Miami</strong>（迈阿密大学 Herbert
-商学院）Master of Accounting</td>
-<td>已核实（<a
-href="https://news.miami.edu/bus/stories/2019/02/accounting-stem-2019.html">Miami</a>）</td>
-<td>按学分收费，官网未查到 2025–26 标价，申请前核实</td>
-<td>迈阿密，估算约 $25,000–$32,000</td>
-<td>STEM 已认证的私立校，适合作为保底</td>
-</tr>
-</tbody>
-</table>
+href="https://studentaccounts.tulane.edu/sites/default/files/2025-04/Business_Grad_Rate_2025-2026_20250401.pdf">Tulane</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">新奥尔良，估算约 $20,000–$25,000</div></div></div><div class="long"><div class="k">性价比理由</div>STEM
+已认证的私立校，适合作为保底；奖学金后实际成本可能明显低于标价</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实（<a
+href="https://www.sandiego.edu/newscenter/96513">USD</a>）</span></div><div class="name"><strong>University of San Diego</strong>（圣地亚哥大学）MS in
+Accountancy</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">约 <strong>$47,850</strong>（第三方，30 学分）（<a
+href="https://www.mastersportal.com/studies/126419/accountancy.html">Mastersportal</a>）</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">圣地亚哥，估算约 $25,000–$32,000</div></div></div><div class="long"><div class="k">性价比理由</div>STEM 已认证、加州就业市场；私立校中学费较低</div></div><div class="card"><div class="tags"><span class="tag stem-ok">STEM：已核实（<a
+href="https://news.miami.edu/bus/stories/2019/02/accounting-stem-2019.html">Miami</a>）</span></div><div class="name"><strong>University of Miami</strong>（迈阿密大学 Herbert
+商学院）Master of Accounting</div><div class="facts"><div class="fact"><div class="k">学费（国际生）</div><div class="v">按学分收费，官网未查到 2025–26 标价，申请前核实</div></div><div class="fact"><div class="k">生活费参考</div><div class="v">迈阿密，估算约 $25,000–$32,000</div></div></div><div class="long"><div class="k">性价比理由</div>STEM 已认证的私立校，适合作为保底</div></div></div>
 <h3 id="总成本对比与选校组合建议初步">8.4
 总成本对比与选校组合建议（初步）</h3>
 <p>以”学费 +
