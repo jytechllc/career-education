@@ -64,13 +64,22 @@ const COPY = {
 const CASES: Record<"zh" | "en", CaseItem[]> = {
   zh: [
     {
-      title: "会计专业留美规划建议书",
+      title: "会计专业留美规划建议书（就业方向）",
       description:
         "会计专业如何兼顾美国就业与长期身份：专业组合、H-1B 加权抽签影响、美国高校选校名单，以及硕士与博士的留美比较。",
       path: "/accounting-us-plan",
       Icon: GraduationCap,
       tags: ["美国留学", "会计", "选校规划"],
       color: "yellow",
+    },
+    {
+      title: "会计专业留美规划建议书（博士方向）",
+      description:
+        "会计学博士路线：全额资助、大学 H-1B 免抽签与 EB-1B 绿卡路径，录取门槛、本科准备清单、申博路径与目标院校梯队。",
+      path: "/accounting-phd-plan",
+      Icon: GraduationCap,
+      tags: ["美国博士", "会计", "学术路线"],
+      color: "blue",
     },
     {
       title: "悉尼就业市场分析报告",
@@ -93,13 +102,22 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
   ],
   en: [
     {
-      title: "Accounting Major: US Career & Visa Plan",
+      title: "Accounting Major: US Career & Visa Plan (Industry Track)",
       description:
         "Major strategy, H-1B weighted lottery impact, US school shortlist, and master's vs. PhD for staying in the US (in Chinese).",
       path: "/accounting-us-plan",
       Icon: GraduationCap,
       tags: ["US Study", "Accounting", "School Selection"],
       color: "yellow",
+    },
+    {
+      title: "Accounting Major: US Career & Visa Plan (PhD Track)",
+      description:
+        "Accounting PhD route: full funding, cap-exempt H-1B and EB-1B green card path, admission bar, prep checklist and target programs (in Chinese).",
+      path: "/accounting-phd-plan",
+      Icon: GraduationCap,
+      tags: ["US PhD", "Accounting", "Academic Track"],
+      color: "blue",
     },
     {
       title: "Sydney Job Market Report",

@@ -1,6 +1,12 @@
-import re
+import sys
 
-body = open("body_only.html", encoding="utf-8").read()
+# Usage: python3 build_pdf.py [phd]
+#   (default) 就业方向版: body_only.html -> proposal_branded.html
+#   phd       博士方向版: body_only_phd.html -> proposal_branded_phd.html
+VARIANT = sys.argv[1] if len(sys.argv) > 1 else "career"
+SUFFIX = "_phd" if VARIANT == "phd" else ""
+
+body = open(f"body_only{SUFFIX}.html", encoding="utf-8").read()
 body = body.replace("<hr />\n", "")
 
 CSS = r"""
@@ -158,7 +164,7 @@ pre code { background: none; padding: 0; }
 @page :first { margin: 0; }
 """
 
-TOC_ITEMS = [
+CAREER_TOC = [
     ("", "结论先行：现阶段建议的专业战略"),
     ("一", "为什么会计仍然是一个好的起点"),
     ("二", "我们建议的方向：Accounting + Analytics"),
@@ -172,6 +178,33 @@ TOC_ITEMS = [
     ("十", "大二到大三：能力结构先行"),
     ("十一", "下一步"),
 ]
+PHD_TOC = [
+    ("", "结论先行：博士路线的核心判断"),
+    ("一", "会计博士读的是什么"),
+    ("二", "为什么会计博士是一条高确定性路线"),
+    ("三", "门槛与风险"),
+    ("四", "适合度自测清单"),
+    ("五", "本科阶段准备清单"),
+    ("六", "三条进入美国会计博士的路径"),
+    ("七", "目标院校梯队"),
+    ("八", "从大二到拿到绿卡：时间线"),
+    ("九", "与就业方向版的关系"),
+    ("十", "下一步"),
+]
+
+COVER = {
+    "career": {
+        "title": "专业方向<span class=\"accent\">规划建议书</span>",
+        "sub": "会计专业 · 美国就业与长期身份路径规划<br>本科到硕士（乃至博士）主路线建议",
+        "goal": "美国就业 + 长期身份",
+    },
+    "phd": {
+        "title": "博士方向<span class=\"accent\">规划建议书</span>",
+        "sub": "会计专业 · 美国会计学博士与教职路径规划<br>录取门槛、选校梯队与身份路线",
+        "goal": "美国高校教职 + 长期身份",
+    },
+}[VARIANT]
+TOC_ITEMS = PHD_TOC if VARIANT == "phd" else CAREER_TOC
 toc_html = "\n".join(
     f'<li><span><span class="no">{n}</span>{t}</span></li>' for n, t in TOC_ITEMS
 )
@@ -180,7 +213,7 @@ html = f"""<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>专业方向规划建议书</title>
+<title>{"博士方向规划建议书" if VARIANT == "phd" else "专业方向规划建议书"}</title>
 <style>{CSS}</style>
 </head>
 <body>
@@ -190,13 +223,13 @@ html = f"""<!doctype html>
     <div class="cover-brand"><span class="mark">J</span>JYEDU · 杰圆教育</div>
     <div class="cover-title-block">
       <div class="cover-eyebrow">Academic &amp; Career Planning · 家长版</div>
-      <div class="cover-title">专业方向<span class="accent">规划建议书</span></div>
+      <div class="cover-title">{COVER["title"]}</div>
       <div class="cover-rule"></div>
-      <div class="cover-sub">会计专业 · 美国就业与长期身份路径规划<br>本科到硕士（乃至博士）主路线建议</div>
+      <div class="cover-sub">{COVER["sub"]}</div>
     </div>
     <div class="cover-meta">
       <div><b>学生背景</b>会计专业 · 国内大二</div>
-      <div><b>长期目标</b>美国就业 + 长期身份</div>
+      <div><b>长期目标</b>{COVER["goal"]}</div>
       <div><b>文件性质</b>阶段性方向建议，非最终决定</div>
       <div><b>出品</b>JYEdu 杰圆教育 · JY Tech LLC</div>
     </div>
@@ -219,5 +252,5 @@ html = f"""<!doctype html>
 </html>
 """
 
-open("proposal_branded.html", "w", encoding="utf-8").write(html)
+open(f"proposal_branded{SUFFIX}.html", "w", encoding="utf-8").write(html)
 print("wrote", len(html), "bytes")
