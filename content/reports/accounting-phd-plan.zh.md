@@ -167,25 +167,38 @@
 
 按"冲刺—主申—保底"三档，共约 12 所，另列香港备选。**名单以孩子 2028 年夏（大三末）的评估结果和硕士阶段的研究产出为准，届时再做最终调整。**
 
-| 档位 | 学校 | 推荐理由（针对本案例） | 资助 | STEM |
-|---|---|---|---|---|
-| 冲刺 | **Michigan Ross** | 就业方向版硕士首选之一（MAcc 为 STEM）；若硕士在此就读，可直接接触博士项目教授 | 保证 5 年全额资助（免学费 + 医保 + 津贴）（[Ross][ross-funding]） | 申请前核实 |
-| 冲刺 | **UT Austin McCombs** | 会计博士第一梯队；与就业方向版的 UT Austin MPA 衔接 | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 冲刺 | **Chicago Booth** | 顶尖研究型，偏经济学与理论，数学要求最高；仅在孩子数学特别突出时申请 | 每年 $55,000，保证 5 年（[Booth][booth-aid]） | 申请前核实 |
-| 主申 | **UIUC Gies** | **本案例最契合的学校之一**：会计系以数据分析教育见长，设有 Illinois-Deloitte Foundation 商业分析中心；在读博士生约 15 人，规模较大；PhD in Accountancy 为 STEM 认证项目；与 UIUC MSA 直接衔接（[Gies][gies-phd]、[Daily Illini][illini-stem]） | 全额资助，金额以录取通知为准 | **已核实** |
-| 主申 | **Rutgers** | **研究方向最契合**：会计与信息系统系设有持续审计与报告实验室（Continuous Auditing & Reporting Lab），是审计数据分析、会计信息系统方向的代表性研究机构（[Rutgers][rutgers-carl]） | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 主申 | **Texas A&M Mays** | 博士项目设 Accounting 方向，研究实力强；德州就业市场好 | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 主申 | **Penn State** | 强势研究型，教职去向稳定 | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 主申 | **Iowa** | 强势研究型，以档案实证研究见长 | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 保底 | **Florida Warrington** | 录取要求公开透明：GMAT 最低 650、近年录取平均 720，托福 91（口语 26）（[UF][uf-phd]） | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 保底 | **Kansas** | 在 BYU 2025 排名中审计档案研究全球第 1、档案研究全球第 11（[KU][ku-byu]），与审计数据分析方向契合 | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 保底 | **Arizona Eller** | 毕业生曾任教于 Chicago、Rochester、UT Austin、Ohio State、Texas A&M 等校（[Arizona][arizona-placement]） | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 保底 | **Georgia / Alabama** | 稳健型项目，录取门槛相对友好（Alabama 公布 GRE 数学 ≥162 或 GMAT ≥615 新版）（[Alabama][alabama-phd]） | 全额资助，金额以录取通知为准 | 申请前核实 |
-| 香港备选 | **香港科技大学（HKUST）** | 若改走路径 B：先读 MPhil in Accounting，学分可转入其博士项目（[HKUST][hkust-mphil]）；港校会计研究实力强，也可作为博士毕业后的教职出口 | 研究型项目通常提供资助 | 不适用 |
+**先说"价格"**：美国会计博士与硕士完全不同——**博士阶段学费全免，学校另发生活津贴**，家庭在博士阶段基本不需要再支付学费和生活费。所以比较博士项目时，"价格"要看的是**津贴金额是否覆盖当地生活成本**，而不是学费。美国大多数商学院不公开具体津贴金额；下表中有官方公开数字的直接列出，没有的写明"未公开"，录取通知书中会写明具体金额。
 
-**说明**：美国大多数商学院不公开博士津贴的具体金额，但主流会计博士项目普遍提供全额资助；**"STEM：申请前核实"不代表该项目不是 STEM**，只是目前未查到公开的官方说明。每所学校的资助金额、STEM 认证状态和近年毕业生去向，我们都会在申请前逐一向学校核实。
+| 档位 | 学校 | 资助与津贴 | 所在地生活成本 | 核心优势（针对本案例） | STEM |
+|---|-----|--------|---|-----------|---|
+| 冲刺 | **Michigan Ross**（密歇根大学） | 保证 5 年全额资助：免学费 + 医保 + 奖学金与助教/助研津贴组合；津贴金额未公开（[Ross][ross-funding]） | 安娜堡，中等 | 综合名校 + 会计强校；**若硕士读 Michigan MAcc，可直接接触博士项目教授**，推荐信衔接最顺 | 申请前核实 |
+| 冲刺 | **UT Austin McCombs**（德州大学奥斯汀分校） | 全额资助；津贴金额未公开 | 奥斯汀，中等偏高 | 会计博士第一梯队，毕业生教职去向顶尖；**与 UT Austin MPA 硕士衔接** | 申请前核实 |
+| 冲刺 | **Chicago Booth**（芝加哥大学） | **每年 $55,000，保证 5 年**，必要时延至第 6 年（2025 年秋入学标准）（[Booth][booth-aid]）——本名单中公开津贴最高 | 芝加哥，高 | 顶尖研究型，偏经济学与理论，数学要求最高；**仅在孩子数学特别突出时申请** | 申请前核实 |
+| 主申 | **UIUC Gies**（伊利诺伊大学厄巴纳-香槟分校） | 全额资助：奖学金或半职助教/助研（每周 20 小时）+ 免学费；会计博士津贴未公开，同学院金融博士约 **$37,000/年**，可作参考（[Gies][gies-aid]） | 大学城，低——**津贴相对生活成本最宽裕** | **本案例最契合的学校之一**：会计系以数据分析教育见长，设有 Illinois-Deloitte Foundation 商业分析中心；在读博士生约 15 人，规模较大；与 UIUC MSA 硕士直接衔接（[Gies][gies-phd]） | **已核实**（[Daily Illini][illini-stem]） |
+| 主申 | **Rutgers**（罗格斯大学） | 全额资助；津贴金额未公开 | 新泽西（纽约都市圈），偏高 | **研究方向最契合**：会计信息系统（AIS）是其博士项目的独立方向，设有持续审计与报告实验室（Continuous Auditing & Reporting Lab），与 KPMG 等企业合作，是审计数据分析领域的代表性研究机构（[Rutgers][rutgers-phd]、[Rutgers][rutgers-carl]） | 申请前核实 |
+| 主申 | **Texas A&M Mays**（德州农工大学） | 全额资助；津贴金额未公开 | 大学城，低 | 博士项目设 Accounting 方向，研究实力强；德州就业市场好 | 申请前核实 |
+| 主申 | **Penn State Smeal**（宾州州立大学） | 最长 5 年奖学金或助教/助研：免学费 + 生活津贴 + 学校补贴医保（可覆盖家属）+ 学术会议差旅资助；津贴金额未公开（[Smeal][smeal-aid]） | 大学城，低 | 强势研究型，教职去向稳定；差旅资助有利于博士期间参加学术会议、积累学术人脉 | 申请前核实 |
+| 主申 | **Iowa Tippie**（爱荷华大学） | **最低 $32,000/年 + 全额学费和杂费**，一般保证 5 年；医保 90% 由学校补贴，学生每月约 $30–$40（[Tippie][tippie-aid]） | 大学城，低 | 以档案实证研究见长；津贴与医保条件公开透明 | 申请前核实 |
+| 保底 | **Florida Warrington**（佛罗里达大学） | **约 $40,000–$42,000/年 + 全额学费奖学金**，保证 5 年（[UF][uf-phd]） | 大学城，低 | 每年只招 **2–4 人**，但录取要求公开透明：GMAT 最低 650、录取平均 720，托福 91（口语 26）；毕业生任教于 Ohio State、UIUC、UConn、Arizona、Maryland 等校（[UF][uf-phd]） | 申请前核实 |
+| 保底 | **Kansas**（堪萨斯大学） | 所有博士生均有助教/助研或奖学金支持，4–5 年；竞争性的 Self Graduate Fellowship 津贴为 **$38,000/年**（2026 年秋入学）；普通津贴金额未公开（[KU][ku-aid]） | 大学城，低 | BYU 2025 排名审计档案研究**全球第 1**、档案研究全球第 11（[KU][ku-byu]），**与审计数据分析方向契合** | 申请前核实 |
+| 保底 | **Arizona Eller**（亚利桑那大学） | 全额学费 + 生活津贴，可通过额外授课增加收入；论文阶段可申请 **$25,000** 的 Deloitte Foundation Fellowship（[Eller][eller-phd]） | 图森，中低 | 毕业生曾任教于 Chicago、Rochester、UT Austin、Wisconsin、Ohio State、Texas A&M 等校（[Arizona][arizona-placement]） | 申请前核实 |
+| 保底 | **Georgia / Alabama**（佐治亚大学 / 阿拉巴马大学） | 全额资助；津贴金额未公开 | 大学城，低 | 稳健型项目，录取门槛相对友好（Alabama 公布 GRE 数学 ≥162 或 GMAT ≥615 新版）（[Alabama][alabama-phd]） | 申请前核实 |
+| 香港备选 | **香港科技大学（HKUST）** | 研究生奖学金（PGS）**每月 HK$19,135**（2025–26），约 **HK$229,620/年**；MPhil 最长 2 年（[HKUST][hkust-pgs]） | 香港，高 | 若改走路径 B：先读 MPhil in Accounting，学分可转入其博士项目（[HKUST][hkust-mphil]）；港校会计研究实力强，也可作为博士毕业后的教职出口 | 不适用 |
 
-### 7.4 申请策略
+**说明**："STEM：申请前核实"不代表该项目不是 STEM，只是目前未查到公开的官方说明。每所学校的津贴金额、STEM 认证状态和近年毕业生去向，我们都会在申请前逐一向学校核实。
+
+### 7.4 本案例整体费用估算：博士路线要花多少钱
+
+| 阶段 | 时间 | 家庭需要支付的费用 |
+|---|---|---|
+| 本科（国内） | 2026–2029 | 国内学费；另需 GRE/GMAT、托福、暑期科研等费用 |
+| 美国 STEM 硕士（路径 C） | 2029–2030 | **约 $6.5–8.5 万**（学费 + 生活费，按就业方向版第八节的主申院校估算，未扣奖学金） |
+| 美国博士 | 2030–2035 | **基本为零**：学费全免，津贴覆盖生活；家庭仅需承担往返机票和初到美国的安顿费用 |
+| 博士毕业后 | 2035 起 | 助理教授年薪起步约 $147,440（AACSB 平均）（[GVSU 引用][gvsu-salary]），顶尖商学院可达 $275,000–$290,000（[AJO][stanford-ajo]） |
+
+**如果改走路径 B（HKUST MPhil）**，硕士阶段本身有奖学金（约 HK$229,620/年），家庭支出会明显低于路径 C；代价是多用约 1 年时间，且硕士阶段不在美国、不产生 STEM OPT。
+
+### 7.5 申请策略
 
 - **申请数量**：会计博士每个项目每年只录取个位数学生，我们建议申请 **10–15 个项目**，三档大致按 3 : 5 : 4 分配
 - **套磁与导师匹配**：申请前阅读目标教授近两年的论文，在研究陈述（Research Statement）中具体说明研究兴趣与教授方向的契合点
@@ -291,6 +304,13 @@
 - [Michigan Ross——博士资助说明][ross-funding]
 - [UIUC Gies——会计系与博士项目][gies-phd]
 - [Rutgers——持续审计与报告实验室][rutgers-carl]
+- [UIUC Gies——博士资助说明][gies-aid]
+- [Rutgers Business School——博士项目方向][rutgers-phd]
+- [Penn State Smeal——博士资助说明][smeal-aid]
+- [Iowa Tippie——博士资助说明][tippie-aid]
+- [University of Kansas——博士资助说明][ku-aid]
+- [Arizona Eller——会计博士项目][eller-phd]
+- [HKUST——研究生奖学金标准][hkust-pgs]
 - [University of Alabama——会计博士项目要求][alabama-phd]
 - [University of Kansas——BYU 会计研究排名说明][ku-byu]
 - [The Daily Illini——UIUC 会计项目获 STEM 认证][illini-stem]
@@ -314,6 +334,13 @@
 [gies-phd]: https://research.giesbusiness.illinois.edu/news/gies-accountancy
 [rutgers-carl]: https://www.business.rutgers.edu/sites/default/files/documents/faculty/cv-miklos-vasarhelyi.pdf
 [alabama-phd]: https://catalog.ua.edu/graduate/business/accountancy/phd
+[gies-aid]: https://giesbusiness.illinois.edu/academics/doctoral/accountancy/phd-in-accountancy---financial-assistance
+[rutgers-phd]: https://www.business.rutgers.edu/phd
+[smeal-aid]: https://www.smeal.psu.edu/phd/admission/financial-aid
+[tippie-aid]: https://tippie.uiowa.edu/phd/funding-aid
+[ku-aid]: https://business.ku.edu/graduate-programs/phd/funding
+[eller-phd]: https://eller.arizona.edu/programs/doctoral/accounting
+[hkust-pgs]: https://fytgs.hkust.edu.hk/funding
 [hkust-mphil]: https://prog-crs.hkust.edu.hk/pgprog/2026-27/mphil-phd-acct/
 [ku-byu]: https://business.ku.edu/news/article/ku-school-of-business-maintains-global-leadership-in-accounting-research-rankings
 [illini-stem]: https://dailyillini.com/news/2018/04/09/accountancy-and-accounting-science-received-stem-designations/
