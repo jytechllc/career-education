@@ -7,7 +7,7 @@ const content = readReport("accounting-phd-plan.zh.md");
 
 const TITLE = "会计专业博士方向规划建议书";
 const DESCRIPTION =
-  "会计学博士（Accounting PhD）路线：读什么、为什么对国际学生身份确定性最高、录取门槛与风险、本科准备清单、三条申博路径、目标院校梯队，以及从大二到绿卡的时间线。";
+  "会计专业学生的会计学博士（Accounting PhD）就学与就业方案：读博衔接路径、研究方向、博士目标院校推荐名单（冲刺 / 主申 / 保底）、博士毕业后的就业方向与身份路线，以及从大二到绿卡的年份时间表。";
 
 export async function generateMetadata({
   params,

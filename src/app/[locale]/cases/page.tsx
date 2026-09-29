@@ -75,7 +75,7 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
     {
       title: "会计专业留美规划建议书（博士方向）",
       description:
-        "会计学博士路线：全额资助、大学 H-1B 免抽签与 EB-1B 绿卡路径，录取门槛、本科准备清单、申博路径与目标院校梯队。",
+        "会计学博士就学与就业方案：读博衔接、研究方向、博士目标院校推荐名单、毕业去向与身份路线，以及从大二到绿卡的时间表。",
       path: "/accounting-phd-plan",
       Icon: GraduationCap,
       tags: ["美国博士", "会计", "学术路线"],
