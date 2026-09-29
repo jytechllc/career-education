@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Globe,
   Briefcase,
+  GraduationCap,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
 
@@ -63,6 +64,15 @@ const COPY = {
 const CASES: Record<"zh" | "en", CaseItem[]> = {
   zh: [
     {
+      title: "会计专业留美规划建议书",
+      description:
+        "会计专业如何兼顾美国就业与长期身份：专业组合、H-1B 加权抽签影响、美国高校选校名单，以及硕士与博士的留美比较。",
+      path: "/accounting-us-plan",
+      Icon: GraduationCap,
+      tags: ["美国留学", "会计", "选校规划"],
+      color: "yellow",
+    },
+    {
       title: "悉尼就业市场分析报告",
       description:
         "深入了解 2024 年悉尼就业市场的最新趋势，包括热门行业分析、薪资水平、就业趋势与机遇，以及成功案例分享。",
@@ -82,6 +92,15 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
     },
   ],
   en: [
+    {
+      title: "Accounting Major: US Career & Visa Plan",
+      description:
+        "Major strategy, H-1B weighted lottery impact, US school shortlist, and master's vs. PhD for staying in the US (in Chinese).",
+      path: "/accounting-us-plan",
+      Icon: GraduationCap,
+      tags: ["US Study", "Accounting", "School Selection"],
+      color: "yellow",
+    },
     {
       title: "Sydney Job Market Report",
       description:
