@@ -5,7 +5,7 @@ import sys
 #   (default) 就业方向版: body_only.html -> proposal_branded.html
 #   phd       博士方向版: body_only_phd.html -> proposal_branded_phd.html
 #   arts      舞蹈表演指南: body_only_arts.html -> proposal_branded_arts.html
-#   market    市场研究报告: body_only_market.html -> proposal_branded_market.html
+#   market    赴美留学市场研究报告: body_only_market.html -> proposal_branded_market.html
 VARIANT = sys.argv[1] if len(sys.argv) > 1 else "career"
 SUFFIX = "" if VARIANT == "career" else f"_{VARIANT}"
 
@@ -299,15 +299,17 @@ MARKET_TOC = [
     ("", "核心数据一览"),
     ("一", "研究说明与数据口径"),
     ("二", "市场总量：从峰值回落近三成"),
-    ("三", "学历结构：硕士、博士分开看"),
-    ("四", "硕士市场：规模大、学制短、以自费为主"),
-    ("五", "博士市场：规模稳定、全额资助、留美意愿高"),
-    ("六", "硕士与博士对比"),
-    ("七", "院校类型与地区分布"),
-    ("八", "目的地竞争：美国不再是唯一首选"),
-    ("九", "政策环境：签证和就业政策不确定性上升"),
-    ("十", "趋势判断与对留学家庭的建议"),
-    ("十一", "研究局限"),
+    ("三", "各学历层次全景"),
+    ("四", "可以去美国读高中吗？"),
+    ("五", "可以去美国读本科吗？"),
+    ("六", "硕士市场"),
+    ("七", "博士市场"),
+    ("八", "各学历层次对比"),
+    ("九", "院校类型与地区分布"),
+    ("十", "目的地竞争：美国不再是唯一首选"),
+    ("十一", "政策环境"),
+    ("十二", "趋势判断与对留学家庭的建议"),
+    ("十三", "研究局限"),
 ]
 
 ACCOUNTING_META = [
@@ -344,14 +346,14 @@ COVER = {
         ],
     },
     "market": {
-        "title": "中国学生赴美研究生<span class=\"accent\">留学市场研究报告</span>",
-        "sub": "硕士、博士分开统计<br>规模趋势、专业分布、资助与留美、政策环境",
+        "title": "中国学生赴美<span class=\"accent\">留学市场研究报告</span>",
+        "sub": "高中、本科、硕士、博士分层统计<br>规模趋势、费用与资助、留美路径、政策环境",
         "goal": "为留学家庭提供数据参考",
         "goal_label": "报告用途",
-        "doc_title": "赴美研究生留学市场研究报告",
+        "doc_title": "赴美留学市场研究报告",
         "eyebrow": "Market Research · 2026",
         "meta": [
-            ("研究对象", "在美攻读硕士、博士学位的中国学生"),
+            ("研究对象", "在美就读高中、本科、硕士、博士的中国学生"),
             ("数据时点", "2024/25 学年为主，截至 2026 年 9 月"),
         ],
     },

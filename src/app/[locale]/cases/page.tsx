@@ -66,12 +66,12 @@ const COPY = {
 const CASES: Record<"zh" | "en", CaseItem[]> = {
   zh: [
     {
-      title: "中国学生赴美研究生留学市场研究报告（2026）",
+      title: "中国学生赴美留学市场研究报告（2026）",
       description:
-        "硕士、博士分开统计：在美中国研究生规模与趋势、专业分布、资助与留美情况、目的地竞争与签证政策环境，基于 Open Doors、NSF、SEVIS 等官方数据。",
-      path: "/china-us-grad-market",
+        "高中、本科、硕士、博士分层统计：在美中国学生规模与趋势、能否赴美读高中和本科、费用与奖学金、留美情况、目的地竞争与签证政策，基于 Open Doors、NSF、SEVIS 等官方数据。",
+      path: "/china-us-study-market",
       Icon: BarChart3,
-      tags: ["市场研究", "美国研究生", "硕士 / 博士"],
+      tags: ["市场研究", "赴美留学", "高中 / 本科 / 研究生"],
       color: "blue",
     },
     {
@@ -122,12 +122,12 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
   ],
   en: [
     {
-      title: "Chinese Graduate Students in the US: Market Report 2026",
+      title: "Chinese Students in the US: Market Report 2026",
       description:
-        "Master's vs PhD: enrollment trends, fields, funding, stay rates, competing destinations and visa policy, from Open Doors, NSF and SEVIS data (in Chinese).",
-      path: "/china-us-grad-market",
+        "High school, undergraduate, master's and PhD: enrollment trends, costs and aid, stay rates, competing destinations and visa policy, from Open Doors, NSF and SEVIS data (in Chinese).",
+      path: "/china-us-study-market",
       Icon: BarChart3,
-      tags: ["Market Research", "US Graduate", "Master's / PhD"],
+      tags: ["Market Research", "US Study", "K-12 to PhD"],
       color: "blue",
     },
     {
