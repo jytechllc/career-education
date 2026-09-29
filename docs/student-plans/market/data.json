@@ -1,0 +1,518 @@
+{
+  "auto": {
+    "od_china": {
+      "edition": 2025,
+      "url": "https://opendoorsdata.org/wp-content/uploads/2026/01/OD_China_Fact-Sheet-2025.pdf",
+      "fetched": "2026-09-28",
+      "data": {
+        "cur_label": "2024/25",
+        "prev_label": "2023/24",
+        "totals": [
+          [
+            "2016/17",
+            350755
+          ],
+          [
+            "2017/18",
+            363341
+          ],
+          [
+            "2018/19",
+            369548
+          ],
+          [
+            "2019/20",
+            372532
+          ],
+          [
+            "2020/21",
+            317299
+          ],
+          [
+            "2021/22",
+            290086
+          ],
+          [
+            "2022/23",
+            289526
+          ],
+          [
+            "2023/24",
+            277398
+          ],
+          [
+            "2024/25",
+            265919
+          ]
+        ],
+        "levels": {
+          "ug": {
+            "prev": 87551,
+            "cur": 78583,
+            "share": 29.6
+          },
+          "grad": {
+            "prev": 122778,
+            "cur": 120229,
+            "share": 45.2
+          },
+          "nondeg": {
+            "prev": 5517,
+            "cur": 5126,
+            "share": 1.9
+          },
+          "opt": {
+            "prev": 61552,
+            "cur": 61981,
+            "share": 23.3
+          }
+        },
+        "institution_types": {
+          "associate": 1.4,
+          "baccalaureate": 1.8,
+          "doctoral": 89.1,
+          "masters": 6.0,
+          "special": 1.7
+        },
+        "private": 46.6,
+        "public": 53.4,
+        "econ_impact": 14587000000,
+        "econ_year": 2024,
+        "level_history": {
+          "2022/23": {
+            "ug": 100349,
+            "grad": 126028,
+            "nondeg": 8016,
+            "opt": 55133
+          },
+          "2023/24": {
+            "ug": 87551,
+            "grad": 122778,
+            "nondeg": 5517,
+            "opt": 61552
+          },
+          "2024/25": {
+            "ug": 78583,
+            "grad": 120229,
+            "nondeg": 5126,
+            "opt": 61981
+          }
+        }
+      },
+      "prev_url": "https://opendoorsdata.org/wp-content/uploads/2024/12/OpenDoors_FactSheet_China_2024.pdf"
+    },
+    "od_fastfacts": {
+      "edition": 2025,
+      "url": "https://opendoorsdata.org/wp-content/uploads/2025/11/OD25_Fast-Facts.pdf",
+      "fetched": "2026-09-28",
+      "data": {
+        "world_total": 1177766,
+        "india": 363019,
+        "china": 265919,
+        "china_share": 22.6,
+        "grad_total_label": "2024/25",
+        "grad_total": 488481,
+        "grad_total_chg": -2.7
+      }
+    },
+    "sevis": {
+      "edition": 2024,
+      "url": "https://www.ice.gov/doclib/sevis/btn/25_0605_2024-sevis-btn.pdf",
+      "fetched": "2026-09-28",
+      "data": {
+        "k12_total": 54356,
+        "k12_china": 14515,
+        "k12_china_share": 26.7,
+        "k12_others": [
+          "Vietnam",
+          "Republic of Korea (South Korea)",
+          "Mexico",
+          "Canada"
+        ],
+        "stem_opt_india_share": 48.0,
+        "stem_opt_china_share": 20.4,
+        "stem_opt_total": 165524,
+        "china_records": 329541,
+        "masters_total": 667622,
+        "doctoral_total": 214824,
+        "top_majors": [
+          [
+            "Computer Science",
+            118137
+          ],
+          [
+            "Second Language Learning",
+            95747
+          ],
+          [
+            "Business Administration and Management, General",
+            88257
+          ],
+          [
+            "Computer and Information Sciences, General",
+            82434
+          ],
+          [
+            "Management Science",
+            40403
+          ],
+          [
+            "Electrical and Electronics Engineering",
+            36939
+          ],
+          [
+            "Information Technology",
+            31215
+          ],
+          [
+            "Management Sciences and Quantitative Methods, Other",
+            30301
+          ],
+          [
+            "Mechanical Engineering",
+            29698
+          ],
+          [
+            "Econometrics and Quantitative Economies",
+            29146
+          ],
+          [
+            "Liberal Arts and Sciences/Liberal Studies",
+            27837
+          ],
+          [
+            "Information Science/Studies",
+            27059
+          ],
+          [
+            "General Studies",
+            26943
+          ],
+          [
+            "Regular/General High School/Secondary Diploma Program",
+            23663
+          ],
+          [
+            "Biology/Biological Sciences, General",
+            20951
+          ],
+          [
+            "Business Analytics",
+            20645
+          ],
+          [
+            "Computer Engineering, General",
+            18148
+          ],
+          [
+            "Civil Engineering, General",
+            17883
+          ],
+          [
+            "Chemistry, General",
+            16454
+          ],
+          [
+            "Engineering, General",
+            15878
+          ]
+        ],
+        "k12_history": {
+          "2023": {
+            "k12_china": 14329,
+            "k12_china_share": 26.3
+          }
+        }
+      },
+      "prev_url": "https://ice.gov/doclib/sevis/btn/24_0510_hsi_sevp-cy23-sevis-btn.pdf"
+    },
+    "nsf": {
+      "edition": 2025,
+      "pub": "nsf26326",
+      "url": "https://ncses.nsf.gov/pubs/nsf26326/assets/data-tables/tables/nsf26326-tab007-007.pdf",
+      "fetched": "2026-09-28",
+      "data": {
+        "years": [
+          2015,
+          2016,
+          2017,
+          2018,
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ],
+        "china": [
+          5374,
+          5527,
+          5552,
+          6188,
+          6316,
+          6335,
+          6198,
+          6659,
+          6651,
+          6753,
+          6545
+        ],
+        "china_se": [
+          4971,
+          5141,
+          5147,
+          5692,
+          5755,
+          5730,
+          5605,
+          6027,
+          5980,
+          6115,
+          5886
+        ],
+        "china_non_se": [
+          403,
+          386,
+          405,
+          496,
+          561,
+          605,
+          593,
+          632,
+          671,
+          638,
+          659
+        ],
+        "all_temp_visa_latest": 18570,
+        "india_latest": 2715,
+        "china_rank": 1,
+        "stay_years": [
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ],
+        "stay_pool_label": "2019–2025",
+        "stay_china": [
+          79.2,
+          80.1,
+          73.8,
+          76.7,
+          77.6,
+          79.3,
+          78.7
+        ],
+        "stay_china_n": [
+          6316,
+          6335,
+          6198,
+          6659,
+          6651,
+          6753,
+          6545
+        ],
+        "stay_all": [
+          71.2,
+          73.0,
+          70.8,
+          74.3,
+          76.2,
+          75.8,
+          75.4
+        ],
+        "stay_china_pool": 77.9,
+        "stay_china_pool_n": 45457,
+        "stay_all_pool": 73.9
+      }
+    }
+  },
+  "manual": {
+    "od_extra": {
+      "tied_to": "od_china",
+      "edition": 2025,
+      "checked": "2026-09-28",
+      "url": "https://opendoorsdata.org/wp-content/uploads/2026/01/OD_China_Fact-Sheet-2025.pdf",
+      "note": "中国数据表中无法可靠自动解析的项：公立/私立比例、签证变化、前五大州",
+      "value": {
+        "private": 53.4,
+        "public": 46.6,
+        "visa_f": -3.6,
+        "visa_j": 33.6,
+        "visa_fy": 2024,
+        "top_states": [
+          "纽约",
+          "加州",
+          "马萨诸塞",
+          "伊利诺伊",
+          "宾夕法尼亚"
+        ]
+      }
+    },
+    "od_fields": {
+      "tied_to": "od_fastfacts",
+      "edition": 2025,
+      "checked": "2026-09-28",
+      "url": "https://www.iie.org/news/open-doors-2025-press-release/",
+      "note": "全体国际学生专业分布（Open Doors 新闻稿）",
+      "value": {
+        "label": "2024/25",
+        "rows": [
+          [
+            "数学与计算机科学",
+            305377,
+            25.9
+          ],
+          [
+            "工程",
+            217016,
+            18.4
+          ],
+          [
+            "商科与管理",
+            159857,
+            13.6
+          ],
+          [
+            "自然科学与生命科学",
+            95667,
+            8.1
+          ],
+          [
+            "社会科学",
+            86008,
+            7.3
+          ]
+        ]
+      }
+    },
+    "iie_fall": {
+      "tied_to": "od_china",
+      "edition": 2025,
+      "checked": "2026-09-28",
+      "url": "https://www.iie.org/blog/four-things-to-know-about-the-fall-2025-snapshot/",
+      "note": "IIE 秋季入学快照，与 Open Doors 同期发布",
+      "value": {
+        "term": "2025 年秋季",
+        "new": -17,
+        "grad": -12,
+        "ug": 2,
+        "opt": 14,
+        "visa_pct": 96,
+        "travel_pct": 68
+      }
+    },
+    "moe_outbound": {
+      "checked": "2026-09-28",
+      "url": "https://wonkhe.com/blogs/china-is-reinventing-itself-as-a-study-destination-and-the-uk-must-take-note/",
+      "note": "中国教育部出国留学人数",
+      "value": {
+        "year": 2025,
+        "out_wan": "57.06",
+        "back_wan": "53.56",
+        "peak_text": "2019 年峰值的 70 万余人"
+      }
+    },
+    "collegeboard": {
+      "checked": "2026-09-28",
+      "url": "https://research.collegeboard.org/trends/college-pricing/highlights",
+      "note": "College Board《大学费用趋势》，每年 10–11 月更新",
+      "value": {
+        "year": "2025–26",
+        "report_year": 2025,
+        "private": 45000,
+        "private_budget": 65470,
+        "public_oos": 31880,
+        "public_oos_budget": 50920,
+        "cc_budget": 21320
+      }
+    },
+    "tabs": {
+      "checked": "2026-09-28",
+      "url": "https://nais.org/getmedia/585a3b5b-dd19-45bf-95f4-33c84d7edbed/Facts-at-a-Glance-2024-2025-(TABS).pdf",
+      "note": "NAIS / TABS 寄宿学校数据",
+      "value": {
+        "year": "2024–25",
+        "seven_day": 72845,
+        "g9_median": 72700,
+        "five_day": 59744,
+        "day": 40973,
+        "intl_pct": 15.2,
+        "remission_pct": 4.2
+      }
+    },
+    "needblind": {
+      "checked": "2026-09-28",
+      "url": "https://studyinternational.com/news/need-blind-universities-in-the-us/",
+      "note": "对国际学生 need-blind 且满足全部需求的美国大学",
+      "value": {
+        "as_of": "2025 年 5 月",
+        "schools": [
+          "Amherst",
+          "Bowdoin",
+          "Brown",
+          "Dartmouth",
+          "Harvard",
+          "MIT",
+          "Princeton",
+          "Notre Dame",
+          "Yale"
+        ]
+      }
+    },
+    "major_names_zh": {
+      "checked": "2026-09-28",
+      "note": "SEVIS 专业英文名 -> 中文",
+      "value": {
+        "Computer Science": "计算机科学",
+        "Second Language Learning": "第二语言学习",
+        "Business Administration and Management, General": "工商管理",
+        "Computer and Information Sciences, General": "计算机与信息科学",
+        "Management Science": "管理科学",
+        "Electrical and Electronics Engineering": "电子与电气工程",
+        "Information Technology": "信息技术",
+        "Management Sciences and Quantitative Methods, Other": "管理科学与定量方法",
+        "Mechanical Engineering": "机械工程",
+        "Econometrics and Quantitative Economies": "计量经济学与定量经济学",
+        "Econometrics and Quantitative Economics": "计量经济学与定量经济学",
+        "Liberal Arts and Sciences/Liberal Studies": "文理综合",
+        "Information Science/Studies": "信息科学",
+        "General Studies": "通识教育",
+        "Regular/General High School/Secondary Diploma Program": "普通高中课程",
+        "Biology/Biological Sciences, General": "生物学",
+        "Business Analytics": "商业分析",
+        "Computer Engineering, General": "计算机工程",
+        "Civil Engineering, General": "土木工程",
+        "Chemistry, General": "化学",
+        "Engineering, General": "工程（综合）",
+        "Mathematics, General": "数学",
+        "Economics, General": "经济学",
+        "Finance, General": "金融"
+      }
+    },
+    "country_names_zh": {
+      "checked": "2026-09-28",
+      "note": "SEVIS 国家英文名 -> 中文",
+      "value": {
+        "Vietnam": "越南",
+        "Republic of Korea (South Korea)": "韩国",
+        "South Korea": "韩国",
+        "Mexico": "墨西哥",
+        "Canada": "加拿大",
+        "Spain": "西班牙",
+        "Japan": "日本",
+        "Brazil": "巴西",
+        "India": "印度",
+        "Germany": "德国",
+        "Taiwan": "中国台湾",
+        "Nigeria": "尼日利亚",
+        "Thailand": "泰国",
+        "France": "法国",
+        "Italy": "意大利"
+      }
+    }
+  }
+}

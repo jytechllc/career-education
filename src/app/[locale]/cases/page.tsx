@@ -11,6 +11,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
+import marketMeta from "../../../../content/reports/china-us-study-market.meta.json";
 
 interface CaseItem {
   title: string;
@@ -66,7 +67,7 @@ const COPY = {
 const CASES: Record<"zh" | "en", CaseItem[]> = {
   zh: [
     {
-      title: "中国学生赴美留学市场研究报告（2026）",
+      title: marketMeta.title,
       description:
         "高中、本科、硕士、博士分层统计：在美中国学生规模与趋势、能否赴美读高中和本科、费用与奖学金、留美情况、目的地竞争与签证政策，基于 Open Doors、NSF、SEVIS 等官方数据。",
       path: "/china-us-study-market",
@@ -122,7 +123,7 @@ const CASES: Record<"zh" | "en", CaseItem[]> = {
   ],
   en: [
     {
-      title: "Chinese Students in the US: Market Report 2026",
+      title: `Chinese Students in the US: Market Report ${marketMeta.title.match(/\d{4}/)?.[0] ?? ""}`.trim(),
       description:
         "High school, undergraduate, master's and PhD: enrollment trends, costs and aid, stay rates, competing destinations and visa policy, from Open Doors, NSF and SEVIS data (in Chinese).",
       path: "/china-us-study-market",
