@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import {
+  ArrowRight,
   Check,
   CheckCircle,
   GraduationCap,
   MessageSquare,
+  Microscope,
   Phone,
   Star,
   X,
@@ -37,6 +40,16 @@ type Copy = {
   currency: string;
   notIncluded: string;
   tiers: Tier[];
+  phd: {
+    eyebrow: string;
+    name: string;
+    price: string;
+    currency: string;
+    tagline: string;
+    points: string[];
+    addons: string;
+    link: string;
+  };
   timeline: {
     title: string;
     years: { name: string; focus: string }[];
@@ -49,13 +62,13 @@ type Copy = {
 
 const zh: Copy = {
   meta: {
-    title: "研究生留学申请服务与价格 | JYEdu 杰圆教育",
+    title: "研究生与直博留学申请服务与价格 | JYEdu 杰圆教育",
     description:
-      "研究生留学申请三档服务：申请助力 $12,000、超级 VIP $18,000、长线规划 VIP $22,000，覆盖选校、文书、网申、面试，长线规划从大一开始。",
+      "研究生留学申请三档服务：申请助力 $12,000、超级 VIP $18,000、长线规划 VIP $22,000；另有本科直博（全额资助 PhD）申请服务 ¥180,000。",
   },
   eyebrow: "研究生留学申请 · JYEdu 杰圆教育",
   title: "研究生留学申请服务",
-  subtitle: "三档服务，从申请季冲刺到大一起的四年规划",
+  subtitle: "硕士申请三档服务，从申请季冲刺到大一起的四年规划；另有本科直博服务",
   currency: "USD",
   notIncluded: "不含",
   tiers: [
@@ -132,6 +145,21 @@ const zh: Copy = {
       ],
     },
   ],
+  phd: {
+    eyebrow: "本科直博",
+    name: "全额资助 PhD 申请",
+    price: "¥180,000",
+    currency: "人民币",
+    tagline: "本科毕业直接申请博士，目标是全球名校全额资助录取",
+    points: [
+      "约 6 个月、三个阶段：明确研究方向 → 打造竞争力档案 → 全程申请支持",
+      "研究导师匹配、教授与实验室定向联系、科研背景强化",
+      "个人陈述、推荐信策略、奖学金与资金规划、面试辅导、行前指导",
+      "当季未取得 Top 100 全额资助录取的，在满足合同约定配合条件的前提下继续服务后续申请季，不再另收咨询服务费",
+    ],
+    addons: "可选：GRE 备考辅导 ¥30,000；论文写作/发表协助 ¥30,000 / 篇",
+    link: "查看直博服务详情",
+  },
   timeline: {
     title: "服务覆盖周期",
     years: [
@@ -170,13 +198,13 @@ const zh: Copy = {
 
 const en: Copy = {
   meta: {
-    title: "Graduate Admissions Services & Pricing | JYEdu",
+    title: "Graduate & Direct-PhD Admissions Services and Pricing | JYEdu",
     description:
-      "Three graduate admissions packages: Application Boost $12,000, Super VIP $18,000 and Long-Term VIP $22,000 — school selection, essays, applications and interviews, with four-year planning from freshman year.",
+      "Three master's admissions packages: Application Boost $12,000, Super VIP $18,000 and Long-Term VIP $22,000 — plus a direct-PhD (fully funded) admissions program at ¥180,000.",
   },
   eyebrow: "Graduate Admissions · JYEdu",
   title: "Graduate Admissions Services",
-  subtitle: "Three packages, from an application-season sprint to four-year planning from freshman year",
+  subtitle: "Three master's packages, from an application-season sprint to four-year planning — plus a direct-PhD program",
   currency: "USD",
   notIncluded: "Not included",
   tiers: [
@@ -253,6 +281,21 @@ const en: Copy = {
       ],
     },
   ],
+  phd: {
+    eyebrow: "Direct PhD",
+    name: "Fully Funded PhD Admissions",
+    price: "¥180,000",
+    currency: "RMB",
+    tagline: "Apply to PhD programs straight from undergrad, aiming for fully funded offers at top universities",
+    points: [
+      "About 6 months in three phases: research direction → competitive profile → full application support",
+      "Research mentor matching, targeted outreach to professors and labs, research strengthening",
+      "Statement of purpose, recommendation strategy, scholarship and funding planning, interview prep, pre-departure guidance",
+      "If no Top 100 fully funded offer is secured that season, service continues into later seasons at no extra counselling fee, subject to the conditions in the agreement",
+    ],
+    addons: "Optional: GRE prep ¥30,000; research paper writing/publication support ¥30,000 per paper",
+    link: "See the direct-PhD program",
+  },
   timeline: {
     title: "Coverage by year",
     years: [
@@ -433,6 +476,43 @@ export default async function GraduateAdmissionPage({
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg border border-yellow-100 p-5 sm:p-8 mb-8 sm:mb-12 grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
+          <div>
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide text-yellow-700">
+              <Microscope className="h-4 w-4" />
+              {c.phd.eyebrow}
+            </p>
+            <h2 className="mt-1 text-xl sm:text-2xl font-bold text-yellow-900">{c.phd.name}</h2>
+            <p className="mt-3 flex items-baseline gap-1.5">
+              <span className="text-3xl sm:text-4xl font-bold text-yellow-900 tabular-nums">
+                {c.phd.price}
+              </span>
+              <span className="text-xs font-medium text-gray-500">{c.phd.currency}</span>
+            </p>
+            <p className="mt-2 text-sm text-gray-600">{c.phd.tagline}</p>
+            <Link
+              className="mt-4 inline-flex items-center gap-1 rounded-full bg-yellow-600 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-700"
+              href={`/${locale}/phd-admission`}
+            >
+              {c.phd.link}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div>
+            <ul className="space-y-2.5">
+              {c.phd.points.map((pt) => (
+                <li key={pt} className="flex items-start gap-2 text-sm text-gray-800">
+                  <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-yellow-600" />
+                  {pt}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 border-t border-yellow-100 pt-3 text-xs sm:text-sm text-gray-600">
+              {c.phd.addons}
+            </p>
           </div>
         </div>
 
