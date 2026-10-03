@@ -2,15 +2,21 @@ import { ExternalLink, FileImage, FileSpreadsheet, FileText, FolderOpen } from "
 
 import { requireStaff } from "@/lib/admin-auth";
 import { getAdminDict } from "@/lib/admin-i18n";
-import { type DriveFile, type TalentFolder, listTalentFolders } from "@/lib/google-drive";
+import {
+  type CachedFile,
+  type TalentsManifest,
+  TALENTS_FOLDER_ID,
+  readTalentsManifest,
+} from "@/lib/talents-cache";
 
-/** The shared "Talents" folder (owner jytech202307@gmail.com). */
-const TALENTS_FOLDER_ID =
-  process.env.TALENTS_FOLDER_ID ?? "1ssyZL0SVxOZMOjkCtzLKJeQB0jClHUb4";
+import { SyncButton } from "./SyncButton";
+
+// The Sync now server action runs under this page's limits.
+export const maxDuration = 300;
 
 type Kind = "pdf" | "doc" | "word" | "image" | "sheet" | "other";
 
-function kindOf(f: DriveFile): Kind {
+function kindOf(f: CachedFile): Kind {
   if (f.mimeType === "application/pdf") return "pdf";
   if (f.mimeType === "application/vnd.google-apps.document") return "doc";
   if (f.mimeType.includes("wordprocessingml") || f.mimeType === "application/msword") return "word";
@@ -32,15 +38,16 @@ export default async function AdminTalentsPage({
   const { t: d } = await getAdminDict();
   const t = d.talents;
 
-  let folders: TalentFolder[] = [];
+  let manifest: TalentsManifest | null = null;
   let failed = false;
 
   try {
-    folders = await listTalentFolders(TALENTS_FOLDER_ID);
+    manifest = await readTalentsManifest();
   } catch (e) {
-    console.error("[admin/talents] Drive read failed", e);
+    console.error("[admin/talents] manifest read failed", e);
     failed = true;
   }
+  const folders = manifest?.folders ?? [];
 
   const needle = q.toLowerCase();
   const shown = needle
@@ -69,6 +76,17 @@ export default async function AdminTalentsPage({
         </a>
       </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-gray-500">
+          {manifest
+            ? `${t.lastSynced}: ${new Date(manifest.syncedAt).toLocaleString(d.dateLocale)}`
+            : null}
+        </p>
+        <SyncButton
+          t={{ sync: t.sync, syncing: t.syncing, synced: t.synced, syncFailed: t.syncFailed }}
+        />
+      </div>
+
       <form className="flex gap-2" method="get">
         <input
           className="h-10 rounded-md border border-yellow-200 bg-white px-3 text-sm w-64 max-w-full"
@@ -87,6 +105,8 @@ export default async function AdminTalentsPage({
 
       {failed ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{t.error}</div>
+      ) : !manifest ? (
+        <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">{t.neverSynced}</div>
       ) : shown.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">{t.empty}</div>
       ) : (
@@ -126,7 +146,7 @@ export default async function AdminTalentsPage({
                         <li key={f.id} className="flex items-center justify-between gap-3 py-2">
                           <a
                             className="flex min-w-0 items-center gap-2 text-gray-800 hover:text-yellow-800 hover:underline"
-                            href={f.webViewLink ?? "#"}
+                            href={`/admin/talents/file?id=${encodeURIComponent(f.id)}`}
                             rel="noreferrer"
                             target="_blank"
                           >
@@ -134,6 +154,7 @@ export default async function AdminTalentsPage({
                             <span className="truncate">{f.name}</span>
                           </a>
                           <span className="shrink-0 text-xs text-gray-400">
+                            {f.r2Key ? null : <span className="mr-1 text-amber-600">{t.driveOnly} ·</span>}
                             {t.kinds[kind]}
                             {f.modifiedTime
                               ? ` · ${new Date(f.modifiedTime).toLocaleDateString(d.dateLocale)}`

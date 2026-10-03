@@ -108,3 +108,39 @@ export async function listTalentFolders(rootId: string): Promise<TalentFolder[]>
       return last(b).localeCompare(last(a));
     });
 }
+
+/** Google-native types have no bytes of their own; export these as PDF. */
+const EXPORTABLE = new Set([
+  "application/vnd.google-apps.document",
+  "application/vnd.google-apps.spreadsheet",
+  "application/vnd.google-apps.presentation",
+  "application/vnd.google-apps.drawing",
+]);
+
+/**
+ * File bytes for caching: binary files as-is, Google Docs/Sheets/Slides
+ * exported to PDF. Returns null for types that can't be downloaded
+ * (forms, shortcuts, …).
+ */
+export async function downloadDriveFile(
+  f: DriveFile,
+): Promise<{ body: Buffer; contentType: string; ext: string | null } | null> {
+  const drive = getDrive();
+
+  if (f.mimeType.startsWith("application/vnd.google-apps.")) {
+    if (!EXPORTABLE.has(f.mimeType)) return null;
+    const res = await drive.files.export(
+      { fileId: f.id, mimeType: "application/pdf" },
+      { responseType: "arraybuffer" },
+    );
+
+    return { body: Buffer.from(res.data as ArrayBuffer), contentType: "application/pdf", ext: "pdf" };
+  }
+
+  const res = await drive.files.get(
+    { fileId: f.id, alt: "media", supportsAllDrives: true },
+    { responseType: "arraybuffer" },
+  );
+
+  return { body: Buffer.from(res.data as ArrayBuffer), contentType: f.mimeType || "application/octet-stream", ext: null };
+}

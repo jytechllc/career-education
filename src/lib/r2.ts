@@ -84,3 +84,46 @@ export async function getSignedFileUrl(r2Key: string): Promise<string> {
 export async function deleteFile(r2Key: string): Promise<void> {
   await getClient().send(new DeleteObjectCommand({ Bucket: BUCKET(), Key: r2Key }));
 }
+
+export async function putObject(
+  key: string,
+  body: Buffer | string,
+  contentType: string,
+): Promise<void> {
+  await getClient().send(
+    new PutObjectCommand({ Bucket: BUCKET(), Key: key, Body: body, ContentType: contentType }),
+  );
+}
+
+/** Object body as text, or null when the key doesn't exist. */
+export async function getObjectText(key: string): Promise<string | null> {
+  try {
+    const res = await getClient().send(new GetObjectCommand({ Bucket: BUCKET(), Key: key }));
+
+    return (await res.Body?.transformToString("utf-8")) ?? null;
+  } catch (e) {
+    if ((e as { name?: string }).name === "NoSuchKey") return null;
+    throw e;
+  }
+}
+
+/**
+ * Short-lived link that opens the file in the browser under its original
+ * name (R2 keys are sanitised, so the name is set on the response instead).
+ */
+export async function getSignedInlineUrl(
+  r2Key: string,
+  fileName: string,
+  contentType: string,
+): Promise<string> {
+  return getSignedUrl(
+    getClient(),
+    new GetObjectCommand({
+      Bucket: BUCKET(),
+      Key: r2Key,
+      ResponseContentType: contentType,
+      ResponseContentDisposition: `inline; filename*=UTF-8''${encodeURIComponent(fileName)}`,
+    }),
+    { expiresIn: 60 * 10 },
+  );
+}
