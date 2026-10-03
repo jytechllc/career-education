@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { hasLocale, locales } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { auth0 } from "@/lib/auth0";
+import { staffRoleOf } from "@/lib/admin-auth";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -57,10 +58,13 @@ export default async function LocaleLayout({
         email: session.user.email as string | undefined,
       }
     : null;
+  const isStaff = session?.user.email_verified
+    ? !!(await staffRoleOf(session.user.email))
+    : false;
 
   return (
     <>
-      <Navbar locale={locale} dict={dict} user={user} />
+      <Navbar locale={locale} dict={dict} user={user} isStaff={isStaff} />
       <main className="flex-1">{children}</main>
       <Footer locale={locale} dict={dict} />
     </>

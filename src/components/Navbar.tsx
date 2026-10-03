@@ -11,6 +11,7 @@ import {
   LogOut,
   UserCircle,
   ChevronDown,
+  LayoutDashboard,
 } from "lucide-react";
 import type { Dictionary } from "@/lib/dictionaries";
 
@@ -20,6 +21,8 @@ interface NavbarProps {
   locale: string;
   dict: Dictionary;
   user: User;
+  /** Admin or supervisor — shows the link into /admin. */
+  isStaff?: boolean;
 }
 
 type NavLink = { label: string; href: string };
@@ -28,12 +31,14 @@ type NavLink = { label: string; href: string };
 // group (the overview isn't repeated inside its own dropdown).
 type NavGroup = { label: string; href: string; items: NavLink[] };
 
-export const Navbar = ({ locale, dict, user }: NavbarProps) => {
+export const Navbar = ({ locale, dict, user, isStaff = false }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
 
   const otherLocale = locale === "zh" ? "en" : "zh";
+  // Enter the admin in the language the visitor is browsing in.
+  const adminHref = `/admin/lang?to=${locale === "en" ? "en" : "zh"}&back=/admin`;
 
   // Grouped so the desktop bar doesn't run 9 items wide. Grouping is by
   // visitor intent, not by page type: "explore a program" vs "check we're
@@ -133,6 +138,16 @@ export const Navbar = ({ locale, dict, user }: NavbarProps) => {
 
           {user ? (
             <div className="flex items-center gap-3">
+              {isStaff ? (
+                // eslint-disable-next-line @next/next/no-html-link-for-pages
+                <a
+                  href={adminHref}
+                  className="flex items-center gap-1.5 text-sm font-medium bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-full transition"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  {dict.nav.admin}
+                </a>
+              ) : null}
               <Link
                 href={`/${locale}/profile`}
                 className="flex items-center gap-1.5 text-sm font-medium hover:text-yellow-200 transition"
@@ -257,6 +272,16 @@ export const Navbar = ({ locale, dict, user }: NavbarProps) => {
             </Link>
             {user ? (
               <>
+                {isStaff ? (
+                  // eslint-disable-next-line @next/next/no-html-link-for-pages
+                  <a
+                    href={adminHref}
+                    className="py-2 px-3 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2 text-sm font-medium"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    {dict.nav.admin}
+                  </a>
+                ) : null}
                 <Link
                   href={`/${locale}/profile`}
                   onClick={() => setMobileMenuOpen(false)}

@@ -48,15 +48,22 @@ export default async function AdminLayout({
               {t.brand}
             </Link>
             <nav className="flex flex-wrap gap-1 text-sm">
-              {nav.map((n) => (
-                <Link
-                  key={n.href}
-                  className="rounded-full px-3 py-1 hover:bg-white/15"
-                  href={n.href}
-                >
-                  {t.nav[n.key]}
-                </Link>
-              ))}
+              {nav.map((n) => {
+                // "/admin" only matches itself; sections also match their subpages.
+                const active =
+                  n.href === "/admin" ? path === "/admin" : path === n.href || path.startsWith(`${n.href}/`);
+
+                return (
+                  <Link
+                    key={n.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`rounded-full px-3 py-1 ${active ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
+                    href={n.href}
+                  >
+                    {t.nav[n.key]}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
           <div className="flex items-center gap-3 text-xs text-yellow-100">
