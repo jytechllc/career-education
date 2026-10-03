@@ -64,17 +64,17 @@ const zh: Copy = {
   meta: {
     title: "研究生与直博留学申请服务与价格 | JYEdu 杰圆教育",
     description:
-      "研究生留学申请三档服务：申请助力 $12,000、超级 VIP $18,000、长线规划 VIP $22,000；另有本科直博（全额资助 PhD）申请服务 ¥180,000。",
+      "研究生留学申请三档服务：申请助力 ¥88,000、超级 VIP ¥128,000、长线规划 VIP ¥158,000；另有本科直博（全额资助 PhD）申请服务 ¥180,000。",
   },
   eyebrow: "研究生留学申请 · JYEdu 杰圆教育",
   title: "研究生留学申请服务",
   subtitle: "硕士申请三档服务，从申请季冲刺到大一起的四年规划；另有本科直博服务",
-  currency: "USD",
+  currency: "人民币",
   notIncluded: "不含",
   tiers: [
     {
       name: "申请助力",
-      price: "$12,000",
+      price: "¥88,000",
       tagline: "申请季辅导 · 1 个专业 8 个项目",
       rows: [
         { label: "服务周期", value: "申请季辅导" },
@@ -97,7 +97,7 @@ const zh: Copy = {
     },
     {
       name: "超级 VIP",
-      price: "$18,000",
+      price: "¥128,000",
       tagline: "名校定向冲刺 · 资深导师全程督导 · 1 段实习",
       badge: "推荐",
       featured: true,
@@ -122,7 +122,7 @@ const zh: Copy = {
     },
     {
       name: "长线规划 VIP",
-      price: "$22,000",
+      price: "¥158,000",
       tagline: "大一入学起全程规划 · 2 段实习 · 一路负责到申请",
       badge: "旗舰 · 四年全程",
       rows: [
@@ -200,17 +200,17 @@ const en: Copy = {
   meta: {
     title: "Graduate & Direct-PhD Admissions Services and Pricing | JYEdu",
     description:
-      "Three master's admissions packages: Application Boost $12,000, Super VIP $18,000 and Long-Term VIP $22,000 — plus a direct-PhD (fully funded) admissions program at ¥180,000.",
+      "Three master's admissions packages: Application Boost ¥88,000, Super VIP ¥128,000 and Long-Term VIP ¥158,000 — plus a direct-PhD (fully funded) admissions program at ¥180,000.",
   },
   eyebrow: "Graduate Admissions · JYEdu",
   title: "Graduate Admissions Services",
   subtitle: "Three master's packages, from an application-season sprint to four-year planning — plus a direct-PhD program",
-  currency: "USD",
+  currency: "RMB",
   notIncluded: "Not included",
   tiers: [
     {
       name: "Application Boost",
-      price: "$12,000",
+      price: "¥88,000",
       tagline: "Application season · 1 field, 8 programs",
       rows: [
         { label: "Service period", value: "Application season" },
@@ -233,7 +233,7 @@ const en: Copy = {
     },
     {
       name: "Super VIP",
-      price: "$18,000",
+      price: "¥128,000",
       tagline: "Top-school sprint · senior advisor oversight · 1 internship",
       badge: "Recommended",
       featured: true,
@@ -258,7 +258,7 @@ const en: Copy = {
     },
     {
       name: "Long-Term VIP",
-      price: "$22,000",
+      price: "¥158,000",
       tagline: "Planning from freshman year · 2 internships · through applications",
       badge: "Flagship · 4 years",
       rows: [
