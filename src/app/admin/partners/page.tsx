@@ -2,11 +2,11 @@ import Link from "next/link";
 import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireStaff } from "@/lib/admin-auth";
 import { collegeCoachingApplications, partnerCredentials, partners } from "@/lib/schema";
 
 export default async function AdminPartnersPage() {
-  await requireAdmin("/admin/partners");
+  await requireStaff("/admin/partners");
 
   const rows = await db
     .select({

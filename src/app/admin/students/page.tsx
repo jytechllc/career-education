@@ -1,7 +1,7 @@
 import { desc, ilike, or } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireStaff } from "@/lib/admin-auth";
 import { candidates } from "@/lib/schema";
 
 export default async function AdminStudentsPage({
@@ -12,7 +12,7 @@ export default async function AdminStudentsPage({
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().slice(0, 100);
 
-  await requireAdmin(`/admin/students${q ? `?q=${encodeURIComponent(q)}` : ""}`);
+  await requireStaff(`/admin/students${q ? `?q=${encodeURIComponent(q)}` : ""}`);
 
   const like = `%${q}%`;
   const rows = await db

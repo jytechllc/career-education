@@ -2,11 +2,11 @@ import Link from "next/link";
 import { count, desc, eq, gt, isNotNull, isNull, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireStaff } from "@/lib/admin-auth";
 import { candidates, collegeCoachingApplications, partners } from "@/lib/schema";
 
 export default async function AdminOverviewPage() {
-  await requireAdmin("/admin");
+  await requireStaff("/admin");
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const [[active], [trashed], [lastWeek], [students], byPartner, recent] =

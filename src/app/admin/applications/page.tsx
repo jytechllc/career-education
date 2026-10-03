@@ -2,7 +2,7 @@ import Link from "next/link";
 import { and, desc, eq, ilike, inArray, isNotNull, isNull, or, type SQL } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireStaff } from "@/lib/admin-auth";
 import { getSignedFileUrl } from "@/lib/r2";
 import { applicationFiles, collegeCoachingApplications, partners } from "@/lib/schema";
 import { ApplicationCard, type AppWithFiles } from "@/components/admin/ApplicationCard";
@@ -17,7 +17,7 @@ export default async function AdminApplicationsPage({
     Object.entries(sp).filter((e): e is [string, string] => !!e[1]),
   ).toString();
 
-  await requireAdmin(`/admin/applications${qs ? `?${qs}` : ""}`);
+  await requireStaff(`/admin/applications${qs ? `?${qs}` : ""}`);
 
   const partnerId = Number(sp.partner) || null;
   const q = (sp.q ?? "").trim().slice(0, 100);

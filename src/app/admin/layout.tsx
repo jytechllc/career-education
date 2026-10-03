@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { auth0 } from "@/lib/auth0";
-import { isAdminEmail } from "@/lib/admin-auth";
+import { staffRoleOf } from "@/lib/admin-auth";
 
 export const metadata: Metadata = {
   title: "管理后台",
@@ -27,9 +27,9 @@ export default async function AdminLayout({
   // drawn for admins, so a non-admin's 404 doesn't reveal the admin nav.
   const session = await auth0.getSession();
   const email = session?.user.email ?? null;
-  const isAdmin = !!session?.user.email_verified && isAdminEmail(email);
+  const role = session?.user.email_verified ? staffRoleOf(email) : null;
 
-  if (!isAdmin) return <>{children}</>;
+  if (!role) return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-yellow-50">
@@ -52,7 +52,9 @@ export default async function AdminLayout({
             </nav>
           </div>
           <div className="flex items-center gap-3 text-xs text-yellow-100">
-            <span>{email}</span>
+            <span>
+              {email} · {role === "admin" ? "管理员" : "主管"}
+            </span>
             <Link className="underline hover:text-white" href="/zh">
               返回网站
             </Link>
