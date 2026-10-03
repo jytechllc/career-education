@@ -3,10 +3,13 @@ import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/admin-auth";
+import { getAdminDict } from "@/lib/admin-i18n";
 import { collegeCoachingApplications, partnerCredentials, partners } from "@/lib/schema";
 
 export default async function AdminPartnersPage() {
   await requireStaff("/admin/partners");
+  const { t: d } = await getAdminDict();
+  const t = d.partners;
 
   const rows = await db
     .select({
@@ -31,9 +34,9 @@ export default async function AdminPartnersPage() {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-2xl font-bold text-yellow-900">合作机构（{rows.length}）</h1>
+        <h1 className="text-2xl font-bold text-yellow-900">{t.title(rows.length)}</h1>
         <p className="text-sm text-gray-500 mt-1">
-          合作机构通过 /partners/login 登录，只能看到提交到自己名下的申请。
+          {t.subtitle}
         </p>
       </div>
 
@@ -41,12 +44,12 @@ export default async function AdminPartnersPage() {
         <table className="w-full text-sm">
           <thead className="bg-yellow-100/60 text-left text-xs text-yellow-900">
             <tr>
-              <th className="px-4 py-2">机构</th>
-              <th className="px-4 py-2">联系邮箱</th>
-              <th className="px-4 py-2">登录账号</th>
-              <th className="px-4 py-2 text-right">申请</th>
-              <th className="px-4 py-2 text-right">回收站</th>
-              <th className="px-4 py-2">最近申请</th>
+              <th className="px-4 py-2">{t.col.name}</th>
+              <th className="px-4 py-2">{t.col.email}</th>
+              <th className="px-4 py-2">{t.col.login}</th>
+              <th className="px-4 py-2 text-right">{t.col.active}</th>
+              <th className="px-4 py-2 text-right">{t.col.trash}</th>
+              <th className="px-4 py-2">{t.col.last}</th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +68,7 @@ export default async function AdminPartnersPage() {
                 <td className="px-4 py-2 text-right tabular-nums">{p.active}</td>
                 <td className="px-4 py-2 text-right tabular-nums text-gray-500">{p.trashed}</td>
                 <td className="px-4 py-2 text-xs text-gray-500">
-                  {p.lastAt ? new Date(p.lastAt).toLocaleDateString("zh-CN") : "—"}
+                  {p.lastAt ? new Date(p.lastAt).toLocaleDateString(d.dateLocale) : "—"}
                 </td>
               </tr>
             ))}

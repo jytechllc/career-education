@@ -3,10 +3,13 @@ import { count, desc, eq, gt, isNotNull, isNull, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/admin-auth";
+import { getAdminDict } from "@/lib/admin-i18n";
 import { candidates, collegeCoachingApplications, partners } from "@/lib/schema";
 
 export default async function AdminOverviewPage() {
   await requireStaff("/admin");
+  const { t: d } = await getAdminDict();
+  const t = d.overview;
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const [[active], [trashed], [lastWeek], [students], byPartner, recent] =
@@ -54,24 +57,24 @@ export default async function AdminOverviewPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-2xl font-bold text-yellow-900">概览</h1>
+      <h1 className="text-2xl font-bold text-yellow-900">{t.title}</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Stat label="学生申请" value={active.n} href="/admin/applications" />
-        <Stat label="近 7 天新增" value={lastWeek.n} href="/admin/applications" />
-        <Stat label="回收站" value={trashed.n} href="/admin/applications?trash=1" />
-        <Stat label="站内学员" value={students.n} href="/admin/students" />
+        <Stat label={t.applications} value={active.n} href="/admin/applications" />
+        <Stat label={t.lastWeek} value={lastWeek.n} href="/admin/applications" />
+        <Stat label={t.trash} value={trashed.n} href="/admin/applications?trash=1" />
+        <Stat label={t.students} value={students.n} href="/admin/students" />
       </div>
 
       <section className="bg-white rounded-lg shadow p-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-yellow-900">最新申请</h2>
+          <h2 className="font-semibold text-yellow-900">{t.latest}</h2>
           <Link className="text-sm text-yellow-700 underline" href="/admin/applications">
-            全部申请
+            {t.allApplications}
           </Link>
         </div>
         {recent.length === 0 ? (
-          <p className="text-sm text-gray-500">还没有申请。</p>
+          <p className="text-sm text-gray-500">{t.none}</p>
         ) : (
           <ul className="divide-y divide-gray-100 text-sm">
             {recent.map((r) => (
@@ -84,7 +87,7 @@ export default async function AdminOverviewPage() {
                   ) : null}
                 </div>
                 <span className="text-xs text-gray-400">
-                  {r.partner} · {r.createdAt.toLocaleDateString("zh-CN")}
+                  {r.partner} · {r.createdAt.toLocaleDateString(d.dateLocale)}
                 </span>
               </li>
             ))}
@@ -93,14 +96,14 @@ export default async function AdminOverviewPage() {
       </section>
 
       <section className="bg-white rounded-lg shadow p-5">
-        <h2 className="font-semibold text-yellow-900 mb-3">按合作机构</h2>
+        <h2 className="font-semibold text-yellow-900 mb-3">{t.byPartner}</h2>
         <ul className="divide-y divide-gray-100 text-sm">
           {byPartner.map((p) => (
             <li key={p.id} className="py-2 flex items-center justify-between">
               <Link className="text-yellow-800 underline" href={`/admin/applications?partner=${p.id}`}>
                 {p.name}
               </Link>
-              <span className="tabular-nums text-gray-600">{p.n} 份</span>
+              <span className="tabular-nums text-gray-600">{t.count(p.n)}</span>
             </li>
           ))}
         </ul>

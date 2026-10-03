@@ -2,11 +2,29 @@
 
 import { useState, useTransition } from "react";
 
-import { ROLE_LABELS, STAFF_ROLES as ROLES, type StaffRole as StaffRoleName } from "@/lib/staff-roles";
+import { STAFF_ROLES as ROLES, type StaffRole as StaffRoleName } from "@/lib/staff-roles";
+
+/** Strings from the admin dictionary (staffControls), passed down by the page. */
+export type StaffControlsText = {
+  emailLabel: string;
+  emailPlaceholder: string;
+  roleLabel: string;
+  add: string;
+  adding: string;
+  added: string;
+  remove: string;
+  removed: string;
+  confirmRemove: string;
+  roleOf: string;
+  errors: Record<"invalidEmail" | "unknownRole" | "pinned" | "self" | "failed", string>;
+};
+type RoleText = Record<StaffRoleName, string>;
+
+const fill = (s: string, email: string) => s.replace("{email}", email);
 
 import { removeStaffAction, saveStaffAction } from "./actions";
 
-export function AddStaffForm() {
+export function AddStaffForm({ t, roles }: { t: StaffControlsText; roles: RoleText }) {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<StaffRoleName>("supervisor");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -21,32 +39,32 @@ export function AddStaffForm() {
           const res = await saveStaffAction(email, role);
 
           if (res.ok) {
-            setMsg({ ok: true, text: `已添加 ${email.trim()}` });
+            setMsg({ ok: true, text: fill(t.added, email.trim()) });
             setEmail("");
           } else {
-            setMsg({ ok: false, text: res.error });
+            setMsg({ ok: false, text: t.errors[res.error] });
           }
         });
       }}
     >
       <input
         required
-        aria-label="员工邮箱"
+        aria-label={t.emailLabel}
         className="h-9 w-72 max-w-full rounded-md border border-yellow-200 bg-white px-3 text-sm"
-        placeholder="员工的登录邮箱"
+        placeholder={t.emailPlaceholder}
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <select
-        aria-label="角色"
+        aria-label={t.roleLabel}
         className="h-9 rounded-md border border-yellow-200 bg-white px-2 text-sm"
         value={role}
         onChange={(e) => setRole(e.target.value as StaffRoleName)}
       >
         {ROLES.map((r) => (
           <option key={r} value={r}>
-            {ROLE_LABELS[r]}
+            {roles[r]}
           </option>
         ))}
       </select>
@@ -55,7 +73,7 @@ export function AddStaffForm() {
         disabled={pending}
         type="submit"
       >
-        {pending ? "添加中…" : "添加员工"}
+        {pending ? t.adding : t.add}
       </button>
       {msg ? (
         <span className={`text-xs ${msg.ok ? "text-green-700" : "text-red-600"}`}>
@@ -69,21 +87,25 @@ export function AddStaffForm() {
 export function StaffRowControls({
   email,
   role: initial,
+  t,
+  roles,
 }: {
   email: string;
   role: StaffRoleName;
+  t: StaffControlsText;
+  roles: RoleText;
 }) {
   const [role, setRole] = useState(initial);
   const [error, setError] = useState<string | null>(null);
   const [removed, setRemoved] = useState(false);
   const [pending, start] = useTransition();
 
-  if (removed) return <span className="text-xs text-gray-400">已删除</span>;
+  if (removed) return <span className="text-xs text-gray-400">{t.removed}</span>;
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       <select
-        aria-label={`${email} 的角色`}
+        aria-label={fill(t.roleOf, email)}
         className="h-8 rounded-md border border-yellow-200 bg-white px-2 text-xs"
         disabled={pending}
         value={role}
@@ -95,13 +117,13 @@ export function StaffRowControls({
             const res = await saveStaffAction(email, next);
 
             if (res.ok) setRole(next);
-            else setError(res.error);
+            else setError(t.errors[res.error]);
           });
         }}
       >
         {ROLES.map((r) => (
           <option key={r} value={r}>
-            {ROLE_LABELS[r]}
+            {roles[r]}
           </option>
         ))}
       </select>
@@ -110,17 +132,17 @@ export function StaffRowControls({
         disabled={pending}
         type="button"
         onClick={() => {
-          if (!confirm(`删除员工 ${email}？`)) return;
+          if (!confirm(fill(t.confirmRemove, email))) return;
           start(async () => {
             setError(null);
             const res = await removeStaffAction(email);
 
             if (res.ok) setRemoved(true);
-            else setError(res.error);
+            else setError(t.errors[res.error]);
           });
         }}
       >
-        删除
+        {t.remove}
       </button>
       {error ? <span className="text-xs text-red-600">{error}</span> : null}
     </div>

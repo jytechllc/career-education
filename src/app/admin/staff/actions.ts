@@ -8,7 +8,9 @@ import { assertAdmin, envStaffRole } from "@/lib/admin-auth";
 import { staffMembers } from "@/lib/schema";
 import { STAFF_ROLES, type StaffRole } from "@/lib/staff-roles";
 
-export type StaffActionResult = { ok: true } | { ok: false; error: string };
+/** `error` is a key into the admin dictionary's staffControls.errors. */
+export type StaffError = "invalidEmail" | "unknownRole" | "pinned" | "self" | "failed";
+export type StaffActionResult = { ok: true } | { ok: false; error: StaffError };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,10 +23,10 @@ export async function saveStaffAction(
     const admin = await assertAdmin();
     const email = emailInput.trim().toLowerCase();
 
-    if (!EMAIL_RE.test(email)) return { ok: false, error: "邮箱格式不正确" };
-    if (!STAFF_ROLES.includes(role)) return { ok: false, error: "未知角色" };
-    if (envStaffRole(email)) return { ok: false, error: "该邮箱由环境变量固定，不能在后台修改" };
-    if (email === admin.email.toLowerCase()) return { ok: false, error: "不能修改自己的角色" };
+    if (!EMAIL_RE.test(email)) return { ok: false, error: "invalidEmail" };
+    if (!STAFF_ROLES.includes(role)) return { ok: false, error: "unknownRole" };
+    if (envStaffRole(email)) return { ok: false, error: "pinned" };
+    if (email === admin.email.toLowerCase()) return { ok: false, error: "self" };
 
     await db
       .insert(staffMembers)
@@ -37,7 +39,9 @@ export async function saveStaffAction(
 
     return { ok: true };
   } catch (e) {
-    return { ok: false, error: (e as Error).message };
+    console.error("[admin/staff]", e);
+
+    return { ok: false, error: "failed" };
   }
 }
 
@@ -47,14 +51,16 @@ export async function removeStaffAction(emailInput: string): Promise<StaffAction
     const admin = await assertAdmin();
     const email = emailInput.trim().toLowerCase();
 
-    if (envStaffRole(email)) return { ok: false, error: "该邮箱由环境变量固定，不能在后台删除" };
-    if (email === admin.email.toLowerCase()) return { ok: false, error: "不能删除自己" };
+    if (envStaffRole(email)) return { ok: false, error: "pinned" };
+    if (email === admin.email.toLowerCase()) return { ok: false, error: "self" };
 
     await db.delete(staffMembers).where(eq(staffMembers.email, email));
     revalidatePath("/admin/staff");
 
     return { ok: true };
   } catch (e) {
-    return { ok: false, error: (e as Error).message };
+    console.error("[admin/staff]", e);
+
+    return { ok: false, error: "failed" };
   }
 }

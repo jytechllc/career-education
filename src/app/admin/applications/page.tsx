@@ -3,6 +3,7 @@ import { and, desc, eq, ilike, inArray, isNotNull, isNull, or, type SQL } from "
 
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/admin-auth";
+import { getAdminDict } from "@/lib/admin-i18n";
 import { getSignedFileUrl } from "@/lib/r2";
 import { applicationFiles, collegeCoachingApplications, partners } from "@/lib/schema";
 import { ApplicationCard, type AppWithFiles } from "@/components/admin/ApplicationCard";
@@ -19,6 +20,8 @@ export default async function AdminApplicationsPage({
 
   await requireStaff(`/admin/applications${qs ? `?${qs}` : ""}`);
 
+  const { t: d } = await getAdminDict();
+  const t = d.applications;
   const partnerId = Number(sp.partner) || null;
   const q = (sp.q ?? "").trim().slice(0, 100);
   const inTrash = sp.trash === "1";
@@ -71,13 +74,13 @@ export default async function AdminApplicationsPage({
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-2xl font-bold text-yellow-900">
-          {inTrash ? "回收站" : "学生申请"}（{apps.length}）
+          {inTrash ? t.trashTitle(apps.length) : t.title(apps.length)}
         </h1>
         <Link
           className="text-sm text-yellow-700 underline"
           href={inTrash ? "/admin/applications" : "/admin/applications?trash=1"}
         >
-          {inTrash ? "返回申请列表" : "查看回收站"}
+          {inTrash ? t.backToList : t.viewTrash}
         </Link>
       </div>
 
@@ -87,7 +90,7 @@ export default async function AdminApplicationsPage({
           className="h-10 rounded-md border border-yellow-200 bg-white px-3 text-sm w-64 max-w-full"
           defaultValue={q}
           name="q"
-          placeholder="姓名、邮箱、学校或专业"
+          placeholder={t.searchPlaceholder}
           type="search"
         />
         <select
@@ -95,7 +98,7 @@ export default async function AdminApplicationsPage({
           defaultValue={partnerId ?? ""}
           name="partner"
         >
-          <option value="">全部合作机构</option>
+          <option value="">{t.allPartners}</option>
           {partnerList.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
@@ -106,18 +109,18 @@ export default async function AdminApplicationsPage({
           className="h-10 rounded-md bg-yellow-600 px-4 text-sm font-medium text-white hover:bg-yellow-700"
           type="submit"
         >
-          筛选
+          {t.filter}
         </button>
       </form>
 
       {inTrash ? (
         <p className="text-xs text-gray-500">
-          回收站里的申请由合作机构移入，30 天后自动永久删除（含上传文件）。
+          {t.trashNote}
         </p>
       ) : null}
 
       {apps.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">没有符合条件的申请。</div>
+        <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">{t.empty}</div>
       ) : (
         <div className="flex flex-col gap-4">
           {apps.map((app) => (
