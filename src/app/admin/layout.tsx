@@ -27,7 +27,7 @@ export default async function AdminLayout({
   // drawn for admins, so a non-admin's 404 doesn't reveal the admin nav.
   const session = await auth0.getSession();
   const email = session?.user.email ?? null;
-  const role = session?.user.email_verified ? staffRoleOf(email) : null;
+  const role = session?.user.email_verified ? await staffRoleOf(email) : null;
 
   if (!role) return <>{children}</>;
 
@@ -40,7 +40,7 @@ export default async function AdminLayout({
               杰圆教育 · 管理后台
             </Link>
             <nav className="flex flex-wrap gap-1 text-sm">
-              {NAV.map((n) => (
+              {[...NAV, ...(role === "admin" ? [{ href: "/admin/staff", label: "员工" }] : [])].map((n) => (
                 <Link
                   key={n.href}
                   className="rounded-full px-3 py-1 hover:bg-white/15"

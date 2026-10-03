@@ -1,10 +1,15 @@
 import "server-only";
 
+import { cache } from "react";
+import { eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 
 import { auth0 } from "./auth0";
+import { db } from "./db";
+import { staffMembers } from "./schema";
+import type { StaffRole } from "./staff-roles";
 
-export type StaffRole = "admin" | "supervisor";
+export type { StaffRole };
 
 function allowlist(varName: string): string[] {
   return (process.env[varName] ?? "")
@@ -14,12 +19,10 @@ function allowlist(varName: string): string[] {
 }
 
 /**
- * Staff = an Auth0 user whose *verified* email is in ADMIN_EMAILS or
- * SUPERVISOR_EMAILS (comma-separated, Vercel env). Unverified addresses are
- * self-asserted at sign-up, so they never qualify. Both roles see all of
- * /admin today; admin-only surfaces (billing, settings) check role === "admin".
+ * Role pinned by ADMIN_EMAILS / SUPERVISOR_EMAILS (Vercel env). These cannot
+ * be removed or demoted from /admin/staff, so nobody can lock everyone out.
  */
-export function staffRoleOf(email: string | null | undefined): StaffRole | null {
+export function envStaffRole(email: string | null | undefined): StaffRole | null {
   if (!email) return null;
   const e = email.toLowerCase();
 
@@ -29,22 +32,65 @@ export function staffRoleOf(email: string | null | undefined): StaffRole | null 
   return null;
 }
 
+export function listEnvStaff(): { email: string; role: StaffRole }[] {
+  const all = [...allowlist("ADMIN_EMAILS"), ...allowlist("SUPERVISOR_EMAILS")];
+
+  return Array.from(new Set(all)).map((email) => ({ email, role: envStaffRole(email)! }));
+}
+
+const dbStaffRole = cache(async (email: string): Promise<StaffRole | null> => {
+  const rows = await db
+    .select({ role: staffMembers.role })
+    .from(staffMembers)
+    .where(eq(staffMembers.email, email.toLowerCase()))
+    .limit(1);
+  const role = rows[0]?.role;
+
+  return role === "admin" || role === "supervisor" ? role : null;
+});
+
 /**
- * Page gate for /admin (admins and supervisors). Signed out → login and back
- * to `returnTo`; signed in but not staff → 404, so the route's existence
- * stays unconfirmed.
+ * Staff = an Auth0 user whose *verified* email is pinned in env or listed in
+ * staff_members (managed from /admin/staff). Unverified addresses are
+ * self-asserted at sign-up, so callers must check email_verified first.
+ * Both roles see the admin pages; staff management is admin-only.
+ */
+export async function staffRoleOf(
+  email: string | null | undefined,
+): Promise<StaffRole | null> {
+  if (!email) return null;
+
+  return envStaffRole(email) ?? (await dbStaffRole(email));
+}
+
+/**
+ * Page gate for /admin. Signed out → login and back to `returnTo`; signed in
+ * but not staff (or not an admin, with `adminOnly`) → 404, so the route's
+ * existence stays unconfirmed.
  */
 export async function requireStaff(
   returnTo: string,
+  { adminOnly = false }: { adminOnly?: boolean } = {},
 ): Promise<{ email: string; role: StaffRole }> {
   const session = await auth0.getSession();
 
   if (!session) redirect(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
 
   const email = session.user.email ?? null;
-  const role = session.user.email_verified ? staffRoleOf(email) : null;
+  const role = session.user.email_verified ? await staffRoleOf(email) : null;
 
-  if (!role) notFound();
+  if (!role || (adminOnly && role !== "admin")) notFound();
 
   return { email: email!, role };
+}
+
+/** Server Action gate: throws instead of rendering a 404. */
+export async function assertAdmin(): Promise<{ email: string }> {
+  const session = await auth0.getSession();
+  const email = session?.user.email ?? null;
+  const role = session?.user.email_verified ? await staffRoleOf(email) : null;
+
+  if (role !== "admin") throw new Error("Not authorized");
+
+  return { email: email! };
 }

@@ -188,3 +188,16 @@ export const applicationFiles = pgTable("application_files", {
 });
 
 export type ApplicationFile = typeof applicationFiles.$inferSelect;
+
+// Staff managed from /admin/staff. ADMIN_EMAILS / SUPERVISOR_EMAILS (Vercel
+// env) still apply and win over this table, so an env admin can never be
+// locked out from the UI.
+export const staffMembers = pgTable("staff_members", {
+  email: text("email").primaryKey(),
+  role: text("role").notNull(), // 'admin' | 'supervisor'
+  addedBy: text("added_by"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type StaffMember = typeof staffMembers.$inferSelect;
