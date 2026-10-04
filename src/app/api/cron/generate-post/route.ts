@@ -46,7 +46,12 @@ async function handle(request: Request) {
     });
   } catch (error) {
     console.error("generate-post error:", error);
-    await logActivity({ actorType: "ai", actor: "blog-generator", action: "blog.generate_failed", detail: { locale } });
+    await logActivity({
+      actorType: "ai",
+      actor: "blog-generator",
+      action: "blog.generate_failed",
+      detail: { locale, error: error instanceof Error ? error.message.slice(0, 500) : String(error) },
+    });
     return NextResponse.json(
       { ok: false, error: "generation_failed" },
       { status: 500 },

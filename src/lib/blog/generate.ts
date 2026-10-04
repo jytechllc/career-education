@@ -1,4 +1,5 @@
 import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
+import { awsCredentialsProvider } from "@vercel/oidc-aws-credentials-provider";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { posts, type Post } from "@/lib/schema";
@@ -12,9 +13,17 @@ const MODEL =
   process.env.BEDROCK_MODEL_ID || "us.anthropic.claude-sonnet-4-6";
 
 function client() {
-  // AWS credentials resolve from the standard chain (env vars, shared profile,
-  // or IAM role). Region from AWS_REGION (fallback us-east-1).
-  return new AnthropicBedrock({ awsRegion: process.env.AWS_REGION || "us-east-1" });
+  // On Vercel, AWS_ROLE_ARN is set: the Vercel OIDC token is exchanged for
+  // short-lived credentials for that role (no stored keys). Locally it is
+  // unset and credentials resolve from the standard chain (AWS_PROFILE).
+  // Region from AWS_REGION (fallback us-east-1).
+  const roleArn = process.env.AWS_ROLE_ARN;
+  return new AnthropicBedrock({
+    awsRegion: process.env.AWS_REGION || "us-east-1",
+    ...(roleArn && {
+      providerChainResolver: async () => awsCredentialsProvider({ roleArn }),
+    }),
+  });
 }
 
 function slugify(input: string): string {
