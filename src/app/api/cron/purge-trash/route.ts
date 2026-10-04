@@ -62,3 +62,6 @@ export async function POST(request: Request) {
     filesDeleted,
   });
 }
+
+// Vercel cron (vercel.json) calls with GET + the CRON_SECRET bearer.
+export const GET = POST;

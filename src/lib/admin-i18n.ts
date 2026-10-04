@@ -49,7 +49,11 @@ const zh = {
     searchPlaceholder: "姓名、邮箱、学校或专业",
     allPartners: "全部合作机构",
     filter: "筛选",
-    trashNote: "回收站里的申请由合作机构移入，30 天后自动永久删除（含上传文件）。",
+    trashNote: "移入回收站的申请保留 30 天，之后自动永久删除（含上传文件）。期间可以随时恢复。员工和合作机构都可以移入或恢复。",
+    trash: "移入回收站",
+    confirmTrash: "把这份申请移入回收站？30 天后会连同上传文件一起永久删除，期间可以恢复。",
+    restore: "恢复",
+    daysLeft: (n: number) => (n > 0 ? `${n} 天后永久删除` : "将在下次清理时永久删除"),
     empty: "没有符合条件的申请。",
   },
   students: {
@@ -178,7 +182,11 @@ const en: AdminDict = {
     allPartners: "All partners",
     filter: "Filter",
     trashNote:
-      "Partners move applications to trash; they are permanently deleted (with uploaded files) after 30 days.",
+      "Trashed applications are kept for 30 days, then permanently deleted with their uploaded files. Restore any time before then. Staff and partners can both trash and restore.",
+    trash: "Move to trash",
+    confirmTrash: "Move this application to trash? It is permanently deleted with its files after 30 days; you can restore it until then.",
+    restore: "Restore",
+    daysLeft: (n: number) => (n > 0 ? `Deleted in ${n} day${n === 1 ? "" : "s"}` : "Deleted at the next cleanup"),
     empty: "No applications match.",
   },
   students: {

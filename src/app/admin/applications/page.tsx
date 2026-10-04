@@ -8,6 +8,10 @@ import { getSignedFileUrl } from "@/lib/r2";
 import { applicationFiles, collegeCoachingApplications, partners } from "@/lib/schema";
 import { ApplicationCard, type AppWithFiles } from "@/components/admin/ApplicationCard";
 
+import { RestoreButton, TrashButton } from "./TrashControls";
+
+const TRASH_RETENTION_DAYS = 30;
+
 export default async function AdminApplicationsPage({
   searchParams,
 }: {
@@ -129,7 +133,20 @@ export default async function AdminApplicationsPage({
               app={app}
               dimmed={inTrash}
               meta={`${app.partnerName ?? "—"}${app.intendedMajor ? ` · ${app.intendedMajor}` : ""}${app.currentSchool ? ` · ${app.currentSchool}` : ""}`}
-            />
+            >
+              {inTrash && app.deletedAt ? (
+                <RestoreButton
+                  id={app.id}
+                  label={t.restore}
+                  note={t.daysLeft(
+                    TRASH_RETENTION_DAYS -
+                      Math.floor((Date.now() - new Date(app.deletedAt).getTime()) / 86_400_000),
+                  )}
+                />
+              ) : (
+                <TrashButton confirmText={t.confirmTrash} id={app.id} label={t.trash} />
+              )}
+            </ApplicationCard>
           ))}
         </div>
       )}
