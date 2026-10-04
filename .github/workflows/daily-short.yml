@@ -1,0 +1,91 @@
+name: Daily Short (JYEdu YouTube)
+
+# Turns the day's zh blog post (generated 01:00 UTC by the blog-cron worker)
+# into a narrated kinetic-typography Short and publishes it to the JYEdu
+# YouTube channel via Buffer. 02:00 UTC = 19:00 PDT / 18:00 PST.
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Post slug (blank = today's newest zh post)"
+        required: false
+      mode:
+        description: "dry = render only; draft = Buffer draft; shareNow = publish"
+        type: choice
+        options: [dry, draft, shareNow]
+        default: dry
+
+permissions:
+  id-token: write # AWS OIDC for Bedrock
+  contents: read
+
+concurrency:
+  group: daily-short
+  cancel-in-progress: false
+
+jobs:
+  short:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: scripts/daily-short
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: scripts/daily-short/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: System deps (ffmpeg, CJK + emoji fonts)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk fonts-noto-color-emoji
+
+      - name: Python deps (TTS, BGM synth)
+        run: pip install -q edge-tts numpy scipy
+
+      - name: Node deps + Chromium
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Make + publish Short
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_YT_CHANNEL_ID: ${{ secrets.BUFFER_YT_CHANNEL_ID }}
+          POST_SLUG: ${{ inputs.slug }}
+          DRY_RUN: ${{ inputs.mode == 'dry' && '1' || '' }}
+          CLIP_PUBLISH_MODE: ${{ inputs.mode == 'draft' && 'draft' || 'shareNow' }}
+          CLIP_YT_PRIVACY: public
+        run: node make-short.mjs
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: short
+          path: |
+            scripts/daily-short/out/*/short.mp4
+            scripts/daily-short/out/*/script.json
+            scripts/daily-short/out/*/meta.json
+          retention-days: 7
+          if-no-files-found: ignore

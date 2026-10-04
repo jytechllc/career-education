@@ -1,0 +1,181 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  :root { --gold:#CA8A04; --gold2:#FACC15; --ink:#0A0A0F; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { width:1080px; height:1920px; overflow:hidden; background:var(--ink); color:#fff;
+    font-family:"PingFang SC","Noto Sans CJK SC","Noto Sans SC","Helvetica Neue",sans-serif; }
+  #stage { position:absolute; inset:0; overflow:hidden; }
+  #grid { position:absolute; left:-50%; width:200%; top:56%; height:1400px;
+    background-image:linear-gradient(rgba(250,204,21,.32) 2px,transparent 2px),
+      linear-gradient(90deg,rgba(250,204,21,.32) 2px,transparent 2px);
+    background-size:120px 120px; transform-origin:50% 0;
+    -webkit-mask-image:linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent);
+    mask-image:linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent); }
+  #glow { position:absolute; inset:0; background:radial-gradient(800px 700px at 50% 40%,rgba(202,138,4,.30),transparent 70%); }
+  .p { position:absolute; width:6px; height:6px; border-radius:50%; background:var(--gold2); box-shadow:0 0 12px var(--gold2); }
+  #brand { position:absolute; left:60px; top:70px; display:flex; align-items:center; gap:16px; z-index:20 }
+  #brand img { width:76px; }
+  #brand span { font:800 44px "Helvetica Neue",Arial,sans-serif; letter-spacing:-1px }
+  #brand b { color:var(--gold2) }
+  #brand small { font-size:28px; font-weight:600; color:#D4D4D8; margin-left:8px; letter-spacing:2px }
+  #tag { position:absolute; right:60px; top:82px; z-index:20; font-size:30px; font-weight:700; color:var(--ink);
+    background:var(--gold2); padding:8px 22px; border-radius:40px; }
+  .scene { position:absolute; inset:0; display:none; }
+  .gold { color:var(--gold2); text-shadow:0 0 30px rgba(250,204,21,.7),0 0 80px rgba(202,138,4,.5); }
+  .white { text-shadow:0 0 24px rgba(255,255,255,.3); }
+  .box { position:absolute; left:80px; right:80px; text-align:center; font-weight:900; line-height:1.18; text-wrap:balance; }
+  .flow { position:absolute; left:80px; right:80px; top:330px; bottom:520px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:34px; text-align:center; }
+  .flow > div { font-weight:900; line-height:1.18; text-wrap:balance; width:100%; }
+  .sweep { position:absolute; width:240px; background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent); mix-blend-mode:overlay; }
+  .big { position:absolute; left:80px; font:900 300px/1 "Helvetica Neue",Arial,sans-serif; color:transparent;
+    -webkit-text-stroke:4px rgba(250,204,21,.85); filter:drop-shadow(0 0 18px rgba(250,204,21,.6)); }
+  .pt-title { position:absolute; left:80px; right:80px; font-weight:900; line-height:1.18; text-wrap:balance; }
+  .pt-card { position:absolute; left:80px; right:80px; border-radius:36px; padding:44px 50px;
+    background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.03));
+    border:3px solid rgba(250,204,21,.65); box-shadow:0 0 40px rgba(202,138,4,.35);
+    font-size:50px; line-height:1.45; color:#E4E4E7; font-weight:600; text-wrap:pretty; }
+  .bar { position:absolute; left:80px; height:12px; width:130px; background:var(--gold2); box-shadow:0 0 20px var(--gold2); }
+  #flash { position:absolute; inset:0; background:#fff; opacity:0; z-index:50; pointer-events:none; }
+  #prog { position:absolute; left:0; bottom:0; height:10px; background:var(--gold2); box-shadow:0 0 16px var(--gold2); z-index:30 }
+</style></head>
+<body><div id="stage">
+  <div id="glow"></div><div id="grid"></div><div id="parts"></div>
+  <div id="brand"><img src="mark.png"><span><b>JY</b>Career<small>杰圆职场教育</small></span></div>
+  <div id="tag"></div>
+
+  <div class="scene" id="s-hook">
+    <div class="flow">
+      <div id="h-kick" style="font-size:52px;color:var(--gold2);font-weight:700;letter-spacing:4px"></div>
+      <div class="gold" id="h-a"></div>
+      <div class="white" id="h-b"></div>
+    </div>
+    <div class="sweep" id="h-sw" style="top:450px;height:900px"></div>
+  </div>
+
+  <div class="scene" id="s-pt">
+    <div class="big" id="p-num" style="top:400px"></div>
+    <div class="bar" style="top:760px"></div>
+    <div class="pt-title gold" id="p-title" style="top:810px"></div>
+    <div class="pt-card" id="p-detail" style="top:1110px"></div>
+  </div>
+
+  <div class="scene" id="s-quote">
+    <div class="flow">
+      <div style="font-size:200px;color:var(--gold2);line-height:.8;font-family:Georgia,serif">“</div>
+      <div class="white" id="q-text"></div>
+      <div id="q-sub" style="font-size:44px;color:#A1A1AA;font-weight:600"></div>
+    </div>
+  </div>
+
+  <div class="scene" id="s-cta">
+    <div class="box white" id="c-a" style="top:560px;font-size:66px">完整文章 👇</div>
+    <div id="c-box" style="position:absolute;left:110px;right:110px;top:710px;height:230px;border-radius:44px;border:6px solid #FACC15;
+      background:rgba(250,204,21,.08);display:flex;align-items:center;justify-content:center">
+      <span class="gold" style="font:800 100px 'Helvetica Neue',Arial,sans-serif">edu.jytech.us</span></div>
+    <div class="box gold" id="c-b" style="top:1050px;font-size:78px">关注 JYCareer</div>
+    <div class="box white" id="c-c" style="top:1180px;font-size:50px;color:#D4D4D8">每天一条职场干货 · 求职不迷路</div>
+    <div class="box" id="c-d" style="top:1350px;font-size:58px"><span style="display:inline-block;color:#0A0A0F;background:#FACC15;padding:14px 44px;border-radius:60px;font-weight:900">👍 点赞 · 收藏 · 转发</span></div>
+  </div>
+  <div id="prog"></div>
+  <div id="flash"></div>
+</div>
+<script>
+const D = window.DATA;                     // injected by make-short.mjs
+const S = D.starts;                        // scene start times, last = end
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const back = (x) => { x = clamp(x); const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+
+// Shrink font until text fits within maxLines.
+function fit(el, text, maxPx, minPx, maxLines) {
+  el.textContent = text;
+  for (let px = maxPx; px >= minPx; px -= 4) {
+    el.style.fontSize = px + "px";
+    const lh = parseFloat(getComputedStyle(el).lineHeight) || px * 1.2;
+    if (el.scrollHeight <= lh * maxLines + 2) return px;
+  }
+  return minPx;
+}
+$("tag").textContent = D.category || "职场干货";
+fit($("h-kick"), D.kicker || "", 52, 36, 1);
+fit($("h-a"), D.hook[0], 180, 100, 2);
+fit($("h-b"), D.hook[1], 96, 60, 3);
+fit($("q-text"), D.quote, 104, 64, 4);
+$("q-sub").textContent = D.quoteSub || "";
+// scene list: hook, points..., quote, cta
+const kinds = ["hook", ...D.points.map(() => "pt"), "quote", "cta"];
+
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const parts = [];
+for (let i = 0; i < 46; i++) {
+  const d = document.createElement("div"); d.className = "p"; $("parts").appendChild(d);
+  parts.push({ d, x: rnd() * 1080, y: rnd() * 1920, v: 40 + rnd() * 120, s: 0.4 + rnd() * 1.2, ph: rnd() * 6 });
+}
+function slam(el, u, from = 2.6) {
+  if (u < 0) { el.style.opacity = 0; return; }
+  const k = ease(u / 0.22);
+  el.style.opacity = clamp(u / 0.08);
+  el.style.transform = `scale(${from + (1 - from) * k})`;
+  el.style.filter = `blur(${(1 - k) * 14}px)`;
+}
+function rise(el, u, dy = 80, dur = 0.35) {
+  if (u < 0) { el.style.opacity = 0; return; }
+  const k = ease(u / dur); el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * dy}px)`;
+}
+let lastPt = -1;
+window.seek = function (t) {
+  $("grid").style.transform = `perspective(700px) rotateX(62deg) translateY(${(t * 160) % 120}px)`;
+  $("glow").style.opacity = 0.8 + 0.2 * Math.sin(t * 3);
+  parts.forEach((p) => {
+    const y = ((p.y - t * p.v) % 1920 + 1920) % 1920;
+    p.d.style.transform = `translate(${p.x + Math.sin(t + p.ph) * 30}px,${y}px) scale(${p.s})`;
+    p.d.style.opacity = 0.35 + 0.35 * Math.sin(t * 2 + p.ph);
+  });
+  $("prog").style.width = `${clamp(t / S[S.length - 1]) * 1080}px`;
+
+  let sc = 0; while (sc < S.length - 2 && t >= S[sc + 1]) sc++;
+  const kind = kinds[sc], u = t - S[sc];
+  ["hook", "pt", "quote", "cta"].forEach((k) => $("s-" + k).style.display = k === kind ? "block" : "none");
+  $("flash").style.opacity = sc > 0 ? clamp(0.5 - u * 4) : 0;
+  let shake = sc > 0 ? Math.max(0, 0.18 - u) * 120 : 0;
+
+  if (kind === "hook") {
+    rise($("h-kick"), u - 0.05, 30, 0.25);
+    slam($("h-a"), u - 0.15, 2.8);
+    slam($("h-b"), u - 1.1, 1.8);
+    shake += Math.max(0, 0.15 - Math.abs(u - 0.3)) * 100 + Math.max(0, 0.12 - Math.abs(u - 1.25)) * 70;
+    $("h-sw").style.left = `${-300 + ((u % 1.8) / 1.0) * 1500}px`;
+  }
+  if (kind === "pt") {
+    const i = sc - 1, p = D.points[i];
+    if (lastPt !== i) {
+      $("p-num").textContent = String(i + 1).padStart(2, "0");
+      fit($("p-title"), p.title, 120, 76, 2);
+      fit($("p-detail"), p.detail, 60, 42, 4);
+      lastPt = i;
+    }
+    const kn = back(u / 0.4);
+    $("p-num").style.opacity = clamp(u / 0.1);
+    $("p-num").style.transform = `translateX(${(1 - kn) * -500}px)`;
+    slam($("p-title"), u - 0.2, 2.0);
+    const kc = back((u - 0.7) / 0.45);
+    $("p-detail").style.opacity = clamp((u - 0.7) / 0.1);
+    $("p-detail").style.transform = `translateX(${(1 - kc) * 1100}px) rotate(${(1 - kc) * 5}deg)`;
+  }
+  if (kind === "quote") {
+    slam($("q-text"), u - 0.2, 1.6); rise($("q-sub"), u - 1.0, 30);
+  }
+  if (kind === "cta") {
+    rise($("c-a"), u, 40, 0.3);
+    const b = $("c-box"), kb = back((u - 0.25) / 0.45);
+    b.style.opacity = clamp((u - 0.25) / 0.1); b.style.transform = `scale(${0.6 + 0.4 * kb})`;
+    b.style.boxShadow = `0 0 ${60 + 30 * Math.sin(u * 6)}px rgba(250,204,21,.75)`;
+    slam($("c-b"), u - 1.1, 1.8); rise($("c-c"), u - 1.5, 30);
+    const d = $("c-d"), kd = back((u - 2.0) / 0.35);
+    d.style.opacity = clamp((u - 2.0) / 0.08); d.style.transform = `scale(${(0.5 + 0.5 * kd) * (1 + 0.04 * Math.sin(u * 9))})`;
+  }
+  $("stage").style.transform = shake ? `translate(${Math.sin(t * 90) * shake * 0.3}px,${Math.cos(t * 77) * shake * 0.3}px)` : "none";
+};
+</script></body></html>
