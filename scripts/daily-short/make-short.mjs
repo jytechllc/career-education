@@ -57,7 +57,7 @@ const SCRIPT_TOOL = {
       kicker: { type: "string", description: "≤12字，栏目/场景提示，如「HR 最常问的问题」" },
       hook: { type: "array", items: { type: "string" }, minItems: 2, maxItems: 2,
         description: "两行大字钩子：第1行≤8字（最抓眼的词），第2行≤16字" },
-      hook_say: { type: "string", description: "开场口播，≤40字，口语化、有悬念" },
+      hook_say: { type: "string", description: "开场口播，≤30字，口语化、有悬念" },
       points: {
         type: "array", minItems: 3, maxItems: 3,
         items: {
@@ -65,13 +65,13 @@ const SCRIPT_TOOL = {
           properties: {
             title: { type: "string", description: "要点标题，≤10字" },
             detail: { type: "string", description: "一句话展开，≤34字，具体可操作" },
-            say: { type: "string", description: "该要点口播，≤50字" },
+            say: { type: "string", description: "该要点口播，≤36字" },
           },
           required: ["title", "detail", "say"],
         },
       },
       quote: { type: "string", description: "收尾金句，≤26字" },
-      quote_say: { type: "string", description: "金句口播，≤36字" },
+      quote_say: { type: "string", description: "金句口播，≤28字" },
       yt_title: { type: "string", description: "YouTube 标题，≤40字，不含话题标签，制造好奇或痛点" },
       hashtags: { type: "array", items: { type: "string" }, description: "4-6个中文话题词，不带#" },
     },
@@ -88,7 +88,7 @@ async function writeScript(post) {
     tool_choice: { type: "tool", name: "save_short" },
     messages: [{
       role: "user",
-      content: `你是「JYCareer 杰圆职场教育」的短视频编导。把下面这篇职场博客改编成一条约 35 秒的竖屏短视频脚本（YouTube Shorts / 抖音风格）。
+      content: `你是「JYCareer 杰圆职场教育」的短视频编导。把下面这篇职场博客改编成一条约 40 秒的竖屏短视频脚本（YouTube Shorts / 抖音风格）。
 
 要求：
 - 只用文章里的观点，不编造统计数字、百分比、公司名或案例。
@@ -112,7 +112,7 @@ ${post.content.slice(0, 6000)}`,
 
 // ---- 3) narration ----------------------------------------------------------
 function tts(text, out) {
-  execFileSync("edge-tts", ["--voice", VOICE, "--rate=+15%", "--text", text, "--write-media", out], { stdio: "pipe" });
+  execFileSync("edge-tts", ["--voice", VOICE, "--rate=+20%", "--text", text, "--write-media", out], { stdio: "pipe" });
 }
 
 // ---- 4) render frames --------------------------------------------------------
