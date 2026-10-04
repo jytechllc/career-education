@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(request: Request) {
   const { name, email, phone, message } = await request.json();
@@ -47,6 +48,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    await logActivity({ actorType: "visitor", actor: String(email).slice(0, 200), action: "contact.submit", detail: { name: String(name).slice(0, 100) } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

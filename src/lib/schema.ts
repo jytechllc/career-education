@@ -7,6 +7,7 @@ import {
   boolean,
   date,
   numeric,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const candidates = pgTable("candidates", {
@@ -201,3 +202,22 @@ export const staffMembers = pgTable("staff_members", {
 });
 
 export type StaffMember = typeof staffMembers.$inferSelect;
+
+// Who did what, across staff, partners, students/visitors, AI and system
+// jobs. Written by lib/activity.ts (never blocks the action it records) and
+// read at /admin/activity. No message or document contents — only what
+// happened, to which record, plus small metadata in `detail`.
+export const activityLog = pgTable("activity_log", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  // staff | partner | student | visitor | ai | system
+  actorType: text("actor_type").notNull(),
+  // email, partner username, model id, or job name
+  actor: text("actor"),
+  action: text("action").notNull(),
+  targetType: text("target_type"),
+  targetId: text("target_id"),
+  detail: jsonb("detail"),
+});
+
+export type ActivityLogEntry = typeof activityLog.$inferSelect;

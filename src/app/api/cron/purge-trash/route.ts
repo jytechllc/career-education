@@ -3,6 +3,7 @@ import { and, eq, isNotNull, lt } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { collegeCoachingApplications, applicationFiles } from "@/lib/schema";
 import { deleteFile } from "@/lib/r2";
+import { logActivity } from "@/lib/activity";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -55,6 +56,13 @@ export async function POST(request: Request) {
       .delete(collegeCoachingApplications)
       .where(eq(collegeCoachingApplications.id, id));
   }
+
+  await logActivity({
+    actorType: "system",
+    actor: "cron",
+    action: "trash.purge",
+    detail: { applicationsPurged: expired.length, filesDeleted, ids: expired.map((e) => e.id) },
+  });
 
   return NextResponse.json({
     ok: true,

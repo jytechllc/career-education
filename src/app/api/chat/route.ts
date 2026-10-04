@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
 
+import { auth0 } from "@/lib/auth0";
+import { logActivity } from "@/lib/activity";
+
 export const runtime = "nodejs";
 
 const MODEL = process.env.BEDROCK_MODEL_ID || "us.anthropic.claude-sonnet-4-6";
@@ -27,6 +30,20 @@ export async function POST(request: Request) {
     });
 
     const textBlock = message.content.find((b) => b.type === "text");
+    const session = await auth0.getSession().catch(() => null);
+
+    // Metadata only — the conversation itself is not stored.
+    await logActivity({
+      actorType: "ai",
+      actor: MODEL,
+      action: "chat.reply",
+      detail: {
+        user: session?.user.email ?? "visitor",
+        turns: Array.isArray(messages) ? messages.length : 0,
+        inputTokens: message.usage.input_tokens,
+        outputTokens: message.usage.output_tokens,
+      },
+    });
 
     return NextResponse.json({
       message: textBlock?.type === "text" ? textBlock.text : "",

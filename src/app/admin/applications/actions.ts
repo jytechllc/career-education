@@ -7,11 +7,14 @@ import { auth0 } from "@/lib/auth0";
 import { staffRoleOf } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 import { collegeCoachingApplications } from "@/lib/schema";
+import { logActivity } from "@/lib/activity";
 
-async function isStaff(): Promise<boolean> {
+/** The signed-in staff member's email, or null when not staff. */
+async function staffEmail(): Promise<string | null> {
   const session = await auth0.getSession();
+  const email = session?.user.email ?? null;
 
-  return !!(session?.user.email_verified && (await staffRoleOf(session.user.email)));
+  return session?.user.email_verified && (await staffRoleOf(email)) ? email : null;
 }
 
 /**
@@ -20,7 +23,9 @@ async function isStaff(): Promise<boolean> {
  * the partner portal uses, so either side can trash and the other sees it.
  */
 async function setTrashed(id: number, trashed: boolean): Promise<{ ok: boolean }> {
-  if (!Number.isInteger(id) || !(await isStaff())) return { ok: false };
+  const actor = await staffEmail();
+
+  if (!Number.isInteger(id) || !actor) return { ok: false };
 
   const [row] = await db
     .update(collegeCoachingApplications)
@@ -28,6 +33,15 @@ async function setTrashed(id: number, trashed: boolean): Promise<{ ok: boolean }
     .where(eq(collegeCoachingApplications.id, id))
     .returning({ id: collegeCoachingApplications.id });
 
+  if (row) {
+    await logActivity({
+      actorType: "staff",
+      actor,
+      action: trashed ? "application.trash" : "application.restore",
+      targetType: "application",
+      targetId: id,
+    });
+  }
   revalidatePath("/admin/applications");
   revalidatePath("/admin");
 

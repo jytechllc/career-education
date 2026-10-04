@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth0 } from "@/lib/auth0";
 import { staffRoleOf } from "@/lib/admin-auth";
 import { syncTalents, type SyncResult } from "@/lib/talents-cache";
+import { logActivity } from "@/lib/activity";
 
 /** "Sync now" on /admin/talents. Any staff member may run it. */
 export async function syncTalentsAction(): Promise<
@@ -17,6 +18,8 @@ export async function syncTalentsAction(): Promise<
 
   try {
     const result = await syncTalents();
+
+    await logActivity({ actorType: "staff", actor: session!.user.email ?? null, action: "talents.sync", detail: { ...result } });
 
     revalidatePath("/admin/talents");
 

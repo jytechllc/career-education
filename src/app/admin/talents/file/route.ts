@@ -4,6 +4,7 @@ import { auth0 } from "@/lib/auth0";
 import { staffRoleOf } from "@/lib/admin-auth";
 import { getSignedInlineUrl } from "@/lib/r2";
 import { readTalentsManifest } from "@/lib/talents-cache";
+import { logActivity } from "@/lib/activity";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,17 @@ export async function GET(req: NextRequest) {
   const file = manifest?.folders.flatMap((f) => f.files).find((f) => f.id === id);
 
   if (!file) return new NextResponse("Not found", { status: 404 });
+
+  const student = manifest!.folders.find((f) => f.files.some((x) => x.id === file.id))?.name;
+
+  await logActivity({
+    actorType: "staff",
+    actor: email,
+    action: "talents.file_open",
+    targetType: "drive_file",
+    targetId: file.id,
+    detail: { name: file.name, student },
+  });
   // Not cached (too large / non-exportable): fall back to Drive.
   if (!file.r2Key) {
     return file.webViewLink

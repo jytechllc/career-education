@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { assertAdmin, envStaffRole } from "@/lib/admin-auth";
 import { staffMembers } from "@/lib/schema";
 import { STAFF_ROLES, type StaffRole } from "@/lib/staff-roles";
+import { logActivity } from "@/lib/activity";
 
 /** `error` is a key into the admin dictionary's staffControls.errors. */
 export type StaffError = "invalidEmail" | "unknownRole" | "pinned" | "self" | "failed";
@@ -35,6 +36,7 @@ export async function saveStaffAction(
         target: staffMembers.email,
         set: { role, updatedAt: sql`now()` },
       });
+    await logActivity({ actorType: "staff", actor: admin.email, action: "staff.save", targetType: "staff", targetId: email, detail: { role } });
     revalidatePath("/admin/staff");
 
     return { ok: true };
@@ -55,6 +57,7 @@ export async function removeStaffAction(emailInput: string): Promise<StaffAction
     if (email === admin.email.toLowerCase()) return { ok: false, error: "self" };
 
     await db.delete(staffMembers).where(eq(staffMembers.email, email));
+    await logActivity({ actorType: "staff", actor: admin.email, action: "staff.remove", targetType: "staff", targetId: email });
     revalidatePath("/admin/staff");
 
     return { ok: true };

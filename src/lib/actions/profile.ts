@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth0 } from "@/lib/auth0";
 import { db } from "@/lib/db";
 import { candidates, type Candidate } from "@/lib/schema";
+import { logActivity } from "@/lib/activity";
 
 export type ProfileInput = {
   phone?: string;
@@ -88,6 +89,7 @@ export async function saveMyProfile(input: ProfileInput) {
       set: { ...values, updatedAt: new Date() },
     });
 
+  await logActivity({ actorType: "student", actor: values.email ?? auth0Id, action: "profile.save", targetType: "candidate", targetId: auth0Id });
   revalidatePath("/[locale]/profile", "page");
   return { ok: true as const };
 }

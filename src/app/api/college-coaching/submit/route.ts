@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { collegeCoachingApplications, applicationFiles, partners } from "@/lib/schema";
+import { logActivity } from "@/lib/activity";
 
 const PARTNER_SLUG = "awesome-college-coaching";
 
@@ -116,6 +117,15 @@ export async function POST(request: Request) {
         });
       }
     }
+
+    await logActivity({
+      actorType: "visitor",
+      actor: email,
+      action: "application.submit",
+      targetType: "application",
+      targetId: application.id,
+      detail: { partner: partner.slug, files: fileFields.filter(({ kind }) => str(form, `${kind}R2Key`)).length },
+    });
 
     // Notify JYEdu + the partner — best-effort, doesn't block success response.
     if (process.env.REVO_API_KEY) {

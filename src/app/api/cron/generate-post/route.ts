@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { generatePost } from "@/lib/blog/generate";
 import { hasLocale, defaultLocale } from "@/lib/i18n";
+import { logActivity } from "@/lib/activity";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -24,6 +25,15 @@ async function handle(request: Request) {
 
   try {
     const post = await generatePost(locale);
+
+    await logActivity({
+      actorType: "ai",
+      actor: post.model ?? "blog-generator",
+      action: "blog.generate",
+      targetType: "post",
+      targetId: post.slug,
+      detail: { locale: post.locale, title: post.title },
+    });
     return NextResponse.json({
       ok: true,
       post: {
@@ -36,6 +46,7 @@ async function handle(request: Request) {
     });
   } catch (error) {
     console.error("generate-post error:", error);
+    await logActivity({ actorType: "ai", actor: "blog-generator", action: "blog.generate_failed", detail: { locale } });
     return NextResponse.json(
       { ok: false, error: "generation_failed" },
       { status: 500 },

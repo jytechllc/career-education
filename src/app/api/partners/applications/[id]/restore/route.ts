@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { collegeCoachingApplications } from "@/lib/schema";
 import { getPartnerSession } from "@/lib/partner-session";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(
   _request: Request,
@@ -30,6 +31,8 @@ export async function POST(
   if (!updated) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+
+  await logActivity({ actorType: "partner", actor: session.username, action: "application.restore", targetType: "application", targetId: id });
 
   return NextResponse.json({ success: true });
 }

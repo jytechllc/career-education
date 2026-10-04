@@ -37,7 +37,15 @@ export default async function AdminLayout({
 
   const { lang, t } = await getAdminDict();
   const path = (await headers()).get("x-pathname") ?? "/admin";
-  const nav = [...NAV, ...(role === "admin" ? [{ href: "/admin/staff", key: "staff" } as const] : [])];
+  const nav = [
+    ...NAV,
+    ...(role === "admin"
+      ? ([
+          { href: "/admin/activity", key: "activity" },
+          { href: "/admin/staff", key: "staff" },
+        ] as const)
+      : []),
+  ];
 
   return (
     <div className="min-h-screen bg-yellow-50">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { syncTalents } from "@/lib/talents-cache";
+import { logActivity } from "@/lib/activity";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -19,7 +20,11 @@ async function handle(request: Request) {
   }
 
   try {
-    return NextResponse.json(await syncTalents());
+    const result = await syncTalents();
+
+    await logActivity({ actorType: "system", actor: "cron", action: "talents.sync", detail: { ...result } });
+
+    return NextResponse.json(result);
   } catch (e) {
     console.error("[cron/sync-talents]", e);
 
