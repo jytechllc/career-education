@@ -192,7 +192,7 @@ async function bufferPost(videoUrl, title, description) {
     `aiAssisted: true`,
     `schedulingType: automatic`,
     `assets: [{ video: { url: ${q(videoUrl)} } }]`,
-    `metadata: { youtube: { title: ${q(title)}, categoryId: ${q("27")}, privacy: ${process.env.CLIP_YT_PRIVACY || "public"}, madeForKids: false, isAiGenerated: true } }`,
+    `metadata: { youtube: { title: ${q(title)}, categoryId: ${q("28")}, privacy: ${process.env.CLIP_YT_PRIVACY || "public"}, madeForKids: false, isAiGenerated: true } }`,
   ].join(", ");
   const res = await fetch("https://api.buffer.com", {
     method: "POST",
@@ -216,6 +216,18 @@ const work = path.resolve(HERE, "out", `${date}-${post.slug}`);
 fs.mkdirSync(work, { recursive: true });
 
 const script = await writeScript(post);
+
+// Hard guard: the prompt forbids invented numbers, but the model still slipped
+// "90%的人" into a title once. Any percentage, or a number that isn't in the
+// article, falls back to safe text instead of shipping a fake statistic.
+const source = `${post.title}\n${post.summary ?? ""}\n${post.content}`;
+const fakeNumber = (text) =>
+  /\d+(\.\d+)?\s*[%％]|百分之/.test(text) ||
+  (text.match(/\d+(\.\d+)?/g) ?? []).some((n) => n !== "3" && !source.includes(n));
+if (fakeNumber(script.yt_title)) { console.log(`Title had an unsupported number, using post title: ${script.yt_title}`); script.yt_title = post.title.slice(0, 40); }
+if (script.hook.some(fakeNumber)) { console.log(`Hook had an unsupported number: ${script.hook.join(" / ")}`); script.hook = [post.category || "职场干货", post.title.slice(0, 16)]; }
+script.points.forEach((p) => { if (fakeNumber(p.title) || fakeNumber(p.detail) || fakeNumber(p.say)) throw new Error(`Point has an unsupported number: ${p.title} / ${p.detail}`); });
+if (fakeNumber(script.quote) || fakeNumber(script.hook_say) || fakeNumber(script.quote_say)) throw new Error("Quote/narration has an unsupported number");
 fs.writeFileSync(path.join(work, "script.json"), JSON.stringify(script, null, 2));
 console.log("Script:", script.hook.join(" / "));
 
@@ -260,5 +272,34 @@ fs.writeFileSync(path.join(work, "meta.json"), JSON.stringify({ title, descripti
 if (DRY) { console.log("DRY_RUN — not publishing.\n" + title); process.exit(0); }
 const url = await uploadR2(final, `jycareer-shorts/${date}-${post.slug}.mp4`);
 console.log("R2:", url);
-const id = await bufferPost(url, title, description);
+async function postStatus(id) {
+  const res = await fetch("https://api.buffer.com", {
+    method: "POST",
+    headers: { "content-type": "application/json", Authorization: `Bearer ${reqEnv("BUFFER_API_KEY")}` },
+    body: JSON.stringify({ query: `{ post(input: { id: ${JSON.stringify(id)} }) { status externalLink error { message } } }` }),
+  });
+  return (await res.json()).data?.post;
+}
+// shareNow goes out asynchronously; poll until YouTube accepts or Buffer reports an error.
+async function waitSent(id) {
+  for (let i = 0; i < 30; i++) {
+    await new Promise((r) => setTimeout(r, 10_000));
+    const p = await postStatus(id);
+    if (p?.status === "sent") return p;
+    if (p?.status === "error") return p;
+  }
+  return { status: "timeout" };
+}
+
+let id = await bufferPost(url, title, description);
 console.log(`Buffer ${MODE} → post ${id}\n${title}`);
+if (MODE === "shareNow") {
+  let result = await waitSent(id);
+  if (result.status === "error") {
+    console.log(`Buffer error: ${result.error?.message} — retrying once`);
+    id = await bufferPost(url, title, description);
+    result = await waitSent(id);
+  }
+  if (result.status !== "sent") throw new Error(`YouTube publish failed (${result.status}): ${result.error?.message ?? "no response"} — Buffer post ${id}`);
+  console.log(`Published: ${result.externalLink}`);
+}
