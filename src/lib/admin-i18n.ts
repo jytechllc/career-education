@@ -29,6 +29,14 @@ const zh = {
   logout: "退出",
   switchTo: "EN",
   roles: { admin: "管理员", supervisor: "主管" },
+  noAccess: {
+    title: "没有访问权限",
+    notStaff: "当前登录的账号 {email} 没有管理后台的访问权限。如需开通，请联系管理员。",
+    unverified: "当前登录的账号 {email} 尚未完成邮箱验证。请先点击验证邮件中的链接，再重新登录。",
+    adminOnly: "此页面仅限管理员访问，当前账号 {email} 没有该权限。",
+    switchAccount: "退出并切换账号",
+    backToAdmin: "返回后台首页",
+  },
   dateLocale: "zh-CN",
   overview: {
     title: "概览",
@@ -174,6 +182,14 @@ const en: AdminDict = {
   logout: "Log out",
   switchTo: "中文",
   roles: { admin: "Admin", supervisor: "Supervisor" },
+  noAccess: {
+    title: "No access",
+    notStaff: "The signed-in account {email} doesn't have access to the admin portal. Ask an admin to grant you access.",
+    unverified: "The signed-in account {email} hasn't verified its email yet. Click the link in the verification email, then sign in again.",
+    adminOnly: "This page is for admins only. The account {email} doesn't have that role.",
+    switchAccount: "Sign out and switch account",
+    backToAdmin: "Back to admin home",
+  },
   dateLocale: "en-US",
   overview: {
     title: "Overview",

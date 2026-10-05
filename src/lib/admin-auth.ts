@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { eq } from "drizzle-orm";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { auth0 } from "./auth0";
 import { db } from "./db";
@@ -65,8 +65,8 @@ export async function staffRoleOf(
 
 /**
  * Page gate for /admin. Signed out → login and back to `returnTo`; signed in
- * but not staff (or not an admin, with `adminOnly`) → 404, so the route's
- * existence stays unconfirmed.
+ * but not staff (or not an admin, with `adminOnly`) → /admin/no-access, which
+ * tells them why and lets them switch accounts.
  */
 export async function requireStaff(
   returnTo: string,
@@ -79,7 +79,11 @@ export async function requireStaff(
   const email = session.user.email ?? null;
   const role = session.user.email_verified ? await staffRoleOf(email) : null;
 
-  if (!role || (adminOnly && role !== "admin")) notFound();
+  if (!role || (adminOnly && role !== "admin")) {
+    const reason = !session.user.email_verified ? "unverified" : role ? "admin-only" : "not-staff";
+
+    redirect(`/admin/no-access?reason=${reason}`);
+  }
 
   return { email: email!, role };
 }
