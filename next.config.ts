@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 import path from "node:path";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // forbidden() → app/admin/forbidden.tsx with a real 403 status.
+    authInterrupts: true,
+  },
   turbopack: {
     root: path.resolve(__dirname),
   },

@@ -1,17 +1,24 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 /**
  * /admin lives outside the [locale] routes, so its language is a cookie set
- * by the EN / 中文 switch in the admin header (/admin/lang). Chinese default.
+ * by the EN / 中文 switch (/admin/lang). Without the cookie, follow the
+ * browser: English if Accept-Language prefers it, otherwise Chinese.
  */
 export type AdminLang = "zh" | "en";
 
 export const ADMIN_LANG_COOKIE = "jyedu_admin_lang";
 
 export async function getAdminLang(): Promise<AdminLang> {
-  return (await cookies()).get(ADMIN_LANG_COOKIE)?.value === "en" ? "en" : "zh";
+  const saved = (await cookies()).get(ADMIN_LANG_COOKIE)?.value;
+
+  if (saved === "en" || saved === "zh") return saved;
+
+  const accept = ((await headers()).get("accept-language") ?? "").toLowerCase();
+
+  return accept.startsWith("en") ? "en" : "zh";
 }
 
 const zh = {
