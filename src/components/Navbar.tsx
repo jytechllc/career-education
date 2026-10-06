@@ -54,6 +54,7 @@ export const Navbar = ({ locale, dict, user, isStaff = false }: NavbarProps) => 
       items: [
         { label: dict.nav.graduateAdmission, href: `/${locale}/graduate-admission` },
         { label: dict.nav.phdAdmission, href: `/${locale}/phd-admission` },
+        { label: dict.nav.usTop100, href: `/${locale}/us-top-100` },
       ],
     },
     {
