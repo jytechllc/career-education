@@ -16,6 +16,9 @@ on:
         type: choice
         options: [dry, draft, shareNow]
         default: dry
+      script_file:
+        description: "Hand-written script JSON under scripts/daily-short/ (blank = Bedrock writes it)"
+        required: false
 
 permissions:
   id-token: write # AWS OIDC for Bedrock
@@ -74,6 +77,7 @@ jobs:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
           BUFFER_YT_CHANNEL_ID: ${{ secrets.BUFFER_YT_CHANNEL_ID }}
           POST_SLUG: ${{ inputs.slug }}
+          SCRIPT_FILE: ${{ inputs.script_file }}
           DRY_RUN: ${{ inputs.mode == 'dry' && '1' || '' }}
           CLIP_PUBLISH_MODE: ${{ inputs.mode == 'draft' && 'draft' || 'shareNow' }}
           CLIP_YT_PRIVACY: public

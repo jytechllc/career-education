@@ -12,7 +12,9 @@
  *      DRY_RUN=1 (render only), R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY,
  *      R2_BUCKET_NAME, R2_PUBLIC_URL, BUFFER_API_KEY, BUFFER_YT_CHANNEL_ID,
  *      CLIP_PUBLISH_MODE (shareNow | draft, default draft), CLIP_YT_PRIVACY (public),
- *      CHROME_PATH? (use a local Chrome instead of Playwright's), PYTHON? (python3).
+ *      CHROME_PATH? (use a local Chrome instead of Playwright's), PYTHON? (python3),
+ *      SCRIPT_FILE? (hand-written script JSON, relative to this folder — skips Bedrock;
+ *      the number guards below still apply).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -215,7 +217,11 @@ const date = new Date(post.published_at).toISOString().slice(0, 10);
 const work = path.resolve(HERE, "out", `${date}-${post.slug}`);
 fs.mkdirSync(work, { recursive: true });
 
-const script = await writeScript(post);
+// A reviewed, hand-written script (e.g. a topic where the model's draft got
+// facts wrong) replaces the Bedrock draft; same shape as SCRIPT_TOOL.
+const script = process.env.SCRIPT_FILE
+  ? JSON.parse(fs.readFileSync(path.resolve(HERE, process.env.SCRIPT_FILE), "utf8"))
+  : await writeScript(post);
 
 // Hard guard: the prompt forbids invented numbers, but the model still slipped
 // "90%的人" into a title once. Any percentage, or a number that isn't in the
