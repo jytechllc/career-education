@@ -44,7 +44,14 @@ type Copy = {
     subtitle: string;
     steps: { title: string; body: string }[];
   };
-  services: { title: string; items: string[]; link: string };
+  services: {
+    title: string;
+    priceLabel: string;
+    price: string;
+    priceNote: string;
+    items: string[];
+    link: string;
+  };
   disclaimer: string;
   cta: { title: string; body: string; phone: string; wechat: string };
 };
@@ -64,7 +71,7 @@ const zh: Copy = {
   stats: [
     { value: "19", label: "所美国目标名校" },
     { value: "4", label: "所 QS 世界前 10" },
-    { value: "0", label: "元续服务咨询费" },
+    { value: "$5,000", label: "预估费用（美元）" },
   ],
   schoolsTitle: "目标院校",
   schoolsSource: "排名依据：QS 世界大学排名 2026",
@@ -132,6 +139,9 @@ const zh: Copy = {
   },
   services: {
     title: "服务内容",
+    priceLabel: "预估费用",
+    price: "$5,000",
+    priceNote: "美元 · 实际费用以背景评估后签署的服务协议为准，不含院校申请费等第三方费用",
     items: [
       "数据驱动选校定位",
       "资深文书顾问团队撰写，资深导师终审",
@@ -140,7 +150,7 @@ const zh: Copy = {
       "真人模拟面试",
       "全程跟进至录取结果",
     ],
-    link: "查看服务档位与价格",
+    link: "了解更多留学申请服务",
   },
   disclaimer:
     "院校录取与否的最终决定权在目标院校。本计划所称「保 Offer」，是指上述「未录取则续服务、不另收咨询服务费」的承诺，具体保障范围与条件以签署的服务协议为准。院校申请费、标准化考试报名费等第三方费用由学生/家庭直接支付。",
@@ -167,7 +177,7 @@ const en: Copy = {
   stats: [
     { value: "19", label: "target US universities" },
     { value: "4", label: "in the QS World Top 10" },
-    { value: "$0", label: "counselling fee for extra seasons" },
+    { value: "$5,000", label: "estimated fee (USD)" },
   ],
   schoolsTitle: "Target universities",
   schoolsSource: "Rankings: QS World University Rankings 2026",
@@ -235,6 +245,9 @@ const en: Copy = {
   },
   services: {
     title: "What's included",
+    priceLabel: "Estimated fee",
+    price: "$5,000",
+    priceNote: "USD · the final fee is set in the service agreement signed after your assessment, excluding application and other third-party fees",
     items: [
       "Data-driven school selection",
       "Essays by senior writers, final review by a senior advisor",
@@ -243,7 +256,7 @@ const en: Copy = {
       "Live mock interviews",
       "Support through to final decisions",
     ],
-    link: "See packages and pricing",
+    link: "Explore other admissions services",
   },
   disclaimer:
     "Admission decisions rest solely with the universities. The \"offer guarantee\" means the commitment above — continued service at no extra counselling fee if no offer is secured — and its exact scope and conditions are set by the signed service agreement. Application, test and other third-party fees are paid directly by the student/family.",
@@ -441,7 +454,18 @@ export default async function UsTop100Page({
         </section>
 
         <section className="mb-8 sm:mb-12 rounded-xl border border-yellow-100 bg-white p-5 sm:p-8 shadow-lg">
-          <h2 className="text-2xl sm:text-3xl font-bold text-yellow-900 mb-5">{c.services.title}</h2>
+          <div className="mb-6 flex flex-col gap-4 border-b border-yellow-100 pb-6 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="text-2xl sm:text-3xl font-bold text-yellow-900">{c.services.title}</h2>
+            <div className="sm:text-right">
+              <p className="text-xs font-semibold tracking-wide text-yellow-700">
+                {c.services.priceLabel}
+              </p>
+              <p className="text-3xl sm:text-4xl font-bold text-yellow-900 tabular-nums">
+                {c.services.price}
+              </p>
+              <p className="mt-1 max-w-sm text-xs text-gray-500">{c.services.priceNote}</p>
+            </div>
+          </div>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {c.services.items.map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm sm:text-base text-gray-800">
