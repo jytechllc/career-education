@@ -41,7 +41,7 @@ async function pickPost() {
   const sql = neon(reqEnv("DATABASE_URL"));
   const slug = process.env.POST_SLUG;
   const rows = slug
-    ? await sql`select slug, title, summary, content, category, tags, published_at from posts where slug = ${slug} limit 1`
+    ? await sql`select slug, title, summary, content, category, tags, published_at from posts where slug = ${slug} and locale = 'zh' limit 1`
     : await sql`select slug, title, summary, content, category, tags, published_at from posts
         where locale = 'zh' and status = 'published'
           and published_at > now() - make_interval(hours => ${Number(process.env.MAX_AGE_HOURS || 20)})

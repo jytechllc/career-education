@@ -8,6 +8,7 @@ import {
   date,
   numeric,
   jsonb,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const candidates = pgTable("candidates", {
@@ -54,7 +55,9 @@ export type NewCandidate = typeof candidates.$inferInsert;
 // Auto-generated job-market / career blog posts.
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
-  slug: text("slug").unique().notNull(),
+  // Unique per locale (not globally): /zh/blog/x and /en/blog/x can be the
+  // same article in two languages.
+  slug: text("slug").notNull(),
   locale: text("locale").notNull().default("zh"),
   title: text("title").notNull(),
   summary: text("summary"),
@@ -67,7 +70,7 @@ export const posts = pgTable("posts", {
   status: text("status").notNull().default("published"),
   publishedAt: timestamp("published_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => [unique("posts_locale_slug_unique").on(t.locale, t.slug)]);
 
 export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
