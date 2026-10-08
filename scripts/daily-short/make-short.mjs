@@ -108,11 +108,11 @@ const SCRIPT_TOOL = {
   },
 };
 
-async function writeScript(post) {
+async function draftScript(post) {
   const client = new AnthropicBedrock({ awsRegion: process.env.AWS_REGION || "us-east-1" });
   const msg = await client.messages.create({
     model: MODEL,
-    max_tokens: 2000,
+    max_tokens: 4000,
     tools: [SCRIPT_TOOL],
     tool_choice: { type: "tool", name: "save_short" },
     messages: [{
@@ -138,16 +138,34 @@ ${post.content.slice(0, 6000)}`,
     }],
   });
   const tool = msg.content.find((b) => b.type === "tool_use");
-  if (!tool) throw new Error("model returned no save_short call");
+  if (!tool) throw new Error(`model returned no save_short call (stop: ${msg.stop_reason})`);
+  if (msg.stop_reason === "max_tokens") throw new Error("script cut off at max_tokens");
   // The model sometimes sends a nested field as a JSON string ("[{...}]")
   // instead of the array/object itself; parse those back.
   const input = { ...tool.input };
   for (const k of ["hook", "points", "broll", "source", "hashtags"]) {
     if (typeof input[k] === "string") {
-      try { input[k] = JSON.parse(input[k]); } catch { throw new Error(`save_short.${k} is not valid JSON: ${input[k].slice(0, 80)}`); }
+      try { input[k] = JSON.parse(input[k]); } catch { throw new Error(`save_short.${k} is not valid JSON: ${input[k].slice(0, 200)}`); }
     }
   }
+  const shapeOk = Array.isArray(input.hook) && input.hook.length === 2 &&
+    Array.isArray(input.points) && input.points.length === 3 &&
+    input.points.every((p) => p?.title && p?.detail && p?.say) &&
+    Array.isArray(input.broll) && Array.isArray(input.hashtags);
+  if (!shapeOk) throw new Error(`save_short has the wrong shape: ${JSON.stringify(input).slice(0, 200)}`);
   return input;
+}
+
+/** A malformed tool call is usually a one-off; ask again before failing the day. */
+async function writeScript(post) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await draftScript(post);
+    } catch (e) {
+      if (attempt >= 3) throw e;
+      console.log(`Script attempt ${attempt} failed (${e.message}) — retrying`);
+    }
+  }
 }
 
 // ---- 3) narration ----------------------------------------------------------
