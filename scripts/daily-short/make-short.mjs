@@ -139,7 +139,15 @@ ${post.content.slice(0, 6000)}`,
   });
   const tool = msg.content.find((b) => b.type === "tool_use");
   if (!tool) throw new Error("model returned no save_short call");
-  return tool.input;
+  // The model sometimes sends a nested field as a JSON string ("[{...}]")
+  // instead of the array/object itself; parse those back.
+  const input = { ...tool.input };
+  for (const k of ["hook", "points", "broll", "source", "hashtags"]) {
+    if (typeof input[k] === "string") {
+      try { input[k] = JSON.parse(input[k]); } catch { throw new Error(`save_short.${k} is not valid JSON: ${input[k].slice(0, 80)}`); }
+    }
+  }
+  return input;
 }
 
 // ---- 3) narration ----------------------------------------------------------
