@@ -4,9 +4,11 @@
  *   1. pick today's zh post from Neon (or POST_SLUG)
  *   2. Claude on Bedrock condenses it into a short script (hook / 3 points / quote)
  *   3. edge-tts narration per scene → scene timing
- *   4. template.html rendered frame-by-frame with Playwright → ffmpeg
- *   5. bgm.py synthesizes a royalty-free bed; ducked under the voice, loudnorm
- *   6. upload mp4 to R2 (public URL) → Buffer createPost on the YouTube channel
+ *   4. visuals per scene (broll.mjs): free stock footage, US-federal public-domain
+ *      photos, and an optional screenshot of the official page the claim rests on
+ *   5. template.html rendered frame-by-frame with Playwright → ffmpeg
+ *   6. bgm.py synthesizes a royalty-free bed; ducked under the voice, loudnorm
+ *   7. upload mp4 to R2 (public URL) → Buffer createPost on the YouTube channel
  *
  * Env: DATABASE_URL, AWS_REGION, BEDROCK_MODEL_ID?, POST_SLUG?, MAX_AGE_HOURS? (20),
  *      DRY_RUN=1 (render only), R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY,
@@ -14,7 +16,12 @@
  *      CLIP_PUBLISH_MODE (shareNow | draft, default draft), CLIP_YT_PRIVACY (public),
  *      CHROME_PATH? (use a local Chrome instead of Playwright's), PYTHON? (python3),
  *      SCRIPT_FILE? (hand-written script JSON, relative to this folder — skips Bedrock;
- *      the number guards below still apply).
+ *      the number guards below still apply), PEXELS_API_KEY? / PIXABAY_API_KEY? (stock
+ *      footage; without either the scenes keep the coded background).
+ *
+ * A hand-written script may also set `hook_media`, `points[i].media`, `quote_media`
+ * to { file, credit, license, url } — e.g. a CC-BY clip we comment on. Those beat
+ * the automatic picks, and every credit is shown on screen and in the description.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -23,6 +30,8 @@ import { neon } from "@neondatabase/serverless";
 import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { chromium } from "playwright";
+
+import { SOURCES, govImage, manualMedia, shootSource, stockVideo } from "./broll.mjs";
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const SITE = "https://edu.jytech.us";
@@ -74,10 +83,28 @@ const SCRIPT_TOOL = {
       },
       quote: { type: "string", description: "收尾金句，≤26字" },
       quote_say: { type: "string", description: "金句口播，≤28字" },
+      broll: {
+        type: "array", minItems: 5, maxItems: 5, items: { type: "string" },
+        description: "5 个英文素材库搜索词（依次对应：开场、要点1、要点2、要点3、金句），2-4 个英文单词，描述可拍到的画面，如 \"job interview handshake\"、\"university campus students\"；不要抽象概念",
+      },
+      gov_image: {
+        type: "string",
+        description: "仅移民/签证/政策类选题填写：英文搜索词，用于找美国联邦政府公有领域照片做开场背景，如 \"naturalization ceremony\"、\"USCIS office\"；其他选题留空字符串",
+      },
+      source: {
+        type: "object",
+        description: "仅当文章观点能被下列官方原文直接佐证时填写，否则 id 填 none",
+        properties: {
+          id: { type: "string", enum: ["none", ...Object.keys(SOURCES)] },
+          gist: { type: "string", description: "原文要点的中文转述，≤34字，只转述原文高亮句，不加推断" },
+          say: { type: "string", description: "该场景口播，≤36字，以「官网原文写得很清楚」之类开头" },
+        },
+        required: ["id", "gist", "say"],
+      },
       yt_title: { type: "string", description: "YouTube 标题，≤40字，不含话题标签，制造好奇或痛点" },
       hashtags: { type: "array", items: { type: "string" }, description: "4-6个中文话题词，不带#" },
     },
-    required: ["kicker", "hook", "hook_say", "points", "quote", "quote_say", "yt_title", "hashtags"],
+    required: ["kicker", "hook", "hook_say", "points", "quote", "quote_say", "broll", "gov_image", "source", "yt_title", "hashtags"],
   },
 };
 
@@ -98,6 +125,9 @@ async function writeScript(post) {
 - 三个要点各自独立成立，标题短促有力，展开句具体可操作。
 - 口播是给 AI 配音读的：简体中文、口语化、短句，不要英文缩写和符号。
 - 严格遵守各字段字数上限（屏幕放不下）。
+- 画面会用真实素材做背景：broll 写能拍到的具体场景；政策类选题再给 gov_image。
+- source 只能从下面的官方原文里选，原文必须直接支持文章观点，拿不准就填 none：
+${Object.entries(SOURCES).map(([id, x]) => `  - ${id}：${x.about}（原文："${x.highlight}"）`).join("\n")}
 
 文章标题：${post.title}
 分类：${post.category ?? ""}
@@ -208,6 +238,58 @@ async function bufferPost(videoUrl, title, description) {
   return json.data?.createPost?.post?.id;
 }
 
+// ---- 4b) visuals -----------------------------------------------------------------
+/** One media item (or null) per scene. Manual media wins, then source/gov/stock. */
+async function gatherMedia(work, scenes, script, source) {
+  const dir = path.join(work, "media");
+  fs.mkdirSync(dir, { recursive: true });
+  const queries = script.broll ?? [];
+  const manual = [script.hook_media, ...script.points.map((p) => p.media), script.quote_media];
+  let browser = null;
+  const out = [];
+  let content = 0; // index among hook/points/quote, which line up with broll[] and manual[]
+  for (const [i, sc] of scenes.entries()) {
+    const f = (ext) => path.join(dir, `s${i}.${ext}`);
+    if (sc.kind === "cta") { out.push(null); continue; }
+    if (sc.kind === "source") {
+      browser ??= await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
+      out.push(await shootSource(browser, source.id, f("jpg")));
+      continue;
+    }
+    const k = content++;
+    out.push(
+      manualMedia(HERE, manual[k]) ??
+      (sc.kind === "hook" && script.gov_image ? await govImage(script.gov_image, f("jpg")) : null) ??
+      (await stockVideo(queries[k], f("mp4"))),
+    );
+  }
+  await browser?.close();
+  return out;
+}
+
+/**
+ * Video → a JPEG per output frame, cropped to 9:16 and looped to the scene
+ * length, so the frame-stepped renderer can show frame N exactly (headless
+ * Chromium cannot decode H.264). Images are animated in the template instead.
+ */
+function toBackground(work, m, i, seconds) {
+  if (m.kind === "image") return { type: "image", src: "file://" + m.file };
+  const dir = path.join(work, "media", `f${i}`);
+  fs.mkdirSync(dir, { recursive: true });
+  ff(["-stream_loop", "-1", "-i", m.file, "-t", seconds.toFixed(2), "-an",
+    "-vf", `scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=${FPS}`,
+    "-q:v", "5", path.join(dir, "%05d.jpg")]);
+  return { type: "frames", dir: "file://" + dir, count: fs.readdirSync(dir).length };
+}
+
+/** Attribution block for the YouTube description. */
+function creditLines(media) {
+  const seen = new Set();
+  const rows = media.filter(Boolean).filter((m) => !seen.has(m.url) && seen.add(m.url))
+    .map((m) => `· ${m.credit}（${m.license}）${m.url ? " " + m.url : ""}`);
+  return rows.length ? ["", "素材来源：", ...rows, ""] : [];
+}
+
 // ---- main --------------------------------------------------------------------
 const post = await pickPost();
 if (!post) { console.log("No fresh zh post — nothing to do."); process.exit(0); }
@@ -226,37 +308,55 @@ const script = process.env.SCRIPT_FILE
 // Hard guard: the prompt forbids invented numbers, but the model still slipped
 // "90%的人" into a title once. Any percentage, or a number that isn't in the
 // article, falls back to safe text instead of shipping a fake statistic.
-const source = `${post.title}\n${post.summary ?? ""}\n${post.content}`;
+const sourceText = `${post.title}\n${post.summary ?? ""}\n${post.content}`;
 const fakeNumber = (text) =>
   /\d+(\.\d+)?\s*[%％]|百分之/.test(text) ||
-  (text.match(/\d+(\.\d+)?/g) ?? []).some((n) => n !== "3" && !source.includes(n));
+  (text.match(/\d+(\.\d+)?/g) ?? []).some((n) => n !== "3" && !sourceText.includes(n));
 if (fakeNumber(script.yt_title)) { console.log(`Title had an unsupported number, using post title: ${script.yt_title}`); script.yt_title = post.title.slice(0, 40); }
 if (script.hook.some(fakeNumber)) { console.log(`Hook had an unsupported number: ${script.hook.join(" / ")}`); script.hook = [post.category || "职场干货", post.title.slice(0, 16)]; }
 script.points.forEach((p) => { if (fakeNumber(p.title) || fakeNumber(p.detail) || fakeNumber(p.say)) throw new Error(`Point has an unsupported number: ${p.title} / ${p.detail}`); });
 if (fakeNumber(script.quote) || fakeNumber(script.hook_say) || fakeNumber(script.quote_say)) throw new Error("Quote/narration has an unsupported number");
+const source = script.source && SOURCES[script.source.id] ? script.source : null;
+if (source) {
+  // The gist may restate a number from the official sentence (e.g. 12 months).
+  const allowed = `${sourceText}\n${SOURCES[source.id].highlight}`;
+  const bad = (t) => /\d+(\.\d+)?\s*[%％]|百分之/.test(t) || (t.match(/\d+(\.\d+)?/g) ?? []).some((n) => !allowed.includes(n));
+  if (bad(source.gist) || bad(source.say)) throw new Error(`Source scene has an unsupported number: ${source.gist}`);
+}
 fs.writeFileSync(path.join(work, "script.json"), JSON.stringify(script, null, 2));
-console.log("Script:", script.hook.join(" / "));
+console.log("Script:", script.hook.join(" / "), source ? `· source ${source.id}` : "");
 
-const lines = [
-  script.hook_say,
-  ...script.points.map((p) => p.say),
-  script.quote_say,
-  "完整文章在杰圆职场教育官网。关注 JYCareer，每天一条职场干货！",
+// Scene list: hook, three points, the official source (if any), quote, CTA.
+const scenes = [
+  { kind: "hook", say: script.hook_say, min: 2.8 },
+  ...script.points.map((p) => ({ kind: "pt", say: p.say, min: 3.2 })),
+  ...(source ? [{ kind: "source", say: source.say, min: 3.6 }] : []),
+  { kind: "quote", say: script.quote_say, min: 2.8 },
+  { kind: "cta", say: "完整文章在杰圆职场教育官网。关注 JYCareer，每天一条职场干货！", min: 4.0 },
 ];
-const voices = lines.map((t, i) => { const f = path.join(work, `v${i}.mp3`); tts(t, f); return f; });
-const MIN = [2.8, 3.2, 3.2, 3.2, 2.8, 4.0]; // keep each scene long enough for its animation
+const voices = scenes.map((sc, i) => { const f = path.join(work, `v${i}.mp3`); tts(sc.say, f); return f; });
 const starts = [0];
-voices.forEach((f, i) => starts.push(starts[i] + Math.max(MIN[i], dur(f) + 0.35) + (i === voices.length - 1 ? 1.5 : 0)));
+voices.forEach((f, i) => starts.push(starts[i] + Math.max(scenes[i].min, dur(f) + 0.35) + (i === voices.length - 1 ? 1.5 : 0)));
 console.log("Scenes:", starts.map((s) => s.toFixed(1)).join(" "));
+
+// ---- visuals ----------------------------------------------------------------
+const media = await gatherMedia(work, scenes, script, source);
+const bgs = media.map((m, i) => (m ? toBackground(work, m, i, starts[i + 1] - starts[i]) : null));
+media.forEach((m, i) => console.log(`  scene ${i} ${scenes[i].kind}: ${m ? `${m.kind} ${m.credit}` : "coded background"}`));
 
 const silent = path.join(work, "video.mp4");
 const frames = await render({
-  starts, hook: script.hook, kicker: script.kicker, points: script.points, quote: script.quote,
+  starts, kinds: scenes.map((sc) => sc.kind), bgs,
+  credits: media.map((m) => (m ? (m.source ? m.source.label : `画面：${m.credit}`) : "")),
+  source: source && media[scenes.findIndex((sc) => sc.kind === "source")]
+    ? { label: SOURCES[source.id].label, host: new URL(SOURCES[source.id].url).hostname, gist: source.gist }
+    : null,
+  hook: script.hook, kicker: script.kicker, points: script.points, quote: script.quote,
   quoteSub: "—— JYCareer 杰圆职场教育", category: post.category,
 }, silent);
 console.log(`Rendered ${frames} frames`);
 
-const hits = [0.15, 1.1, ...starts.slice(1, 4).map((s) => s + 0.2)];
+const hits = [0.15, 1.1, ...scenes.flatMap((sc, i) => (sc.kind === "pt" || sc.kind === "source" ? [starts[i] + 0.2] : []))];
 const final = path.join(work, "short.mp4");
 buildAudio(work, voices, starts, hits, silent, final);
 console.log(`Video: ${final} (${dur(final).toFixed(1)}s)`);
@@ -271,6 +371,7 @@ const description = [
   `完整文章：${SITE}/zh/blog/${post.slug}`,
   "",
   "JYCareer 杰圆职场教育 · 每天一条职场干货",
+  ...creditLines(media),
   tags.join(" "),
 ].join("\n");
 fs.writeFileSync(path.join(work, "meta.json"), JSON.stringify({ title, description }, null, 2));

@@ -1,6 +1,9 @@
 {
   "kicker": "留学生签证必看",
-  "hook": ["H-1B", "工资决定中签"],
+  "hook": [
+    "H-1B",
+    "工资决定中签"
+  ],
   "hook_say": "抽签不再纯靠运气了，你第一份工作的工资级别，直接决定你有几次机会。",
   "points": [
     {
@@ -21,6 +24,25 @@
   ],
   "quote": "工资级别，就是你的抽签次数",
   "quote_say": "下一轮登记预计在明年三月，现在找工作，就要把工资级别算进去。",
+  "broll": [
+    "university graduation students",
+    "office team meeting",
+    "city skyline business",
+    "signing contract office",
+    "airport travel"
+  ],
+  "gov_image": "naturalization ceremony",
+  "source": {
+    "id": "h1b-lottery",
+    "gist": "原文：USCIS 将在合格登记中按工资级别进行加权抽签",
+    "say": "官网原文写得很清楚，抽签会按工资级别加权，不再是纯随机。"
+  },
   "yt_title": "H-1B抽签改了！工资级别决定你进几次抽签池，留学生第一份offer必看",
-  "hashtags": ["H1B", "美国工签", "留学生求职", "OPT", "北美求职"]
+  "hashtags": [
+    "H1B",
+    "美国工签",
+    "留学生求职",
+    "OPT",
+    "北美求职"
+  ]
 }

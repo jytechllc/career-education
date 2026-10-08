@@ -76,6 +76,9 @@ jobs:
           R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
           BUFFER_YT_CHANNEL_ID: ${{ secrets.BUFFER_YT_CHANNEL_ID }}
+          # Free-licence stock footage; either may be unset (Pexels preferred).
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           POST_SLUG: ${{ inputs.slug }}
           SCRIPT_FILE: ${{ inputs.script_file }}
           DRY_RUN: ${{ inputs.mode == 'dry' && '1' || '' }}
