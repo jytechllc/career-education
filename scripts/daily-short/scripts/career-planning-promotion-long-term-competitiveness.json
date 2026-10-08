@@ -1,0 +1,48 @@
+{
+  "kicker": "长期职场竞争力",
+  "hook": [
+    "职业规划",
+    "你攒的是资产还是经历？"
+  ],
+  "hook_say": "很多人拼命努力，却越干越迷茫——因为根本没搞清楚自己在积累什么。",
+  "points": [
+    {
+      "title": "盘清你的职业资产",
+      "detail": "把过去三年做成的事写下来，问自己：哪些能力可迁移，哪些只在当前岗位有用。",
+      "say": "先做一件事：写下你近三年做成的三件事，找出背后可以带走的能力，这才是你真正的底牌。"
+    },
+    {
+      "title": "转行要先问动机",
+      "detail": "弄清楚是不喜欢行业，还是不喜欢岗位或公司，动机不同解法完全不同。",
+      "say": "转行前必须先问自己：我是讨厌这个行业，还是讨厌现在的公司和上级？搞错了方向，换了也白换。"
+    },
+    {
+      "title": "晋升靠可见度",
+      "detail": "用业务语言汇报：不说「我做了什么」，而说「这件事对业务目标产生了什么影响」。",
+      "say": "晋升卡壳，很多时候不是能力不够，而是贡献只有你自己知道。要学会把成果翻译成老板听得懂的业务语言。"
+    }
+  ],
+  "quote": "方向清晰了，努力才不会内耗。",
+  "quote_say": "职业发展是一场马拉松，方向对了，每一步才算数。",
+  "broll": [
+    "person writing career notes notebook",
+    "professional switching office desk",
+    "employee presenting business report",
+    "team meeting whiteboard discussion",
+    "confident worker walking office hallway"
+  ],
+  "gov_image": "",
+  "source": {
+    "id": "none",
+    "gist": "",
+    "say": ""
+  },
+  "yt_title": "越努力越迷茫？三步建立你的长期职场竞争力",
+  "hashtags": [
+    "职业规划",
+    "职场成长",
+    "晋升攻略",
+    "转行指南",
+    "杰圆职场教育"
+  ]
+}
