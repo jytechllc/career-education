@@ -112,6 +112,14 @@ const zh = {
   phone: "电话",
   wechat: "微信",
   contactNote: "采访、内容合作与素材需求，请注明媒体名称和用途。",
+  archiveTitle: "历史视频",
+  archiveLead: "我们在 YouTube 发布的每一条视频都会自动存档在这里，可下载原片、复制标题和简介后转发。",
+  archiveCount: "共 {n} 条",
+  watch: "YouTube",
+  copyCaption: "复制标题和简介",
+  article: "原文",
+  archiveEmpty: "暂无存档视频。",
+  more: "查看更早的视频",
 };
 
 const en: typeof zh = {
@@ -145,6 +153,14 @@ const en: typeof zh = {
   phone: "Phone",
   wechat: "WeChat",
   contactNote: "For interviews, partnerships or asset requests, please include your outlet and intended use.",
+  archiveTitle: "Video archive",
+  archiveLead: "Every video we publish on YouTube is archived here automatically. Download the original file and copy the title and caption to repost.",
+  archiveCount: "{n} videos",
+  watch: "YouTube",
+  copyCaption: "Copy title & caption",
+  article: "Article",
+  archiveEmpty: "No archived videos yet.",
+  more: "Show earlier videos",
 };
 
 export const pressCopy = (l: Locale) => (l === "en" ? en : zh);

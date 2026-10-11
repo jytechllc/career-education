@@ -1,9 +1,14 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Download, Film, MessageCircle, Newspaper, Palette, Phone, ShieldCheck } from "lucide-react";
+import { Archive, Download, Film, MessageCircle, Newspaper, Palette, Phone, ShieldCheck, Youtube } from "lucide-react";
 import { hasLocale, locales, type Locale } from "@/lib/i18n";
 import { boilerplate, brandColors, MEDIA_CONTACT, pressCopy, pressLogos, pressUrl, pressVideos } from "@/lib/press";
 import { CopyButton } from "@/components/press/CopyButton";
+import { and, count, desc, eq } from "drizzle-orm";
+import { db } from "@/lib/db";
+import { pressVideos as pressVideosTable } from "@/lib/schema";
+
+const ARCHIVE_PAGE = 24;
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -23,12 +28,25 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 const aspect = { "16:9": "aspect-video", "9:16": "aspect-[9/16]", "3:4": "aspect-[3/4]" } as const;
 
-export default async function PressPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function PressPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ more?: string }>;
+}) {
   const { locale } = await params;
   if (!hasLocale(locale)) notFound();
   const l = locale as Locale;
   const t = pressCopy(l);
   const [film, ...shorts] = pressVideos;
+  const limit = (await searchParams).more === "1" ? 500 : ARCHIVE_PAGE;
+  const visible = and(eq(pressVideosTable.hidden, false));
+  const [archive, [{ total }]] = await Promise.all([
+    db.select().from(pressVideosTable).where(visible).orderBy(desc(pressVideosTable.publishedAt)).limit(limit).catch(() => []),
+    db.select({ total: count() }).from(pressVideosTable).where(visible).catch(() => [{ total: 0 }]),
+  ]);
+  const dateFmt = new Intl.DateTimeFormat(l === "zh" ? "zh-CN" : "en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "America/Los_Angeles" });
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -85,6 +103,62 @@ export default async function PressPage({ params }: { params: Promise<{ locale: 
             <VideoCard key={v.file} v={v} l={l} t={t} />
           ))}
         </div>
+      </section>
+
+      {/* Archive of everything published on YouTube */}
+      <section id="archive" className="mt-14 scroll-mt-24">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
+            <Archive className="h-5 w-5 text-yellow-600" />
+            {t.archiveTitle}
+          </h2>
+          <span className="text-sm text-gray-500">{t.archiveCount.replace("{n}", String(total))}</span>
+        </div>
+        <p className="mt-1 text-sm text-gray-500">{t.archiveLead}</p>
+        {archive.length === 0 ? (
+          <p className="mt-5 rounded-2xl border border-dashed border-gray-200 p-8 text-center text-sm text-gray-400">{t.archiveEmpty}</p>
+        ) : (
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {archive.map((a) => {
+              const display = a.title.replace(/\s*#\S+/g, "").trim();
+              return (
+                <article key={a.id} className="flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                  <div className="mx-auto aspect-[9/16] max-h-[420px] w-full bg-black">
+                    <video src={a.videoUrl} poster={a.posterUrl ?? undefined} controls playsInline preload="none" className="h-full w-full object-contain" />
+                  </div>
+                  <div className="flex flex-1 flex-col p-4">
+                    <p className="line-clamp-2 text-sm font-semibold text-gray-900">{display}</p>
+                    <p className="mt-1 text-xs text-gray-500">
+                      {dateFmt.format(a.publishedAt)}
+                      {a.durationSec ? ` · ${Math.floor(a.durationSec / 60)}:${String(a.durationSec % 60).padStart(2, "0")}` : ""}
+                      {a.sizeBytes ? ` · ${(a.sizeBytes / 1e6).toFixed(0)} MB` : ""}
+                    </p>
+                    <div className="mt-auto flex flex-wrap items-center gap-2 pt-3">
+                      <a href={a.videoUrl} className="inline-flex items-center gap-1 rounded-full bg-yellow-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-yellow-700">
+                        <Download className="h-3.5 w-3.5" />
+                        {t.download}
+                      </a>
+                      {a.youtubeUrl && (
+                        <a href={a.youtubeUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:border-red-300 hover:text-red-600">
+                          <Youtube className="h-3.5 w-3.5" />
+                          {t.watch}
+                        </a>
+                      )}
+                      <CopyButton text={`${a.title}\n\n${a.description}`} label={t.copyCaption} done={t.copied} />
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+        {total > archive.length && (
+          <div className="mt-6 text-center">
+            <a href={`/${l}/press?more=1#archive`} className="inline-flex rounded-full border border-gray-200 px-5 py-2 text-sm font-medium text-gray-700 hover:border-yellow-400">
+              {t.more}
+            </a>
+          </div>
+        )}
       </section>
 
       {/* Logos + colors */}

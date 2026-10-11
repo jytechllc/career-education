@@ -226,7 +226,7 @@ function buildAudio(work, voices, starts, hits, video, out) {
 }
 
 // ---- 6) publish ----------------------------------------------------------------
-async function uploadR2(file, key) {
+async function uploadR2(file, key, contentType = "video/mp4") {
   const s3 = new S3Client({
     region: "auto",
     endpoint: `https://${reqEnv("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
@@ -234,9 +234,35 @@ async function uploadR2(file, key) {
   });
   await s3.send(new PutObjectCommand({
     Bucket: reqEnv("R2_BUCKET_NAME"), Key: key, Body: fs.readFileSync(file),
-    ContentType: "video/mp4", CacheControl: "public, max-age=31536000",
+    ContentType: contentType, CacheControl: "public, max-age=31536000",
+    // Videos download (not play inline) from the press page's archive links;
+    // Buffer fetches server-side, so this doesn't affect publishing.
+    ...(contentType === "video/mp4" ? { ContentDisposition: `attachment; filename="jycareer-${path.basename(key)}"` } : {}),
   }));
   return `${reqEnv("R2_PUBLIC_URL").replace(/\/$/, "")}/${key}`;
+}
+
+/**
+ * Record a published Short in press_videos so it shows up in the press page's
+ * archive (edu.jytech.us/press) for partners to download. Never fails the run:
+ * the video is already live on YouTube by the time this runs.
+ */
+async function archiveForPress({ key, file, videoUrl, title, description, postSlug, youtubeUrl }) {
+  try {
+    const poster = file.replace(/\.mp4$/, "-poster.jpg");
+    execFileSync("ffmpeg", ["-v", "error", "-y", "-ss", "2.5", "-i", file, "-frames:v", "1", "-vf", "scale=720:-2", "-q:v", "3", poster]);
+    const posterUrl = await uploadR2(poster, `jycareer-shorts/${key}.jpg`, "image/jpeg");
+    const duration = Math.round(Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString().trim()) || 0);
+    const size = fs.statSync(file).size;
+    const sql = neon(reqEnv("DATABASE_URL"));
+    await sql`insert into press_videos (key, title, description, post_slug, youtube_url, video_url, poster_url, duration_sec, size_bytes, source)
+      values (${key}, ${title}, ${description}, ${postSlug}, ${youtubeUrl}, ${videoUrl}, ${posterUrl}, ${duration}, ${size}, 'daily-short')
+      on conflict (key) do update set title = excluded.title, description = excluded.description, youtube_url = excluded.youtube_url,
+        video_url = excluded.video_url, poster_url = excluded.poster_url, duration_sec = excluded.duration_sec, size_bytes = excluded.size_bytes`;
+    console.log(`Press archive: ${key}`);
+  } catch (e) {
+    console.log(`::warning::Press archive failed (video is still published): ${e.message}`);
+  }
 }
 
 async function bufferPost(videoUrl, title, description) {
@@ -435,4 +461,10 @@ if (MODE === "shareNow") {
   }
   if (result.status !== "sent") throw new Error(`YouTube publish failed (${result.status}): ${result.error?.message ?? "no response"} — Buffer post ${id}`);
   console.log(`Published: ${result.externalLink}`);
+  await archiveForPress({
+    key: `${date}-${post.slug}`, file: final, videoUrl: url, title, description,
+    postSlug: post.slug, youtubeUrl: result.externalLink ?? null,
+  });
+} else {
+  console.log("Draft mode: not added to the press archive until it is published.");
 }

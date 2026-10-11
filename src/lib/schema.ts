@@ -224,3 +224,25 @@ export const activityLog = pgTable("activity_log", {
 });
 
 export type ActivityLogEntry = typeof activityLog.$inferSelect;
+
+// Archive of published Shorts for the press page (/[locale]/press): every video
+// that goes out on YouTube is recorded here so media partners can download and
+// redistribute it. Written by scripts/daily-short/make-short.mjs after publish.
+export const pressVideos = pgTable("press_videos", {
+  id: serial("id").primaryKey(),
+  key: text("key").unique().notNull(), // e.g. 2026-10-11-ai-impact-on-jobs-and-skills
+  title: text("title").notNull(),
+  description: text("description").notNull().default(""),
+  postSlug: text("post_slug"),
+  youtubeUrl: text("youtube_url"),
+  videoUrl: text("video_url").notNull(),
+  posterUrl: text("poster_url"),
+  durationSec: integer("duration_sec"),
+  sizeBytes: integer("size_bytes"),
+  source: text("source").notNull().default("daily-short"),
+  hidden: boolean("hidden").notNull().default(false),
+  publishedAt: timestamp("published_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type PressVideoRow = typeof pressVideos.$inferSelect;
