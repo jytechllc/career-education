@@ -246,3 +246,81 @@ export const pressVideos = pgTable("press_videos", {
 });
 
 export type PressVideoRow = typeof pressVideos.$inferSelect;
+
+// ---------------------------------------------------------------------------
+// E-signature. A contract's text is frozen when it is created (content_hash is
+// SHA-256 of title + body) and is never edited afterwards; each signer signs
+// that exact hash. Contracts are never deleted — an unsigned one can only be
+// voided — so the record outlives any staff action.
+// ---------------------------------------------------------------------------
+export const contracts = pgTable("contracts", {
+  id: serial("id").primaryKey(),
+  // Human-facing number printed on the record, e.g. JY-20261013-0007.
+  number: text("number").unique().notNull(),
+  title: text("title").notNull(),
+  bodyMd: text("body_md").notNull(),
+  contentHash: text("content_hash").notNull(),
+  // sent | completed | voided
+  status: text("status").notNull().default("sent"),
+  createdBy: text("created_by").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+  // Snapshot of contract + signers + audit trail taken when the last party
+  // signs; record_hash is SHA-256 of that JSON, printed on the record page.
+  completedRecord: jsonb("completed_record"),
+  recordHash: text("record_hash"),
+  voidedAt: timestamp("voided_at"),
+  voidedBy: text("voided_by"),
+  voidReason: text("void_reason"),
+});
+
+export type ContractRow = typeof contracts.$inferSelect;
+
+export const contractSigners = pgTable("contract_signers", {
+  id: serial("id").primaryKey(),
+  contractId: integer("contract_id")
+    .references(() => contracts.id)
+    .notNull(),
+  position: integer("position").notNull(),
+  // As printed on the contract: 甲方 / 乙方 / 学生 …
+  roleLabel: text("role_label").notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  // Secret link token (/sign/<token>). The emailed one-time code is what
+  // proves control of the mailbox; the token alone is not enough to sign.
+  token: text("token").unique().notNull(),
+  otpHash: text("otp_hash"),
+  otpSentAt: timestamp("otp_sent_at"),
+  otpAttempts: integer("otp_attempts").notNull().default(0),
+  verifiedAt: timestamp("verified_at"),
+  viewedAt: timestamp("viewed_at"),
+  signedAt: timestamp("signed_at"),
+  signedName: text("signed_name"),
+  signatureImage: text("signature_image"), // PNG data URL
+  signatureHash: text("signature_hash"),
+  signedIp: text("signed_ip"),
+  signedUserAgent: text("signed_user_agent"),
+});
+
+export type ContractSignerRow = typeof contractSigners.$inferSelect;
+
+// Append-only audit trail. Each row's hash covers the previous row's hash, so
+// removing or editing a past event breaks every hash after it.
+export const contractEvents = pgTable("contract_events", {
+  id: serial("id").primaryKey(),
+  contractId: integer("contract_id")
+    .references(() => contracts.id)
+    .notNull(),
+  signerId: integer("signer_id"),
+  // created | email_sent | viewed | otp_sent | otp_verified | otp_failed | signed | completed | voided
+  type: text("type").notNull(),
+  actor: text("actor"),
+  ip: text("ip"),
+  userAgent: text("user_agent"),
+  detail: jsonb("detail"),
+  prevHash: text("prev_hash"),
+  hash: text("hash").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type ContractEventRow = typeof contractEvents.$inferSelect;
