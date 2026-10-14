@@ -17,8 +17,8 @@ const input = "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm";
  */
 function fillSystemBlanks(md: string): string {
   return md
-    .replace(/^(\*\*本?合同编号[^\n]*?[：:]\*\*)[\s　]*$/m, "$1 见本合同页首电子合同编号")
-    .replace(/^(\*\*签署日期[^\n]*?[：:]\*\*)[\s　]*$/m, "$1 以各方电子签署时间为准");
+    .replace(/^(\*\*本?合同编号[^\n]*?[：:]\*\*)[\s　]*_*[\s　]*$/m, "$1 见本合同页首电子合同编号")
+    .replace(/^(\*\*签署日期[^\n]*?[：:]\*\*)[\s　]*_*[\s　]*$/m, "$1 以各方电子签署时间为准");
 }
 
 export function NewContractForm() {
