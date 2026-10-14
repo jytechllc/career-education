@@ -52,6 +52,13 @@ REPORTS = {
         "slug": "china-us-study-market",
         "lead": ["研究对象", "数据时点", "本报告目的"],
     },
+    # Individual client report: unlisted, noindex, slug carries the client's
+    # 16Personalities result id instead of a name.
+    "host": {
+        "md": "ISFP-T主播转行职业规划报告.md",
+        "slug": "career-1s6r9oaoy",
+        "lead": ["客户背景", "转行目标", "本报告目的"],
+    },
 }
 
 

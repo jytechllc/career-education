@@ -25,7 +25,7 @@ type Props = {
   pdfHref: string;
   pdfName: string;
   related?: { href: string; label: string };
-  cta?: { href: string; label: string };
+  cta?: { href: string; label: string; heading?: string; body?: string };
 };
 
 export default function MarkdownReport({
@@ -109,9 +109,12 @@ export default function MarkdownReport({
       </article>
 
       <div className="mt-12 rounded-2xl bg-gradient-to-r from-yellow-600 to-yellow-700 p-8 text-center text-white">
-        <h2 className="text-2xl font-bold">需要为孩子做一份个性化规划？</h2>
+        <h2 className="text-2xl font-bold">
+          {cta?.heading ?? "需要为孩子做一份个性化规划？"}
+        </h2>
         <p className="mt-3 text-sm text-yellow-100 sm:text-base">
-          我们根据学生的成绩、专业与目标，提供一对一的专业方向与选校规划。
+          {cta?.body ??
+            "我们根据学生的成绩、专业与目标，提供一对一的专业方向与选校规划。"}
         </p>
         <Link
           href={`/${locale}${cta?.href ?? "#contact"}`}

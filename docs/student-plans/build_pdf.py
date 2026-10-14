@@ -6,6 +6,7 @@ import sys
 #   phd       博士方向版: body_only_phd.html -> proposal_branded_phd.html
 #   arts      舞蹈表演指南: body_only_arts.html -> proposal_branded_arts.html
 #   market    赴美留学市场研究报告: body_only_market.html -> proposal_branded_market.html
+#   host      主播转行职业规划报告(客户 1s6r9oaoy): body_only_host.html -> proposal_branded_host.html
 VARIANT = sys.argv[1] if len(sys.argv) > 1 else "career"
 SUFFIX = "" if VARIANT == "career" else f"_{VARIANT}"
 
@@ -357,8 +358,30 @@ COVER = {
             ("数据时点", "2024/25 学年为主，截至 2026 年 9 月"),
         ],
     },
+    "host": {
+        "title": "从主播到幕后<span class=\"accent\">转行规划报告</span>",
+        "sub": "ISFP-T 探险家型 · 陌陌主播转行<br>性格画像、可迁移能力、推荐方向与三个月行动计划",
+        "goal": "收入稳定、与性格匹配的幕后岗位",
+        "goal_label": "转行目标",
+        "doc_title": "主播转行职业规划报告",
+        "eyebrow": "Career Transition Plan · 报告编号 1s6r9oaoy",
+        "meta": [
+            ("客户背景", "ISFP-T · 陌陌主播 · 目标中国就业"),
+            ("文件性质", "方向性建议，补充信息后细化"),
+        ],
+    },
 }[VARIANT]
-TOC_ITEMS = {"career": CAREER_TOC, "phd": PHD_TOC, "arts": ARTS_TOC, "market": MARKET_TOC}[VARIANT]
+HOST_TOC = [
+    ("", "结论先行：建议的转行路线"),
+    ("一", "性格画像"),
+    ("二", "你已经具备的能力"),
+    ("三", "六个推荐方向"),
+    ("四", "三个月行动计划"),
+    ("五", "建议谨慎考虑的岗位"),
+    ("六", "下一步：请补充以下信息"),
+]
+TOC_ITEMS = {"career": CAREER_TOC, "phd": PHD_TOC, "arts": ARTS_TOC, "market": MARKET_TOC,
+             "host": HOST_TOC}[VARIANT]
 meta_html = "\n      ".join(
     f"<div><b>{k}</b>{v}</div>"
     for k, v in [COVER["meta"][0], (COVER.get("goal_label", "长期目标"), COVER["goal"]), *COVER["meta"][1:],
