@@ -187,20 +187,18 @@ function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
-async function sendMail(to: { email: string; name: string }, subject: string, html: string): Promise<boolean> {
+const SENDER_NAME = "杰圆教育 电子签约";
+
+async function sendViaBrevo(to: { email: string; name: string }, subject: string, html: string): Promise<boolean> {
   const key = process.env.REVO_API_KEY;
 
-  if (!key) {
-    console.error("[contracts] REVO_API_KEY missing; email not sent:", subject);
-
-    return false;
-  }
+  if (!key) return false;
 
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { accept: "application/json", "content-type": "application/json", "api-key": key },
     body: JSON.stringify({
-      sender: { name: "杰圆教育 电子签约", email: "helen.lan@jytech.us" },
+      sender: { name: SENDER_NAME, email: "helen.lan@jytech.us" },
       to: [to],
       subject,
       htmlContent: html,
@@ -210,6 +208,39 @@ async function sendMail(to: { email: string; name: string }, subject: string, ht
   if (!res.ok) console.error("[contracts] Brevo error", res.status, await res.text());
 
   return res.ok;
+}
+
+/** Fallback sender. RESEND_FROM must be on a domain verified in Resend. */
+async function sendViaResend(to: { email: string; name: string }, subject: string, html: string): Promise<boolean> {
+  const key = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM;
+
+  if (!key || !from) return false;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "content-type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      from: `${SENDER_NAME} <${from}>`,
+      to: [to.email],
+      reply_to: "helen.lan@jytech.us",
+      subject,
+      html,
+    }),
+  });
+
+  if (!res.ok) console.error("[contracts] Resend error", res.status, await res.text());
+
+  return res.ok;
+}
+
+/** Brevo first (the site's main sender); Resend if Brevo is unavailable. */
+async function sendMail(to: { email: string; name: string }, subject: string, html: string): Promise<boolean> {
+  if (await sendViaBrevo(to, subject, html)) return true;
+  if (await sendViaResend(to, subject, html)) return true;
+  console.error("[contracts] no email provider succeeded:", subject);
+
+  return false;
 }
 
 function mailShell(inner: string): string {
