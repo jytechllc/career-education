@@ -20,6 +20,7 @@ function progress(s: ContractSignerRow, events: ContractEventRow[]): { text: str
   const last = (type: string) => [...mine].reverse().find((e) => e.type === type);
   const lastMail = [...mine].reverse().find((e) => e.type === "email_sent" || e.type === "email_failed");
 
+  if (s.selfIdentify && !s.email) return { text: "等待对方打开链接、填写身份信息", tone: "muted" };
   if (last("otp_verified")) return { text: "已验证邮箱，尚未完成签署", tone: "warn" };
   if (s.viewedAt) return { text: `已打开 · ${fmtBeijing(s.viewedAt, false)}，未签署`, tone: "warn" };
   if (lastMail?.type === "email_failed") {
@@ -65,18 +66,20 @@ export default async function ContractDetailPage({ params }: { params: Promise<{
               <div key={s.id} className="py-3 flex flex-wrap items-center gap-3 text-sm">
                 <div className="min-w-48">
                   <div className="font-medium">
-                    {s.roleLabel}：{s.name}
+                    {s.roleLabel}：{s.name || "（由对方填写）"}
                   </div>
-                  <div className="text-xs text-gray-500">{s.email}</div>
+                  <div className="text-xs text-gray-500">{s.email || "仅链接签署"}</div>
                 </div>
                 <div className={`text-xs ${TONE[p.tone]}`}>{p.text}</div>
                 {open && !s.signedAt && (
                   <div className="ml-auto flex items-center gap-3">
-                    <form action={resendAction}>
-                      <input name="contractId" type="hidden" value={contract.id} />
-                      <input name="signerId" type="hidden" value={s.id} />
-                      <PendingButton label="重发邮件" pendingLabel="发送中…" />
-                    </form>
+                    {s.email && (
+                      <form action={resendAction}>
+                        <input name="contractId" type="hidden" value={contract.id} />
+                        <input name="signerId" type="hidden" value={s.id} />
+                        <PendingButton label="重发邮件" pendingLabel="发送中…" />
+                      </form>
+                    )}
                     <CopyLink url={signUrl(s.token)} />
                   </div>
                 )}

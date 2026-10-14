@@ -92,3 +92,7 @@ END $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS contract_signers_frozen ON contract_signers;
 CREATE TRIGGER contract_signers_frozen BEFORE UPDATE ON contract_signers FOR EACH ROW EXECUTE FUNCTION contract_signers_freeze();
+
+-- 2026-10-14: signers who enter their own name/email on the signing page.
+ALTER TABLE contract_signers ADD COLUMN IF NOT EXISTS self_identify boolean NOT NULL DEFAULT false;
+ALTER TABLE contract_signers ADD COLUMN IF NOT EXISTS signer_info jsonb;

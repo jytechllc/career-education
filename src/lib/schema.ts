@@ -300,6 +300,11 @@ export const contractSigners = pgTable("contract_signers", {
   signatureHash: text("signature_hash"),
   signedIp: text("signed_ip"),
   signedUserAgent: text("signed_user_agent"),
+  // The signer fills in their own name/email (and the fields in signer_info:
+  // relationship, phone, address) when they open the link; locked once their
+  // email code is verified.
+  selfIdentify: boolean("self_identify").notNull().default(false),
+  signerInfo: jsonb("signer_info"),
 });
 
 export type ContractSignerRow = typeof contractSigners.$inferSelect;

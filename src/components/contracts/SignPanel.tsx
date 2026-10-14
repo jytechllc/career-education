@@ -19,6 +19,7 @@ const ERRORS: Record<string, string> = {
   no_consent: "请勾选同意电子签署。",
   bad_signature: "请在签名区手写签名。",
   bad_request: "请求无效，请刷新页面重试。",
+  bad_identity: "请完整填写姓名、与学生关系、联系电话和有效邮箱。",
   network: "网络错误，请检查网络后重试。",
 };
 
@@ -122,19 +123,40 @@ function SignaturePad({ onChange }: { onChange: (dataUrl: string | null) => void
   );
 }
 
+function maskEmail(email: string): string {
+  const [user, domain] = email.split("@");
+
+  return domain ? `${user.slice(0, 2)}${"*".repeat(Math.max(1, user.length - 2))}@${domain}` : email;
+}
+
+const field = "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2";
+
 export function SignPanel({
   token,
   contentHash,
-  signerName,
+  signerName: presetName,
   roleLabel,
-  maskedEmail,
+  maskedEmail: presetMasked,
+  needIdentity = false,
+  initialIdentity,
 }: {
   token: string;
   contentHash: string;
   signerName: string;
   roleLabel: string;
   maskedEmail: string;
+  /** Self-identifying signer who hasn't verified yet: collect details first. */
+  needIdentity?: boolean;
+  initialIdentity?: { name: string; email: string; relationship: string; phone: string; address: string };
 }) {
+  const [identity, setIdentity] = useState(
+    initialIdentity ?? { name: "", email: "", relationship: "", phone: "", address: "" },
+  );
+  const signerName = needIdentity ? identity.name.trim() : presetName;
+  const maskedEmail = needIdentity ? maskEmail(identity.email.trim()) : presetMasked;
+  const identityOk =
+    !needIdentity ||
+    (identity.name.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identity.email.trim()) && identity.relationship.trim() && identity.phone.trim());
   const router = useRouter();
   const [codeSent, setCodeSent] = useState(false);
   const [verifiedUntil, setVerifiedUntil] = useState<Date | null>(null);
@@ -169,7 +191,7 @@ export function SignPanel({
   const sendCode = async () => {
     setBusy(true);
     setError(null);
-    const err = await post(token, { action: "send_code" });
+    const err = await post(token, needIdentity ? { action: "send_code", identity } : { action: "send_code" });
 
     setBusy(false);
     if (err) return fail(err);
@@ -219,7 +241,7 @@ export function SignPanel({
   return (
     <section className="mt-6 scroll-mt-4 rounded-lg bg-white p-5 sm:p-8 shadow print:hidden" id="sign">
       <h2 className="text-lg font-semibold text-gray-900">
-        以「{roleLabel}」身份签署：{signerName}
+        以「{roleLabel}」身份签署{signerName ? `：${signerName}` : ""}
       </h2>
 
       {done ? (
@@ -228,14 +250,50 @@ export function SignPanel({
         <>
           {!verified && (
             <div className="mt-3">
+              {needIdentity && !codeSent && (
+                <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                  <p className="sm:col-span-2 text-sm text-gray-600">
+                    <span className="font-medium text-gray-800">请填写您的信息。</span>
+                    这些信息会作为{roleLabel}信息记入签署记录；邮箱验证通过后不能再修改。
+                  </p>
+                  {(
+                    [
+                      ["name", "姓名（证件上的真实姓名）*", "text"],
+                      ["relationship", "与学生关系（如 父亲 / 母亲）*", "text"],
+                      ["phone", "联系电话 *", "tel"],
+                      ["email", "电子邮箱（接收验证码和签署记录）*", "email"],
+                    ] as const
+                  ).map(([k, label, type]) => (
+                    <label key={k} className="text-sm text-gray-700">
+                      {label}
+                      <input
+                        className={field}
+                        type={type}
+                        value={identity[k]}
+                        onChange={(e) => setIdentity((x) => ({ ...x, [k]: e.target.value }))}
+                      />
+                    </label>
+                  ))}
+                  <label className="sm:col-span-2 text-sm text-gray-700">
+                    通讯地址
+                    <input
+                      className={field}
+                      value={identity.address}
+                      onChange={(e) => setIdentity((x) => ({ ...x, address: e.target.value }))}
+                    />
+                  </label>
+                </div>
+              )}
               <p className="text-sm text-gray-600">
                 <span className="font-medium text-gray-800">第 1 步：邮箱验证。</span>
-                系统会向 {maskedEmail} 发送一次性验证码，用于确认是您本人签署。
+                {needIdentity && !identity.email.trim()
+                  ? "系统会向您填写的邮箱发送一次性验证码，用于确认是您本人签署。"
+                  : `系统会向 ${maskedEmail} 发送一次性验证码，用于确认是您本人签署。`}
               </p>
               {!codeSent ? (
                 <button
                   className="mt-3 rounded-lg bg-yellow-700 px-5 py-2.5 text-white disabled:opacity-50"
-                  disabled={busy}
+                  disabled={busy || !identityOk}
                   type="button"
                   onClick={sendCode}
                 >
@@ -244,7 +302,12 @@ export function SignPanel({
               ) : (
                 <>
                   <p className="mt-2 text-sm text-gray-600">
-                    验证码已于 {sentAt} 发送，10 分钟内有效。没收到请检查垃圾邮件箱。
+                    验证码已于 {sentAt} 发送到 {maskedEmail}，10 分钟内有效。没收到请检查垃圾邮件箱。
+                    {needIdentity && (
+                      <button className="ml-2 underline" type="button" onClick={() => setCodeSent(false)}>
+                        修改信息
+                      </button>
+                    )}
                   </p>
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <input

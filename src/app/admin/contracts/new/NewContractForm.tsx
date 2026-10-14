@@ -6,7 +6,7 @@ import { findBlanks, findParties, stripSignaturePage } from "@/lib/contract-form
 
 import { createContractAction } from "../actions";
 
-type Signer = { roleLabel: string; name: string; email: string };
+type Signer = { roleLabel: string; name: string; email: string; self?: boolean };
 
 const input = "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm";
 
@@ -34,7 +34,7 @@ export function NewContractForm() {
     { roleLabel: "乙方", name: "", email: "" },
   ]);
 
-  const update = (i: number, k: keyof Signer, v: string) => {
+  const update = (i: number, k: keyof Signer, v: string | boolean) => {
     setReviewing(false);
     setSigners((s) => s.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
   };
@@ -108,10 +108,30 @@ export function NewContractForm() {
       <div className="bg-white rounded-lg shadow p-5 flex flex-col gap-3">
         <div className="text-sm font-medium text-gray-700">签署方（身份要与正文里的甲方/乙方对应）</div>
         {signers.map((s, i) => (
-          <div key={i} className="grid gap-2 sm:grid-cols-[120px_1fr_1.4fr_auto] items-center">
+          <div key={i} className="grid gap-2 sm:grid-cols-[120px_1fr_1.4fr_auto_auto] items-center">
             <input className={input} name="roleLabel" placeholder="身份，如 甲方" value={s.roleLabel} onChange={(e) => update(i, "roleLabel", e.target.value)} />
-            <input className={input} name="name" placeholder="证件上的真实姓名" value={s.name} onChange={(e) => update(i, "name", e.target.value)} />
-            <input className={input} name="email" placeholder="邮箱" type="email" value={s.email} onChange={(e) => update(i, "email", e.target.value)} />
+            <input name="selfIdentify" type="hidden" value={s.self ? "1" : "0"} />
+            <input
+              className={`${input} read-only:bg-gray-100`}
+              readOnly={s.self}
+              name="name"
+              placeholder={s.self ? "由对方填写" : "证件上的真实姓名"}
+              value={s.self ? "" : s.name}
+              onChange={(e) => update(i, "name", e.target.value)}
+            />
+            <input
+              className={`${input} read-only:bg-gray-100`}
+              readOnly={s.self}
+              name="email"
+              placeholder={s.self ? "由对方填写" : "邮箱"}
+              type="email"
+              value={s.self ? "" : s.email}
+              onChange={(e) => update(i, "email", e.target.value)}
+            />
+            <label className="flex items-center gap-1 text-xs text-gray-600 whitespace-nowrap">
+              <input checked={!!s.self} type="checkbox" onChange={(e) => update(i, "self", e.target.checked)} />
+              由对方填写
+            </label>
             <button
               className="text-xs text-gray-500 underline disabled:opacity-30"
               disabled={signers.length <= 1}
@@ -156,7 +176,14 @@ export function NewContractForm() {
             <ul className="mt-1 list-disc pl-5">
               {filledSigners.map((s, i) => (
                 <li key={i}>
-                  {s.roleLabel}：<span className="font-semibold">{s.name || "（未填）"}</span> · {s.email || "（未填）"}
+                  {s.roleLabel}：
+                  {s.self ? (
+                    <span>由对方打开链接时填写姓名和邮箱（只能复制链接发给对方，不发邮件）</span>
+                  ) : (
+                    <>
+                      <span className="font-semibold">{s.name || "（未填）"}</span> · {s.email || "（未填）"}
+                    </>
+                  )}
                 </li>
               ))}
             </ul>

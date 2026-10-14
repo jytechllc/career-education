@@ -17,6 +17,7 @@ export async function createContractAction(
     roleLabel: String(roleLabel),
     name: String(form.getAll("name")[i] ?? ""),
     email: String(form.getAll("email")[i] ?? ""),
+    selfIdentify: form.getAll("selfIdentify")[i] === "1",
   }));
   let id: number;
 

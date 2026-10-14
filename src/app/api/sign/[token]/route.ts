@@ -24,7 +24,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
 
   switch (body.action) {
     case "send_code":
-      error = await sendOtp(token, meta);
+      error = await sendOtp(
+        token,
+        meta,
+        body.identity && typeof body.identity === "object"
+          ? {
+              name: String((body.identity as Record<string, unknown>).name ?? ""),
+              email: String((body.identity as Record<string, unknown>).email ?? ""),
+              relationship: String((body.identity as Record<string, unknown>).relationship ?? ""),
+              phone: String((body.identity as Record<string, unknown>).phone ?? ""),
+              address: String((body.identity as Record<string, unknown>).address ?? ""),
+            }
+          : undefined,
+      );
       break;
     case "verify":
       error = await verifyOtp(token, String(body.code ?? ""), meta);

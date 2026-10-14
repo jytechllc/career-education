@@ -40,7 +40,26 @@ export interface SignerInput {
   roleLabel: string;
   name: string;
   email: string;
+  /** Leave name/email empty; the signer enters them on the signing page. */
+  selfIdentify?: boolean;
 }
+
+/** What a self-identifying signer enters before their email code is sent. */
+export interface SignerIdentity {
+  name: string;
+  email: string;
+  relationship: string;
+  phone: string;
+  address: string;
+}
+
+export interface SignerInfo {
+  relationship?: string;
+  phone?: string;
+  address?: string;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface RequestMeta {
   ip: string | null;
@@ -196,6 +215,8 @@ function button(href: string, label: string): string {
 }
 
 export async function emailSignRequest(contract: ContractRow, signer: ContractSignerRow): Promise<boolean> {
+  if (!signer.email) return false;
+
   const ok = await sendMail(
     { email: signer.email, name: signer.name },
     `请签署：${contract.title}`,
@@ -275,14 +296,20 @@ export async function createContract(
   const title = input.title.trim();
   const bodyMd = input.bodyMd.replace(/\r\n?/g, "\n").trim();
   const signers = input.signers
-    .map((s) => ({ roleLabel: s.roleLabel.trim(), name: s.name.trim(), email: s.email.trim().toLowerCase() }))
-    .filter((s) => s.roleLabel || s.name || s.email);
+    .map((s) => ({
+      roleLabel: s.roleLabel.trim(),
+      name: s.selfIdentify ? "" : s.name.trim(),
+      email: s.selfIdentify ? "" : s.email.trim().toLowerCase(),
+      selfIdentify: !!s.selfIdentify,
+    }))
+    .filter((s) => s.roleLabel || s.name || s.email || s.selfIdentify);
 
   if (!title || !bodyMd) throw new Error("合同标题和正文不能为空");
   if (signers.length < 1) throw new Error("至少需要一位签署人");
   for (const s of signers) {
-    if (!s.roleLabel || !s.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email)) {
-      throw new Error("每位签署人都需要填写身份、姓名和有效邮箱");
+    if (!s.roleLabel) throw new Error("每位签署人都需要填写身份（如 甲方）");
+    if (!s.selfIdentify && (!s.name || !EMAIL_RE.test(s.email))) {
+      throw new Error("每位签署人都需要填写姓名和有效邮箱，或勾选「由对方填写」");
     }
   }
 
@@ -312,7 +339,10 @@ export async function createContract(
   await appendEvent(contract.id, "created", {
     actor: staffEmail,
     meta,
-    detail: { contentHash: contract.contentHash, signers: signers.map((s) => `${s.roleLabel} ${s.name} <${s.email}>`) },
+    detail: {
+      contentHash: contract.contentHash,
+      signers: signers.map((s) => (s.selfIdentify ? `${s.roleLabel}（签署人自行填写）` : `${s.roleLabel} ${s.name} <${s.email}>`)),
+    },
   });
 
   if (input.sendEmail) {
@@ -369,18 +399,56 @@ export type SignError =
   | "hash_mismatch"
   | "name_mismatch"
   | "no_consent"
-  | "bad_signature";
+  | "bad_signature"
+  | "bad_identity";
 
-export async function sendOtp(token: string, meta: RequestMeta): Promise<SignError | null> {
+export async function sendOtp(
+  token: string,
+  meta: RequestMeta,
+  identity?: SignerIdentity,
+): Promise<SignError | null> {
   const data = await getByToken(token);
 
   if (!data) return "not_found";
 
-  const { signer, contract } = data;
+  const { contract } = data;
+  let { signer } = data;
 
   if (contract.status !== "sent") return "not_open";
   if (signer.signedAt) return "already_signed";
   if (signer.otpSentAt && Date.now() - signer.otpSentAt.getTime() < OTP_RESEND_MS) return "too_soon";
+
+  // A self-identifying signer may set or correct their details until their
+  // email is verified; after that the identity is fixed.
+  if (signer.selfIdentify && !signer.verifiedAt) {
+    const id = {
+      name: identity?.name.trim() ?? "",
+      email: identity?.email.trim().toLowerCase() ?? "",
+      relationship: identity?.relationship.trim() ?? "",
+      phone: identity?.phone.trim() ?? "",
+      address: identity?.address.trim() ?? "",
+    };
+
+    if (!id.name || !EMAIL_RE.test(id.email) || !id.relationship || !id.phone) return "bad_identity";
+
+    const info: SignerInfo = { relationship: id.relationship, phone: id.phone, address: id.address || undefined };
+    const [row] = await db
+      .update(contractSigners)
+      .set({ name: id.name, email: id.email, signerInfo: info })
+      .where(and(eq(contractSigners.id, signer.id), isNull(contractSigners.verifiedAt)))
+      .returning();
+
+    if (!row) return "not_verified";
+    signer = row;
+    await appendEvent(contract.id, "identity_provided", {
+      signerId: signer.id,
+      actor: id.email,
+      meta,
+      detail: { name: id.name, email: id.email, ...info },
+    });
+  }
+
+  if (!signer.email) return "bad_identity";
 
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
 
@@ -550,6 +618,7 @@ async function maybeComplete(contractId: number): Promise<boolean> {
       name: s.name,
       email: s.email,
       signedName: s.signedName,
+      info: s.signerInfo ?? null,
       signedAt: s.signedAt!.toISOString(),
       signedIp: s.signedIp,
       signatureHash: s.signatureHash,

@@ -9,6 +9,7 @@ export const EVENT_LABELS: Record<string, string> = {
   email_sent: "发送邮件",
   email_failed: "邮件发送失败",
   viewed: "打开合同",
+  identity_provided: "签署人填写身份信息",
   otp_sent: "发送验证码",
   otp_verified: "邮箱验证通过",
   otp_failed: "验证码错误",
@@ -54,6 +55,16 @@ export function ContractHeader({ contract }: { contract: ContractRow }) {
  * like a place to sign (the real panel is below the contract), so it is a
  * plain progress list instead of signature boxes.
  */
+function SignerInfoLines({ info }: { info: Record<string, string | undefined> }) {
+  return (
+    <div className="text-xs text-gray-500">
+      {info.relationship && <div>与学生关系：{info.relationship}</div>}
+      {info.phone && <div>联系电话：{info.phone}</div>}
+      {info.address && <div>通讯地址：{info.address}</div>}
+    </div>
+  );
+}
+
 export function SignatureBlock({ signers, statusOnly = false }: { signers: ContractSignerRow[]; statusOnly?: boolean }) {
   if (statusOnly) {
     return (
@@ -62,7 +73,7 @@ export function SignatureBlock({ signers, statusOnly = false }: { signers: Contr
         <ul className="mt-2 text-sm text-gray-600 space-y-1">
           {signers.map((s) => (
             <li key={s.id}>
-              {s.roleLabel}：{s.name} — {s.signedAt ? `已签署（${fmt(s.signedAt)}）` : "待签署"}
+              {s.roleLabel}：{s.name || "（签署时填写）"} — {s.signedAt ? `已签署（${fmt(s.signedAt)}）` : "待签署"}
             </li>
           ))}
         </ul>
@@ -77,9 +88,10 @@ export function SignatureBlock({ signers, statusOnly = false }: { signers: Contr
         {signers.map((s) => (
           <div key={s.id} className="rounded-lg border border-gray-200 p-4">
             <div className="text-sm font-medium text-gray-900">
-              {s.roleLabel}：{s.name}
+              {s.roleLabel}：{s.name || "（签署时填写）"}
             </div>
             <div className="text-xs text-gray-500">{s.email}</div>
+            {s.signerInfo ? <SignerInfoLines info={s.signerInfo as Record<string, string | undefined>} /> : null}
             {s.signedAt && s.signatureImage ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
