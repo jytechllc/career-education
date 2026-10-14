@@ -138,6 +138,7 @@ export function SignPanel({
   roleLabel,
   maskedEmail: presetMasked,
   needIdentity = false,
+  lockedIdentity = false,
   initialIdentity,
 }: {
   token: string;
@@ -147,6 +148,8 @@ export function SignPanel({
   maskedEmail: string;
   /** Self-identifying signer who hasn't verified yet: collect details first. */
   needIdentity?: boolean;
+  /** Link-only signer returning: details are fixed, only "continue" is offered. */
+  lockedIdentity?: boolean;
   initialIdentity?: { name: string; email: string; relationship: string; phone: string; address: string };
 }) {
   const [identity, setIdentity] = useState(
@@ -154,11 +157,13 @@ export function SignPanel({
   );
   const signerName = needIdentity ? identity.name.trim() : presetName;
   const maskedEmail = needIdentity ? maskEmail(identity.email.trim()) : presetMasked;
+  const declareOk = !!(identity.name.trim() && identity.relationship.trim() && identity.phone.trim());
   const identityOk =
     !needIdentity ||
     (identity.name.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identity.email.trim()) && identity.relationship.trim() && identity.phone.trim());
   const router = useRouter();
   const [codeSent, setCodeSent] = useState(false);
+  const [noEmail, setNoEmail] = useState(false);
   const [verifiedUntil, setVerifiedUntil] = useState<Date | null>(null);
   const [cooldown, setCooldown] = useState(0);
   const [sentAt, setSentAt] = useState<string | null>(null);
@@ -198,6 +203,21 @@ export function SignPanel({
     setCodeSent(true);
     setCooldown(RESEND_SECONDS);
     setSentAt(new Date().toLocaleTimeString("zh-CN", { hour12: false }));
+  };
+
+  // No email: declare the identity and go straight to signing.
+  const declare = async () => {
+    setBusy(true);
+    setError(null);
+    const err = await post(token, {
+      action: "declare",
+      identity: { name: identity.name, relationship: identity.relationship, phone: identity.phone, address: identity.address },
+    });
+
+    setBusy(false);
+    if (err) return fail(err);
+    setNoEmail(true);
+    setVerifiedUntil(new Date(Date.now() + VERIFY_MINUTES * 60 * 1000));
   };
 
   const verify = async () => {
@@ -254,20 +274,23 @@ export function SignPanel({
                 <div className="mb-4 grid gap-3 sm:grid-cols-2">
                   <p className="sm:col-span-2 text-sm text-gray-600">
                     <span className="font-medium text-gray-800">请填写您的信息。</span>
-                    这些信息会作为{roleLabel}信息记入签署记录；邮箱验证通过后不能再修改。
+                    这些信息会作为{roleLabel}信息记入签署记录，确认后不能再修改。
                   </p>
                   {(
                     [
                       ["name", "姓名（证件上的真实姓名）*", "text"],
                       ["relationship", "与学生关系（如 父亲 / 母亲）*", "text"],
                       ["phone", "联系电话 *", "tel"],
-                      ["email", "电子邮箱（接收验证码和签署记录）*", "email"],
+                      ["email", "电子邮箱（选填，用于接收验证码和签署记录）", "email"],
                     ] as const
-                  ).map(([k, label, type]) => (
+                  )
+                    .filter(([k]) => !(lockedIdentity && k === "email"))
+                    .map(([k, label, type]) => (
                     <label key={k} className="text-sm text-gray-700">
                       {label}
                       <input
-                        className={field}
+                        className={`${field} read-only:bg-gray-100`}
+                        readOnly={lockedIdentity}
                         type={type}
                         value={identity[k]}
                         onChange={(e) => setIdentity((x) => ({ ...x, [k]: e.target.value }))}
@@ -277,20 +300,32 @@ export function SignPanel({
                   <label className="sm:col-span-2 text-sm text-gray-700">
                     通讯地址
                     <input
-                      className={field}
+                      className={`${field} read-only:bg-gray-100`}
+                      readOnly={lockedIdentity}
                       value={identity.address}
                       onChange={(e) => setIdentity((x) => ({ ...x, address: e.target.value }))}
                     />
                   </label>
                 </div>
               )}
+              {lockedIdentity ? (
+                <button
+                  className="rounded-lg bg-yellow-700 px-5 py-2.5 text-white disabled:opacity-50"
+                  disabled={busy}
+                  type="button"
+                  onClick={declare}
+                >
+                  {busy ? "请稍候…" : "信息无误，继续签署"}
+                </button>
+              ) : (
+              <>
               <p className="text-sm text-gray-600">
                 <span className="font-medium text-gray-800">第 1 步：邮箱验证。</span>
                 {needIdentity && !identity.email.trim()
-                  ? "系统会向您填写的邮箱发送一次性验证码，用于确认是您本人签署。"
+                  ? "填写邮箱后，系统会发送一次性验证码，用于确认是您本人签署。"
                   : `系统会向 ${maskedEmail} 发送一次性验证码，用于确认是您本人签署。`}
               </p>
-              {!codeSent ? (
+              {!codeSent && (
                 <button
                   className="mt-3 rounded-lg bg-yellow-700 px-5 py-2.5 text-white disabled:opacity-50"
                   disabled={busy || !identityOk}
@@ -299,7 +334,24 @@ export function SignPanel({
                 >
                   {busy ? "发送中…" : "我已阅读合同，获取验证码"}
                 </button>
-              ) : (
+              )}
+              {needIdentity && !codeSent && (
+                <div className="mt-3 text-sm text-gray-600">
+                  没有邮箱？
+                  <button
+                    className="ml-1 font-medium text-yellow-800 underline disabled:opacity-50"
+                    disabled={busy || !declareOk}
+                    type="button"
+                    onClick={declare}
+                  >
+                    不使用邮箱，直接签署
+                  </button>
+                  <span className="block text-xs text-gray-500">
+                    不验证邮箱时，系统只记录您填写的信息和签署过程，签署后不会收到邮件；请保存本页链接，日后可随时打开查看签署记录。
+                  </span>
+                </div>
+              )}
+              {codeSent && (
                 <>
                   <p className="mt-2 text-sm text-gray-600">
                     验证码已于 {sentAt} 发送到 {maskedEmail}，10 分钟内有效。没收到请检查垃圾邮件箱。
@@ -338,6 +390,8 @@ export function SignPanel({
                   </div>
                 </>
               )}
+              </>
+              )}
             </div>
           )}
 
@@ -347,7 +401,7 @@ export function SignPanel({
               <p className="text-sm text-gray-600">
                 <span className="font-medium text-gray-800">第 2 步：签署。</span>
                 {verified
-                  ? `邮箱已验证，请在 ${verifiedUntil!.toLocaleTimeString("zh-CN", { hour12: false, hour: "2-digit", minute: "2-digit" })} 前完成签署。`
+                  ? `${noEmail ? "信息已确认" : "邮箱已验证"}，请在 ${verifiedUntil!.toLocaleTimeString("zh-CN", { hour12: false, hour: "2-digit", minute: "2-digit" })} 前完成签署。`
                   : "请先完成上方邮箱验证。"}
               </p>
               <label className="text-sm text-gray-700">

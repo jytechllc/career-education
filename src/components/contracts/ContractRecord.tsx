@@ -10,6 +10,9 @@ export const EVENT_LABELS: Record<string, string> = {
   email_failed: "邮件发送失败",
   viewed: "打开合同",
   identity_provided: "签署人填写身份信息",
+  identity_declared: "签署人填写身份信息（未验证邮箱）",
+  identity_attested: "工作人员核实签署人身份",
+  signer_email_changed: "更改签署人邮箱",
   otp_sent: "发送验证码",
   otp_verified: "邮箱验证通过",
   otp_failed: "验证码错误",
@@ -65,7 +68,15 @@ function SignerInfoLines({ info }: { info: Record<string, string | undefined> })
   );
 }
 
-export function SignatureBlock({ signers, statusOnly = false }: { signers: ContractSignerRow[]; statusOnly?: boolean }) {
+export function SignatureBlock({
+  signers,
+  statusOnly = false,
+  events = [],
+}: {
+  signers: ContractSignerRow[];
+  statusOnly?: boolean;
+  events?: ContractEventRow[];
+}) {
   if (statusOnly) {
     return (
       <section className="mt-10 border-t border-gray-200 pt-6">
@@ -100,7 +111,18 @@ export function SignatureBlock({ signers, statusOnly = false }: { signers: Contr
                   <div>签署姓名：{s.signedName}</div>
                   <div>签署时间：{fmt(s.signedAt)}</div>
                   <div>签署 IP：{s.signedIp ?? "—"}</div>
-                  <div>身份验证：邮箱一次性验证码，{fmt(s.verifiedAt)}</div>
+                  {(s.signerInfo as { verification?: string } | null)?.verification === "none" ? (
+                    <div>身份验证：未验证邮箱，签署人自行填写信息并通过专属链接签署</div>
+                  ) : (
+                    <div>身份验证：邮箱一次性验证码，{fmt(s.verifiedAt)}</div>
+                  )}
+                  {events
+                    .filter((e) => e.type === "identity_attested" && e.signerId === s.id)
+                    .map((e) => (
+                      <div key={e.id}>
+                        身份核实：{(e.detail as { note?: string } | null)?.note}（{e.actor}，{fmt(e.createdAt)}）
+                      </div>
+                    ))}
                 </dl>
               </>
             ) : (
@@ -128,6 +150,8 @@ export function AuditTrail({
   // "completed"; show exactly those so the page matches what was hashed.
   const sealAt = contract.status === "completed" ? events.find((e) => e.type === "completed")?.id : undefined;
   const shown = sealAt ? events.filter((e) => e.id <= sealAt) : events;
+  // Added after sealing (e.g. a staff identity check): shown, but outside the record hash.
+  const after = sealAt ? events.filter((e) => e.id > sealAt && e.type === "identity_attested") : [];
   const nameOf = (id: number | null) => {
     const s = signers.find((x) => x.id === id);
 
@@ -170,6 +194,16 @@ export function AuditTrail({
           </tbody>
         </table>
       </div>
+      {after.length > 0 && (
+        <div className="mt-4 text-xs text-gray-600">
+          <div className="font-medium text-gray-700">签署完成后的补充记录（不在签署记录指纹范围内）</div>
+          {after.map((e) => (
+            <div key={e.id}>
+              {fmt(e.createdAt)} · {EVENT_LABELS[e.type] ?? e.type} · {nameOf(e.signerId)} · {(e.detail as { note?: string } | null)?.note} · {e.actor}
+            </div>
+          ))}
+        </div>
+      )}
       <details className="mt-4 text-xs text-gray-500">
         <summary className="cursor-pointer">技术凭证（用于核验合同未被改动）</summary>
         <dl className="mt-2 space-y-1 break-all">

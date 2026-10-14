@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { requestMeta, sendOtp, signContract, verifyOtp } from "@/lib/contracts";
+import { declareIdentity, requestMeta, sendOtp, signContract, verifyOtp } from "@/lib/contracts";
 
 /**
  * Signer endpoint. One POST with an `action`:
@@ -38,6 +38,21 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
           : undefined,
       );
       break;
+    case "declare": {
+      const id = (body.identity ?? {}) as Record<string, unknown>;
+
+      error = await declareIdentity(
+        token,
+        {
+          name: String(id.name ?? ""),
+          relationship: String(id.relationship ?? ""),
+          phone: String(id.phone ?? ""),
+          address: String(id.address ?? ""),
+        },
+        meta,
+      );
+      break;
+    }
     case "verify":
       error = await verifyOtp(token, String(body.code ?? ""), meta);
       break;

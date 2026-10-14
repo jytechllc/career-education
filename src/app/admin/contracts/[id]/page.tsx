@@ -10,11 +10,18 @@ import { fmtBeijing } from "@/lib/contract-format";
 import { getContract, signUrl, verifyEventChain } from "@/lib/contracts";
 import type { ContractEventRow, ContractSignerRow } from "@/lib/schema";
 
-import { resendAction, voidAction } from "../actions";
+import { attestAction, resendAction, voidAction } from "../actions";
 
 /** One line per signer, from the same events the audit trail shows. */
 function progress(s: ContractSignerRow, events: ContractEventRow[]): { text: string; tone: "ok" | "warn" | "bad" | "muted" } {
-  if (s.signedAt) return { text: `已签署 · ${fmtBeijing(s.signedAt, false)}`, tone: "ok" };
+  const linkOnly = (s.signerInfo as { verification?: string } | null)?.verification === "none";
+  const attested = events.some((e) => e.type === "identity_attested" && e.signerId === s.id);
+
+  if (s.signedAt) {
+    return linkOnly && !attested
+      ? { text: `已签署（未验证邮箱，建议核实身份）· ${fmtBeijing(s.signedAt, false)}`, tone: "warn" }
+      : { text: `已签署 · ${fmtBeijing(s.signedAt, false)}`, tone: "ok" };
+  }
 
   const mine = events.filter((e) => e.signerId === s.id);
   const last = (type: string) => [...mine].reverse().find((e) => e.type === type);
@@ -71,6 +78,19 @@ export default async function ContractDetailPage({ params }: { params: Promise<{
                   <div className="text-xs text-gray-500">{s.email || "仅链接签署"}</div>
                 </div>
                 <div className={`text-xs ${TONE[p.tone]}`}>{p.text}</div>
+                {(s.signerInfo as { verification?: string } | null)?.verification === "none" && (
+                  <form action={attestAction} className="w-full flex flex-wrap items-center gap-2">
+                    <input name="contractId" type="hidden" value={contract.id} />
+                    <input name="signerId" type="hidden" value={s.id} />
+                    <input
+                      className="flex-1 min-w-64 rounded-lg border border-gray-300 px-2 py-1 text-xs"
+                      name="note"
+                      placeholder="记录身份核实：如 2026-10-14 Helen 与家长微信视频，核对身份证姓名一致"
+                      required
+                    />
+                    <PendingButton label="记录身份核实" pendingLabel="保存中…" />
+                  </form>
+                )}
                 {open && !s.signedAt && (
                   <div className="ml-auto flex items-center gap-3">
                     {s.email && (
@@ -106,7 +126,7 @@ export default async function ContractDetailPage({ params }: { params: Promise<{
       <article className="bg-white rounded-lg shadow p-5 sm:p-8">
         <ContractHeader contract={contract} />
         <ContractBody contract={contract} />
-        <SignatureBlock signers={signers} />
+        <SignatureBlock events={events} signers={signers} />
         <AuditTrail chainOk={verifyEventChain(events)} contract={contract} events={events} signers={signers} />
       </article>
     </div>

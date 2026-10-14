@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireStaff } from "@/lib/admin-auth";
 import { logActivity } from "@/lib/activity";
-import { createContract, requestMeta, resendSignRequest, voidContract, type SignerInput } from "@/lib/contracts";
+import { attestIdentity, createContract, requestMeta, resendSignRequest, voidContract, type SignerInput } from "@/lib/contracts";
 
 export async function createContractAction(
   _prev: { error: string | null },
@@ -55,5 +55,14 @@ export async function voidAction(form: FormData) {
 
   await voidContract(contractId, email, String(form.get("reason") ?? ""), requestMeta(await headers()));
   await logActivity({ actorType: "staff", actor: email, action: "contract.void", targetType: "contract", targetId: contractId });
+  revalidatePath(`/admin/contracts/${contractId}`);
+}
+
+export async function attestAction(form: FormData) {
+  const { email } = await requireStaff("/admin/contracts");
+  const contractId = Number(form.get("contractId"));
+
+  await attestIdentity(contractId, Number(form.get("signerId")), email, String(form.get("note") ?? ""), requestMeta(await headers()));
+  await logActivity({ actorType: "staff", actor: email, action: "contract.attest", targetType: "contract", targetId: contractId });
   revalidatePath(`/admin/contracts/${contractId}`);
 }

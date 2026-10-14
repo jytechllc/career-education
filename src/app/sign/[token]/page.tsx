@@ -34,8 +34,11 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
 
   const { contract, signer, signers, events } = data;
   const open = contract.status === "sent" && !signer.signedAt;
-  const needIdentity = signer.selfIdentify && !signer.verifiedAt;
-  const info = (signer.signerInfo ?? {}) as { relationship?: string; phone?: string; address?: string };
+  const info = (signer.signerInfo ?? {}) as { relationship?: string; phone?: string; address?: string; verification?: string };
+  // A link-only signer who already declared but hasn't signed confirms again
+  // (same details, locked) instead of being asked for an email code.
+  const lockedIdentity = signer.selfIdentify && !!signer.verifiedAt && info.verification === "none";
+  const needIdentity = signer.selfIdentify && (!signer.verifiedAt || lockedIdentity);
 
   return (
     <div className="min-h-screen bg-gray-50 print:bg-white">
@@ -85,7 +88,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
         <article className="rounded-lg bg-white p-5 sm:p-8 shadow print:shadow-none print:p-0">
           <ContractHeader contract={contract} />
           <ContractBody contract={contract} />
-          <SignatureBlock signers={signers} statusOnly={contract.status === "sent"} />
+          <SignatureBlock events={events} signers={signers} statusOnly={contract.status === "sent"} />
           {contract.status !== "sent" && (
             <AuditTrail chainOk={verifyEventChain(events)} contract={contract} events={events} signers={signers} />
           )}
@@ -114,6 +117,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
                 : undefined
             }
             maskedEmail={maskEmail(signer.email)}
+            lockedIdentity={lockedIdentity}
             needIdentity={needIdentity}
             roleLabel={signer.roleLabel}
             signerName={signer.name}

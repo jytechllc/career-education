@@ -57,6 +57,12 @@ export interface SignerInfo {
   relationship?: string;
   phone?: string;
   address?: string;
+  /** "email" = verified by emailed code; "none" = link only, self-declared. */
+  verification?: "email" | "none";
+  /** Staff confirmation of who signed, e.g. after a video call. */
+  attestedBy?: string;
+  attestedAt?: string;
+  attestNote?: string;
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -400,7 +406,8 @@ export type SignError =
   | "name_mismatch"
   | "no_consent"
   | "bad_signature"
-  | "bad_identity";
+  | "bad_identity"
+  | "bad_request";
 
 export async function sendOtp(
   token: string,
@@ -470,6 +477,129 @@ export async function sendOtp(
   await appendEvent(contract.id, "otp_sent", { signerId: signer.id, actor: signer.email, meta });
 
   return null;
+}
+
+/**
+ * Link-only identity for a self-identifying signer who has no email: they
+ * declare name, relationship and phone, and that is recorded as unverified.
+ * Staff can later add an attestation (attestIdentity). Locks the identity.
+ */
+export async function declareIdentity(
+  token: string,
+  identity: Omit<SignerIdentity, "email">,
+  meta: RequestMeta,
+): Promise<SignError | null> {
+  const data = await getByToken(token);
+
+  if (!data) return "not_found";
+
+  const { signer, contract } = data;
+
+  if (contract.status !== "sent") return "not_open";
+  if (signer.signedAt) return "already_signed";
+  if (!signer.selfIdentify) return "bad_request";
+
+  const id = {
+    name: identity.name.trim(),
+    relationship: identity.relationship.trim(),
+    phone: identity.phone.trim(),
+    address: identity.address.trim(),
+  };
+
+  if (!id.name || !id.relationship || !id.phone) return "bad_identity";
+
+  // Once declared (or email-verified), the identity is fixed; re-declaring
+  // only refreshes the 30-minute signing window for the same person.
+  if (signer.verifiedAt) {
+    if ((signer.signerInfo as SignerInfo | null)?.verification !== "none" || signer.name !== id.name) return "bad_identity";
+    await db.update(contractSigners).set({ verifiedAt: new Date() }).where(eq(contractSigners.id, signer.id));
+
+    return null;
+  }
+
+  const info: SignerInfo = {
+    relationship: id.relationship,
+    phone: id.phone,
+    address: id.address || undefined,
+    verification: "none",
+  };
+  const [row] = await db
+    .update(contractSigners)
+    .set({ name: id.name, email: "", signerInfo: info, verifiedAt: new Date(), otpHash: null })
+    .where(and(eq(contractSigners.id, signer.id), isNull(contractSigners.verifiedAt)))
+    .returning();
+
+  if (!row) return "bad_identity";
+  await appendEvent(contract.id, "identity_declared", {
+    signerId: signer.id,
+    actor: id.phone,
+    meta,
+    detail: { name: id.name, ...info },
+  });
+
+  return null;
+}
+
+/**
+ * Change an unsigned signer's email (e.g. they prefer another mailbox). Any
+ * pending code or verification is cleared so the new address has to verify.
+ */
+export async function changeSignerEmail(
+  contractId: number,
+  signerId: number,
+  email: string,
+  staffEmail: string,
+  meta: RequestMeta,
+): Promise<boolean> {
+  const next = email.trim().toLowerCase();
+
+  if (!EMAIL_RE.test(next)) return false;
+
+  const [old] = await db.select().from(contractSigners).where(eq(contractSigners.id, signerId)).limit(1);
+
+  if (!old || old.contractId !== contractId || old.signedAt || old.selfIdentify) return false;
+
+  const [row] = await db
+    .update(contractSigners)
+    .set({ email: next, otpHash: null, otpSentAt: null, otpAttempts: 0, verifiedAt: null })
+    .where(and(eq(contractSigners.id, signerId), isNull(contractSigners.signedAt)))
+    .returning();
+
+  if (!row) return false;
+  await appendEvent(contractId, "signer_email_changed", {
+    signerId,
+    actor: staffEmail,
+    meta,
+    detail: { from: old.email, to: next },
+  });
+
+  return true;
+}
+
+/** Staff record that they confirmed a link-only signer's identity. */
+export async function attestIdentity(
+  contractId: number,
+  signerId: number,
+  staffEmail: string,
+  note: string,
+  meta: RequestMeta,
+): Promise<boolean> {
+  const data = await getContract(contractId);
+  const signer = data?.signers.find((s) => s.id === signerId);
+  const info = (signer?.signerInfo ?? {}) as SignerInfo;
+
+  if (!signer || info.verification !== "none" || !note.trim()) return false;
+
+  // A signed row is frozen by trigger, so the attestation lives in the
+  // audit trail only; the record view reads it from there.
+  await appendEvent(contractId, "identity_attested", {
+    signerId,
+    actor: staffEmail,
+    meta,
+    detail: { note: note.trim() },
+  });
+
+  return true;
 }
 
 export async function verifyOtp(token: string, code: string, meta: RequestMeta): Promise<SignError | null> {
@@ -566,7 +696,7 @@ export async function signContract(
 
   // Everyone but the last signer gets a receipt now; the last one gets the
   // completion email instead.
-  if (!completed) {
+  if (!completed && signer.email) {
     const ok = await sendMail(
       { email: signer.email, name: signer.name },
       `您已签署：${contract.title}`,
@@ -632,6 +762,8 @@ async function maybeComplete(contractId: number): Promise<boolean> {
   let delivered = 0;
 
   for (const s of data.signers) {
+    if (!s.email) continue;
+
     const ok = await sendMail(
       { email: s.email, name: s.name },
       `已完成签署：${won.title}`,
