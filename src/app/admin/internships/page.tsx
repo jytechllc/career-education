@@ -59,7 +59,7 @@ export default async function AdminInternshipsPage({
     (r) =>
       (!status || r.effectiveStatus === status) &&
       (!needle ||
-        `${r.firm} ${r.programme} ${r.eligibility} ${r.en.firm} ${r.en.programme} ${r.en.eligibility}`
+        `${r.firm} ${r.programme} ${r.eligibility} ${r.en?.firm} ${r.en?.programme} ${r.en?.eligibility}`
           .toLowerCase()
           .includes(needle)),
   );
@@ -140,7 +140,8 @@ export default async function AdminInternshipsPage({
                 </thead>
                 <tbody>
                   {rows.map((r) => {
-                    const x = lang === "en" ? r.en : r;
+                    // Rows without an English block fall back to the Chinese research fields.
+                    const x = (lang === "en" && r.en) || r;
 
                     return (
                       <tr

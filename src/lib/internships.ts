@@ -29,7 +29,7 @@ export type Internship = InternshipText & {
   effectiveStatus: InternshipStatus;
   url: string;
   listingId: string;
-  en: InternshipText;
+  en?: InternshipText;
 };
 
 export type InternshipCollection = {
