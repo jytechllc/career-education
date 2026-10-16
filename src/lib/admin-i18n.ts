@@ -131,14 +131,14 @@ const zh = {
   internships: {
     title: "香港银行 2027 暑期实习",
     subtitle: (date: string) =>
-      `外资行、中资行、本地银行和金管局的 2027 年香港暑期实习，信息截至 ${date}。标「去年」的日期是上一轮的时间，仅供参考。`,
-    openSheet: "在 Google 表格打开",
+      `外资行、中资行、本地银行和金管局的 2027 年香港暑期实习，数据来自 jobmatching.us，调研截至 ${date}。过了截止日的岗位会自动归入「已截止」；标「去年」的日期是上一轮的时间，仅供参考。`,
     searchPlaceholder: "机构、项目或资格",
     allStatuses: "全部状态",
     filter: "筛选",
     clear: "清除",
     empty: "没有符合条件的项目。",
-    tiers: { A: "A · 正在开放", B: "B · 尚未开放（按去年时间准备）", C: "C · 已截止", D: "D · 未找到暑期项目" },
+    groups: { open: "正在开放", notYet: "尚未开放（按去年时间准备）", closed: "已截止", unknown: "待确认" },
+    error: "暂时读不到 jobmatching.us 的岗位数据，请稍后刷新。",
     statuses: { open: "开放中", likelyOpen: "大概率开放", notYet: "未开放", closed: "已截止", unknown: "待确认" },
     kinds: { foreign: "外资", chinese: "中资", local: "本地", regulator: "监管" },
     col: { firm: "机构", programme: "项目 / 部门", deadline: "截止日", status: "状态", eligibility: "申请资格", source: "信息来源" },
@@ -303,19 +303,19 @@ const en: AdminDict = {
   internships: {
     title: "Hong Kong bank summer internships 2027",
     subtitle: (date: string) =>
-      `Summer 2027 internships in Hong Kong at foreign, Chinese and local banks and the HKMA, as of ${date}. Dates marked 去年 are last cycle's and only a guide.`,
-    openSheet: "Open in Google Sheets",
+      `Summer 2027 internships in Hong Kong at foreign, Chinese and local banks and the HKMA, from jobmatching.us, researched ${date}. Roles move to Closed automatically once the deadline passes; dates marked 去年 are last cycle's and only a guide.`,
     searchPlaceholder: "Firm, programme or eligibility",
     allStatuses: "All statuses",
     filter: "Filter",
     clear: "Clear",
     empty: "No matching programmes.",
-    tiers: {
-      A: "A · Open now",
-      B: "B · Not open yet (prepare by last year's dates)",
-      C: "C · Closed",
-      D: "D · No summer programme found",
+    groups: {
+      open: "Open now",
+      notYet: "Not open yet (prepare by last year's dates)",
+      closed: "Closed",
+      unknown: "Unconfirmed",
     },
+    error: "Couldn't load the roles from jobmatching.us. Refresh in a moment.",
     statuses: { open: "Open", likelyOpen: "Probably open", notYet: "Not open yet", closed: "Closed", unknown: "Unconfirmed" },
     kinds: { foreign: "Foreign", chinese: "Chinese", local: "Local", regulator: "Regulator" },
     col: {

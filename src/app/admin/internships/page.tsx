@@ -1,17 +1,20 @@
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
 
 import { requireStaff } from "@/lib/admin-auth";
 import { getAdminDict } from "@/lib/admin-i18n";
 import {
-  HK_SUMMER_2027_INTERNSHIPS,
-  INTERNSHIPS_CHECKED_AT,
-  INTERNSHIPS_SHEET_URL,
+  HK_BANK_SUMMER_2027,
+  type InternshipCollection,
   type InternshipStatus,
-  type InternshipTier,
+  fetchInternshipCollection,
 } from "@/lib/internships";
 
-const TIERS: InternshipTier[] = ["A", "B", "C", "D"];
+const GROUPS = ["open", "notYet", "closed", "unknown"] as const;
+
+/** "Probably open" sits with "open". */
+function groupOf(s: InternshipStatus): (typeof GROUPS)[number] {
+  return s === "likelyOpen" ? "open" : s;
+}
 
 const STATUS_STYLE: Record<InternshipStatus, string> = {
   open: "bg-green-100 text-green-800",
@@ -36,10 +39,18 @@ export default async function AdminInternshipsPage({
   const { t: d } = await getAdminDict();
   const t = d.internships;
 
+  let data: InternshipCollection | null = null;
+
+  try {
+    data = await fetchInternshipCollection(HK_BANK_SUMMER_2027);
+  } catch (e) {
+    console.error("[admin/internships] job-matching read failed", e);
+  }
+
   const needle = q.toLowerCase();
-  const shown = HK_SUMMER_2027_INTERNSHIPS.filter(
+  const shown = (data?.rows ?? []).filter(
     (r) =>
-      (!status || r.status === status) &&
+      (!status || r.effectiveStatus === status) &&
       (!needle || `${r.firm} ${r.programme} ${r.eligibility}`.toLowerCase().includes(needle)),
   );
 
@@ -47,15 +58,7 @@ export default async function AdminInternshipsPage({
     <div className="flex flex-col gap-5">
       <div>
         <h1 className="text-2xl font-bold text-yellow-900">{t.title}</h1>
-        <p className="text-sm text-gray-500 mt-1">{t.subtitle(INTERNSHIPS_CHECKED_AT)}</p>
-        <a
-          className="mt-2 inline-flex items-center gap-1 text-sm text-yellow-800 underline"
-          href={INTERNSHIPS_SHEET_URL}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {t.openSheet} <ExternalLink className="h-3.5 w-3.5" />
-        </a>
+        <p className="text-sm text-gray-500 mt-1">{t.subtitle(data?.checkedAt ?? "—")}</p>
       </div>
 
       <form className="flex flex-wrap gap-2" method="get">
@@ -87,17 +90,18 @@ export default async function AdminInternshipsPage({
         )}
       </form>
 
-      {shown.length === 0 && <p className="text-sm text-gray-500">{t.empty}</p>}
+      {!data && <p className="text-sm text-red-700">{t.error}</p>}
+      {data && shown.length === 0 && <p className="text-sm text-gray-500">{t.empty}</p>}
 
-      {TIERS.map((tier) => {
-        const rows = shown.filter((r) => r.tier === tier);
+      {GROUPS.map((group) => {
+        const rows = shown.filter((r) => groupOf(r.effectiveStatus) === group);
 
         if (rows.length === 0) return null;
 
         return (
-          <section key={tier} className="flex flex-col gap-2">
+          <section key={group} className="flex flex-col gap-2">
             <h2 className="font-semibold text-yellow-900">
-              {t.tiers[tier]} <span className="text-sm font-normal text-gray-500">({rows.length})</span>
+              {t.groups[group]} <span className="text-sm font-normal text-gray-500">({rows.length})</span>
             </h2>
             <div className="bg-white rounded-lg shadow overflow-x-auto">
               <table className="w-full text-sm">
@@ -113,29 +117,25 @@ export default async function AdminInternshipsPage({
                 </thead>
                 <tbody>
                   {rows.map((r) => (
-                    <tr key={`${r.firm}-${r.programme}`} className="border-t border-gray-100 align-top">
+                    <tr key={r.id} className="border-t border-gray-100 align-top">
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="font-medium">{r.firm}</div>
                         <div className="text-xs text-gray-400">{t.kinds[r.kind]}</div>
                       </td>
                       <td className="px-4 py-2 min-w-64">
-                        {r.url ? (
-                          <a className="text-yellow-800 underline" href={r.url} rel="noreferrer" target="_blank">
-                            {r.programme}
-                          </a>
-                        ) : (
-                          r.programme
-                        )}
+                        <a className="text-yellow-800 underline" href={r.url} rel="noreferrer" target="_blank">
+                          {r.programme}
+                        </a>
                         <div className="text-xs text-gray-500">{r.duration}</div>
                       </td>
-                      <td className="px-4 py-2 min-w-40">{r.deadline}</td>
+                      <td className="px-4 py-2 min-w-40">{r.deadlineText}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
-                        <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLE[r.status]}`}>
-                          {t.statuses[r.status]}
+                        <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLE[r.effectiveStatus]}`}>
+                          {t.statuses[r.effectiveStatus]}
                         </span>
                       </td>
                       <td className="px-4 py-2 min-w-56 text-gray-700">{r.eligibility}</td>
-                      <td className="px-4 py-2 min-w-40 text-xs text-gray-500">{r.source}</td>
+                      <td className="px-4 py-2 min-w-40 text-xs text-gray-500">{r.sourceNote}</td>
                     </tr>
                   ))}
                 </tbody>
