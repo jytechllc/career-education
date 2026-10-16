@@ -47,7 +47,10 @@ export async function fetchInternshipCollection(collection: string): Promise<Int
   const token = process.env.JOB_MATCHING_API_TOKEN;
 
   if (!token) throw new Error("JOB_MATCHING_API_TOKEN is not set");
-  const res = await fetch(`${JOB_MATCHING_URL}/api/listings/curated/${encodeURIComponent(collection)}`, {
+// ?v= is part of the cache key: bump it when the response shape changes so
+  // pages don't keep an hour-old copy in the old shape.
+  const url = `${JOB_MATCHING_URL}/api/listings/curated/${encodeURIComponent(collection)}?v=2`;
+  const res = await fetch(url, {
     headers: { authorization: `Bearer ${token}` },
     next: { revalidate: 3600 },
   });

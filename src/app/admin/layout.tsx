@@ -77,9 +77,12 @@ export default async function AdminLayout({
           ))}
         </nav>
         <div className="border-t border-white/20 px-5 py-4 flex flex-col gap-2 text-xs text-yellow-100">
-          <span className="break-all">
-            {email} · {t.roles[role]}
-          </span>
+          <div className="min-w-0">
+            <div className="truncate" title={email ?? undefined}>
+              {email}
+            </div>
+            <div className="text-yellow-200/80">{t.roles[role]}</div>
+          </div>
           <div className="flex flex-wrap items-center gap-3">
             <a className="rounded-full border border-white/40 px-2 py-0.5 hover:bg-white/15" href={langHref}>
               {t.switchTo}
