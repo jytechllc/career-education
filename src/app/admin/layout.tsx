@@ -20,6 +20,7 @@ const NAV = [
   { href: "/admin/students", key: "students" },
   { href: "/admin/partners", key: "partners" },
   { href: "/admin/talents", key: "talents" },
+  { href: "/admin/internships", key: "internships" },
   { href: "/admin/contracts", key: "contracts" },
 ] as const;
 
