@@ -6,6 +6,8 @@ import { auth0 } from "@/lib/auth0";
 import { staffRoleOf } from "@/lib/admin-auth";
 import { getAdminDict } from "@/lib/admin-i18n";
 
+import { ActiveNavIntoView } from "./ActiveNavIntoView";
+
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminDict();
 
@@ -111,7 +113,10 @@ export default async function AdminLayout({
             </a>
           </div>
         </div>
-        <nav className="flex gap-1 overflow-x-auto whitespace-nowrap px-3 py-2 text-sm">
+        <nav
+          className="flex gap-1 overflow-x-auto whitespace-nowrap px-3 py-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          id="admin-nav-mobile"
+        >
           {links.map((n) => (
             <Link
               key={n.href}
@@ -123,6 +128,7 @@ export default async function AdminLayout({
             </Link>
           ))}
         </nav>
+        <ActiveNavIntoView navId="admin-nav-mobile" />
       </header>
 
       <main className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-8">{children}</main>
