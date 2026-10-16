@@ -31,12 +31,18 @@ export default async function AdminInternshipsPage({
 }) {
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().slice(0, 100);
-  const status = sp.status && sp.status in STATUS_STYLE ? (sp.status as InternshipStatus) : null;
+  const status =
+    sp.status && sp.status in STATUS_STYLE
+      ? (sp.status as InternshipStatus)
+      : null;
 
-  const qs = new URLSearchParams({ ...(q && { q }), ...(status && { status }) }).toString();
+  const qs = new URLSearchParams({
+    ...(q && { q }),
+    ...(status && { status }),
+  }).toString();
 
   await requireStaff(`/admin/internships${qs ? `?${qs}` : ""}`);
-  const { t: d } = await getAdminDict();
+  const { lang, t: d } = await getAdminDict();
   const t = d.internships;
 
   let data: InternshipCollection | null = null;
@@ -47,18 +53,24 @@ export default async function AdminInternshipsPage({
     console.error("[admin/internships] job-matching read failed", e);
   }
 
+  // Search matches either language, so a firm's Chinese or English name both work.
   const needle = q.toLowerCase();
   const shown = (data?.rows ?? []).filter(
     (r) =>
       (!status || r.effectiveStatus === status) &&
-      (!needle || `${r.firm} ${r.programme} ${r.eligibility}`.toLowerCase().includes(needle)),
+      (!needle ||
+        `${r.firm} ${r.programme} ${r.eligibility} ${r.en.firm} ${r.en.programme} ${r.en.eligibility}`
+          .toLowerCase()
+          .includes(needle)),
   );
 
   return (
     <div className="flex flex-col gap-5">
       <div>
         <h1 className="text-2xl font-bold text-yellow-900">{t.title}</h1>
-        <p className="text-sm text-gray-500 mt-1">{t.subtitle(data?.checkedAt ?? "—")}</p>
+        <p className="text-sm text-gray-500 mt-1">
+          {t.subtitle(data?.checkedAt ?? "—")}
+        </p>
       </div>
 
       <form className="flex flex-wrap gap-2" method="get">
@@ -80,18 +92,26 @@ export default async function AdminInternshipsPage({
             </option>
           ))}
         </select>
-        <button className="rounded bg-yellow-700 px-3 py-1.5 text-sm text-white hover:bg-yellow-800" type="submit">
+        <button
+          className="rounded bg-yellow-700 px-3 py-1.5 text-sm text-white hover:bg-yellow-800"
+          type="submit"
+        >
           {t.filter}
         </button>
         {(q || status) && (
-          <Link className="self-center text-sm text-gray-500 underline" href="/admin/internships">
+          <Link
+            className="self-center text-sm text-gray-500 underline"
+            href="/admin/internships"
+          >
             {t.clear}
           </Link>
         )}
       </form>
 
       {!data && <p className="text-sm text-red-700">{t.error}</p>}
-      {data && shown.length === 0 && <p className="text-sm text-gray-500">{t.empty}</p>}
+      {data && shown.length === 0 && (
+        <p className="text-sm text-gray-500">{t.empty}</p>
+      )}
 
       {GROUPS.map((group) => {
         const rows = shown.filter((r) => groupOf(r.effectiveStatus) === group);
@@ -101,7 +121,10 @@ export default async function AdminInternshipsPage({
         return (
           <section key={group} className="flex flex-col gap-2">
             <h2 className="font-semibold text-yellow-900">
-              {t.groups[group]} <span className="text-sm font-normal text-gray-500">({rows.length})</span>
+              {t.groups[group]}{" "}
+              <span className="text-sm font-normal text-gray-500">
+                ({rows.length})
+              </span>
             </h2>
             <div className="bg-white rounded-lg shadow overflow-x-auto">
               <table className="w-full text-sm">
@@ -116,28 +139,50 @@ export default async function AdminInternshipsPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r) => (
-                    <tr key={r.id} className="border-t border-gray-100 align-top">
-                      <td className="px-4 py-2 whitespace-nowrap">
-                        <div className="font-medium">{r.firm}</div>
-                        <div className="text-xs text-gray-400">{t.kinds[r.kind]}</div>
-                      </td>
-                      <td className="px-4 py-2 min-w-64">
-                        <a className="text-yellow-800 underline" href={r.url} rel="noreferrer" target="_blank">
-                          {r.programme}
-                        </a>
-                        <div className="text-xs text-gray-500">{r.duration}</div>
-                      </td>
-                      <td className="px-4 py-2 min-w-40">{r.deadlineText}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">
-                        <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLE[r.effectiveStatus]}`}>
-                          {t.statuses[r.effectiveStatus]}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 min-w-56 text-gray-700">{r.eligibility}</td>
-                      <td className="px-4 py-2 min-w-40 text-xs text-gray-500">{r.sourceNote}</td>
-                    </tr>
-                  ))}
+                  {rows.map((r) => {
+                    const x = lang === "en" ? r.en : r;
+
+                    return (
+                      <tr
+                        key={r.id}
+                        className="border-t border-gray-100 align-top"
+                      >
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <div className="font-medium">{x.firm}</div>
+                          <div className="text-xs text-gray-400">
+                            {t.kinds[r.kind]}
+                          </div>
+                        </td>
+                        <td className="px-4 py-2 min-w-64">
+                          <a
+                            className="text-yellow-800 underline"
+                            href={r.url}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            {x.programme}
+                          </a>
+                          <div className="text-xs text-gray-500">
+                            {x.duration}
+                          </div>
+                        </td>
+                        <td className="px-4 py-2 min-w-40">{x.deadlineText}</td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLE[r.effectiveStatus]}`}
+                          >
+                            {t.statuses[r.effectiveStatus]}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 min-w-56 text-gray-700">
+                          {x.eligibility}
+                        </td>
+                        <td className="px-4 py-2 min-w-40 text-xs text-gray-500">
+                          {x.sourceNote}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

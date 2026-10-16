@@ -303,7 +303,7 @@ const en: AdminDict = {
   internships: {
     title: "Hong Kong bank summer internships 2027",
     subtitle: (date: string) =>
-      `Summer 2027 internships in Hong Kong at foreign, Chinese and local banks and the HKMA, from jobmatching.us, researched ${date}. Roles move to Closed automatically once the deadline passes; dates marked 去年 are last cycle's and only a guide.`,
+      `Summer 2027 internships in Hong Kong at foreign, Chinese and local banks and the HKMA, from jobmatching.us, researched ${date}. Roles move to Closed automatically once the deadline passes; dates marked "Last cycle" are from the previous round and only a guide.`,
     searchPlaceholder: "Firm, programme or eligibility",
     allStatuses: "All statuses",
     filter: "Filter",

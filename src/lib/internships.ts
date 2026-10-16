@@ -9,21 +9,27 @@ import "server-only";
 export type InternshipKind = "foreign" | "chinese" | "local" | "regulator";
 export type InternshipStatus = "open" | "likelyOpen" | "notYet" | "closed" | "unknown";
 
-export type Internship = {
-  id: string;
-  kind: InternshipKind;
+/** The researched fields, in one language. */
+export type InternshipText = {
   firm: string;
   programme: string;
   duration: string;
   deadlineText: string;
+  eligibility: string;
+  sourceNote: string;
+};
+
+/** Chinese at the top level (as researched), English under `en`. */
+export type Internship = InternshipText & {
+  id: string;
+  kind: InternshipKind;
   deadline: string | null;
   status: InternshipStatus;
   /** status, closed once the deadline has passed. */
   effectiveStatus: InternshipStatus;
-  eligibility: string;
   url: string;
-  sourceNote: string;
   listingId: string;
+  en: InternshipText;
 };
 
 export type InternshipCollection = {

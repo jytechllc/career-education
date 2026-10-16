@@ -49,41 +49,39 @@ export default async function AdminLayout({
       : []),
   ];
 
-  return (
-    <div className="min-h-screen bg-yellow-50">
-      <header className="bg-gradient-to-r from-yellow-600 to-yellow-800 text-white">
-        <div className="container mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-6">
-            <Link className="font-bold" href="/admin">
-              {t.brand}
-            </Link>
-            <nav className="flex flex-wrap gap-1 text-sm">
-              {nav.map((n) => {
-                // "/admin" only matches itself; sections also match their subpages.
-                const active =
-                  n.href === "/admin" ? path === "/admin" : path === n.href || path.startsWith(`${n.href}/`);
+  const links = nav.map((n) => ({
+    ...n,
+    // "/admin" only matches itself; sections also match their subpages.
+    active: n.href === "/admin" ? path === "/admin" : path === n.href || path.startsWith(`${n.href}/`),
+  }));
+  const langHref = `/admin/lang?to=${lang === "en" ? "zh" : "en"}&back=${encodeURIComponent(path)}`;
 
-                return (
-                  <Link
-                    key={n.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`rounded-full px-3 py-1 ${active ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
-                    href={n.href}
-                  >
-                    {t.nav[n.key]}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-          <div className="flex items-center gap-3 text-xs text-yellow-100">
-            <span>
-              {email} · {t.roles[role]}
-            </span>
-            <a
-              className="rounded-full border border-white/40 px-2 py-0.5 hover:bg-white/15"
-              href={`/admin/lang?to=${lang === "en" ? "zh" : "en"}&back=${encodeURIComponent(path)}`}
+  // Sidebar on large screens, so the menu can grow and English labels never
+  // wrap; on small screens a top bar whose menu scrolls sideways.
+  return (
+    <div className="min-h-screen bg-yellow-50 lg:flex">
+      <aside className="hidden lg:flex lg:w-56 lg:shrink-0 lg:flex-col lg:sticky lg:top-0 lg:h-screen bg-gradient-to-b from-yellow-700 to-yellow-900 text-white">
+        <Link className="px-5 py-5 font-bold" href="/admin">
+          {t.brand}
+        </Link>
+        <nav className="flex-1 overflow-y-auto px-3 flex flex-col gap-0.5 text-sm">
+          {links.map((n) => (
+            <Link
+              key={n.href}
+              aria-current={n.active ? "page" : undefined}
+              className={`rounded-md px-3 py-2 ${n.active ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
+              href={n.href}
             >
+              {t.nav[n.key]}
+            </Link>
+          ))}
+        </nav>
+        <div className="border-t border-white/20 px-5 py-4 flex flex-col gap-2 text-xs text-yellow-100">
+          <span className="break-all">
+            {email} · {t.roles[role]}
+          </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <a className="rounded-full border border-white/40 px-2 py-0.5 hover:bg-white/15" href={langHref}>
               {t.switchTo}
             </a>
             <Link className="underline hover:text-white" href={lang === "en" ? "/en" : "/zh"}>
@@ -94,8 +92,37 @@ export default async function AdminLayout({
             </a>
           </div>
         </div>
+      </aside>
+
+      <header className="lg:hidden bg-gradient-to-r from-yellow-600 to-yellow-800 text-white">
+        <div className="px-4 pt-3 flex items-center justify-between gap-3">
+          <Link className="font-bold" href="/admin">
+            {t.brand}
+          </Link>
+          <div className="flex items-center gap-3 text-xs text-yellow-100">
+            <a className="rounded-full border border-white/40 px-2 py-0.5 hover:bg-white/15" href={langHref}>
+              {t.switchTo}
+            </a>
+            <a className="underline hover:text-white" href="/auth/logout">
+              {t.logout}
+            </a>
+          </div>
+        </div>
+        <nav className="flex gap-1 overflow-x-auto whitespace-nowrap px-3 py-2 text-sm">
+          {links.map((n) => (
+            <Link
+              key={n.href}
+              aria-current={n.active ? "page" : undefined}
+              className={`rounded-full px-3 py-1 ${n.active ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
+              href={n.href}
+            >
+              {t.nav[n.key]}
+            </Link>
+          ))}
+        </nav>
       </header>
-      <main className="container mx-auto px-4 sm:px-6 py-8">{children}</main>
+
+      <main className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-8">{children}</main>
     </div>
   );
 }
