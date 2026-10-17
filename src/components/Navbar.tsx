@@ -10,6 +10,7 @@ import {
   LogIn,
   LogOut,
   UserCircle,
+  UserPlus,
   ChevronDown,
   LayoutDashboard,
 } from "lucide-react";
@@ -181,14 +182,23 @@ export const Navbar = ({ locale, dict, user, isStaff = false }: NavbarProps) => 
               </a>
             </div>
           ) : (
-            // eslint-disable-next-line @next/next/no-html-link-for-pages
-            <a
-              href="/auth/login"
-              className="flex items-center gap-1.5 text-sm font-medium bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-full transition"
-            >
-              <LogIn className="h-4 w-4" />
-              {dict.nav.login}
-            </a>
+            <div className="flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+              <a
+                href="/auth/login"
+                className="flex items-center gap-1.5 text-sm font-medium hover:text-yellow-200 px-2 py-1.5 transition"
+              >
+                <LogIn className="h-4 w-4" />
+                {dict.nav.login}
+              </a>
+              <Link
+                href={`/${locale}/signup`}
+                className="flex items-center gap-1.5 text-sm font-semibold bg-white text-yellow-800 hover:bg-yellow-50 px-3 py-1.5 rounded-full transition"
+              >
+                <UserPlus className="h-4 w-4" />
+                {dict.nav.signup}
+              </Link>
+            </div>
           )}
         </div>
 
@@ -304,14 +314,24 @@ export const Navbar = ({ locale, dict, user, isStaff = false }: NavbarProps) => 
                 </a>
               </>
             ) : (
-              // eslint-disable-next-line @next/next/no-html-link-for-pages
-              <a
-                href="/auth/login"
-                className="py-2 px-3 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2 text-sm font-medium"
-              >
-                <LogIn className="h-4 w-4" />
-                {dict.nav.login}
-              </a>
+              <>
+                <Link
+                  href={`/${locale}/signup`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 px-3 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2 text-sm font-medium"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {dict.nav.signup}
+                </Link>
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                <a
+                  href="/auth/login"
+                  className="py-2 px-3 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2 text-sm font-medium"
+                >
+                  <LogIn className="h-4 w-4" />
+                  {dict.nav.login}
+                </a>
+              </>
             )}
           </div>
         </div>
