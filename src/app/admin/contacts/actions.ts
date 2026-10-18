@@ -55,7 +55,7 @@ export async function previewImportAction(form: FormData): Promise<{ ok: true; r
     const file = form.get("file");
     const rows = await parseContacts(
       { file: file instanceof File ? file : null, text: String(form.get("text") ?? "") },
-      form.get("type") === "inhouse" ? "inhouse" : "headhunter",
+      form.get("type") === "inhouse" ? "inhouse" : form.get("type") === "org" ? "org" : "headhunter",
     );
     return rows.length ? { ok: true, rows } : { ok: false, error: "empty" };
   } catch (e) {
@@ -69,7 +69,7 @@ export async function importContactsAction(rows: ImportRow[]): Promise<{ ok: tru
   const email = await staffEmail();
   if (!email) return { ok: false, error: "auth" };
   const valid = rows
-    .filter((r) => !r.problems.length && (r.type === "headhunter" || r.type === "inhouse"))
+    .filter((r) => !r.problems.length && (r.type === "headhunter" || r.type === "inhouse" || r.type === "org"))
     .slice(0, 1000)
     .map(({ problems: _p, ...r }) => ({ ...r, regions: r.regions.filter((x) => (CONTACT_REGIONS as readonly string[]).includes(x)) }));
   if (!valid.length) return { ok: false, error: "empty" };

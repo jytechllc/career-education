@@ -7,10 +7,10 @@ import "server-only";
  */
 export const CONTACT_REGIONS = ["hong kong", "shenzhen", "china", "singapore", "us", "uk", "india", "other"] as const;
 export type ContactRegion = (typeof CONTACT_REGIONS)[number];
-export const CONTACT_TYPES = ["headhunter", "company_inbox", "inhouse"] as const;
+export const CONTACT_TYPES = ["headhunter", "company_inbox", "inhouse", "org"] as const;
 export type ContactType = (typeof CONTACT_TYPES)[number];
 /** The two categories staff filter by: agency headhunters, and company HR (in-house people + official inboxes). */
-export const CONTACT_CATEGORIES = ["headhunter", "hr"] as const;
+export const CONTACT_CATEGORIES = ["headhunter", "hr", "org"] as const;
 export type ContactCategory = (typeof CONTACT_CATEGORIES)[number];
 export type ContactOrigin = "recruiter" | "employer_inbox" | "employer_contact";
 
@@ -78,7 +78,7 @@ export type ImportResult = { added: number; updated: number; failed: { row: numb
 export async function importContacts(
   actor: string,
   contacts: {
-    type: "headhunter" | "inhouse";
+    type: "headhunter" | "inhouse" | "org";
     email: string;
     name: string | null;
     title: string | null;

@@ -10,7 +10,7 @@ import { CONTACT_REGIONS } from "./contacts";
  * English; unknown columns are ignored.
  */
 export type ImportRow = {
-  type: "headhunter" | "inhouse";
+  type: "headhunter" | "inhouse" | "org";
   email: string;
   name: string | null;
   title: string | null;
@@ -60,6 +60,7 @@ function parseRegions(v: string): { regions: string[]; unknown: string[] } {
 }
 
 function parseType(v: string, fallback: ImportRow["type"]): ImportRow["type"] {
+  if (/组织|組織|协会|協會|狮子会|獅子會|商会|商會|校友会|校友會|association|club|chamber|society|ngo|npo/i.test(v)) return "org";
   if (/猎头|獵頭|headhunt|agency|search|recruitment consultant/i.test(v)) return "headhunter";
   if (/企业|企業|内部|內部|in-?house|hr|company/i.test(v)) return "inhouse";
   return fallback;
@@ -142,14 +143,19 @@ export async function parseContacts(input: { file?: File | null; text?: string }
   return table.slice(1, 1001).map((r) => {
     const problems: string[] = [];
     const email = get(r, "email").toLowerCase();
-    if (col.email < 0) problems.push("no email column");
+    const type = parseType(get(r, "type"), fallbackType);
+    // Organisations may be recorded without an email (website and name only).
+    if (type === "org") {
+      if (!email && !get(r, "company")) problems.push("organisation name or email required");
+      else if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push("invalid email");
+    } else if (col.email < 0) problems.push("no email column");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push("invalid email");
     const { regions, unknown } = parseRegions(get(r, "regions"));
     if (unknown.length) problems.push(`unknown region: ${unknown.join(", ")}`);
     const opt = (k: keyof typeof HEADERS) => get(r, k) || null;
 
     return {
-      type: parseType(get(r, "type"), fallbackType),
+      type,
       email,
       name: opt("name"),
       title: opt("title"),

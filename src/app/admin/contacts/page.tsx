@@ -40,7 +40,8 @@ export default async function AdminContactsPage({
 
   // Per-region counts are exact; across all regions a cross-border contact
   // would be counted once per region, so the total comes from the query.
-  const inCategory = (ty: string, cat: string | undefined) => !cat || (cat === "hr" ? ty !== "headhunter" : ty === cat);
+  const inCategory = (ty: string, cat: string | undefined) =>
+    !cat || (cat === "hr" ? ty === "company_inbox" || ty === "inhouse" : ty === cat);
   const count = (r: string, cat: string | undefined) =>
     (data?.counts ?? []).filter((c) => c.region === r && inCategory(c.type, cat)).reduce((n, c) => n + c.n, 0);
   const pages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
@@ -133,13 +134,13 @@ export default async function AdminContactsPage({
                         {c.origin === "recruiter" ? (
                           <CategoryPicker id={c.id} labels={t.categories} value={c.type === "headhunter" ? "headhunter" : "hr"} />
                         ) : (
-                          <span>{t.categories.hr}</span>
+                          <span>{c.type === "org" ? t.categories.org : t.categories.hr}</span>
                         )}
                         {c.type === "company_inbox" && <span className="rounded bg-gray-100 px-1">{t.officialInbox}</span>}
                       </div>
                     </td>
                     <td className="px-4 py-2">
-                      <div>{c.email}</div>
+                      <div>{c.email || "—"}</div>
                       {(c.phone || c.wechat) && (
                         <div className="text-xs text-gray-500">{[c.phone, c.wechat && `WeChat ${c.wechat}`].filter(Boolean).join(" · ")}</div>
                       )}

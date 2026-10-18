@@ -10,7 +10,7 @@ export type ImportText = {
   single: string;
   bulk: string;
   type: string;
-  types: { headhunter: string; inhouse: string };
+  types: { headhunter: string; inhouse: string; org: string };
   fields: Record<"email" | "name" | "title" | "company" | "phone" | "wechat" | "linkedin" | "notes", string>;
   regions: string;
   regionLabels: Record<string, string>;
@@ -32,7 +32,7 @@ const input = "w-full rounded border border-gray-300 bg-white px-3 py-1.5 text-s
 
 export function ContactImport({ t, regionKeys }: { t: ImportText; regionKeys: readonly string[] }) {
   const [tab, setTab] = useState<"single" | "bulk">("single");
-  const [type, setType] = useState<"headhunter" | "inhouse">("headhunter");
+  const [type, setType] = useState<"headhunter" | "inhouse" | "org">("headhunter");
   const [regions, setRegions] = useState<string[]>([]);
   const [rows, setRows] = useState<ImportRow[] | null>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -51,6 +51,7 @@ export function ContactImport({ t, regionKeys }: { t: ImportText; regionKeys: re
       <select className="rounded border border-gray-300 bg-white px-2 py-1.5 text-sm" value={type} onChange={(e) => setType(e.target.value as typeof type)}>
         <option value="headhunter">{t.types.headhunter}</option>
         <option value="inhouse">{t.types.inhouse}</option>
+        <option value="org">{t.types.org}</option>
       </select>
     </label>
   );
@@ -111,7 +112,7 @@ export function ContactImport({ t, regionKeys }: { t: ImportText; regionKeys: re
             {(["email", "name", "title", "company", "phone", "wechat", "linkedin"] as const).map((k) => (
               <label key={k} className="flex flex-col gap-1 text-sm">
                 {t.fields[k]}
-                <input className={input} name={k} required={k === "email"} type={k === "email" ? "email" : "text"} />
+                <input className={input} name={k} required={k === "email" && type !== "org"} type={k === "email" ? "email" : "text"} />
               </label>
             ))}
           </div>
