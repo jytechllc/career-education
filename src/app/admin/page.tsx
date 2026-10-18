@@ -58,6 +58,71 @@ export default async function AdminDashboard() {
         {!ops.jmOk && <p className="mt-3 text-xs text-red-700">{t.jmDown}</p>}
       </section>
 
+      <section className="rounded-lg bg-white p-5 shadow">
+        <h2 className="mb-1 font-semibold text-yellow-900">{t.chTitle}</h2>
+        <p className="mb-3 text-xs text-gray-500">{t.chSubtitle}</p>
+        {ops.channels.length === 0 ? (
+          <p className="text-sm text-gray-500">—</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs text-gray-500">
+                <tr>
+                  <th className="py-1.5 pr-3">{t.ch.channel}</th>
+                  <th className="py-1.5 pr-3">{t.ch.state}</th>
+                  <th className="py-1.5 pr-3 text-right">{t.ch.companies}</th>
+                  <th className="py-1.5 pr-3 text-right">{t.ch.withEmail}</th>
+                  <th className="py-1.5 pr-3 text-right">{t.ch.contacted}</th>
+                  <th className="py-1.5 pr-3 text-right">{t.ch.replied}</th>
+                  <th className="py-1.5 pr-3 text-right">{t.ch.awaiting}</th>
+                  <th className="py-1.5 pr-3 text-right">{t.ch.optedOut}</th>
+                  <th className="py-1.5">{t.ch.lastSent}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ops.channels.map((c) => (
+                  <tr key={c.channel} className="border-t border-gray-100">
+                    <td className="py-1.5 pr-3">{t.channelNames[c.channel] ?? c.channel}</td>
+                    <td className="py-1.5 pr-3 text-xs">
+                      {c.active === false ? (
+                        <span className="rounded bg-gray-100 px-1.5 py-0.5 text-gray-500">{t.ch.stopped}</span>
+                      ) : (
+                        <span className="rounded bg-green-50 px-1.5 py-0.5 text-green-700">
+                          {t.ch.running}
+                          {c.daily_limit ? ` · ${t.ch.perDay(String(c.daily_limit))}` : ""}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-1.5 pr-3 text-right tabular-nums">{c.companies}</td>
+                    <td className="py-1.5 pr-3 text-right tabular-nums">{c.with_email}</td>
+                    <td className="py-1.5 pr-3 text-right tabular-nums">{c.contacted}</td>
+                    <td className="py-1.5 pr-3 text-right tabular-nums">{c.replied}</td>
+                    <td className={`py-1.5 pr-3 text-right tabular-nums ${c.awaiting ? "font-semibold text-red-700" : ""}`}>{c.awaiting}</td>
+                    <td className="py-1.5 pr-3 text-right tabular-nums text-gray-500">{c.opted_out}</td>
+                    <td className="py-1.5 text-xs text-gray-500 whitespace-nowrap">{fmt(c.last_sent)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {ops.replies.length > 0 && (
+          <div className="mt-4">
+            <h3 className="mb-1 text-sm font-medium text-yellow-900">{t.ch.repliesTitle}</h3>
+            <ul className="flex flex-col gap-1 text-sm">
+              {ops.replies.map((r, i) => (
+                <li key={i}>
+                  <span className="mr-1 rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-700">{t.ch.followUp}</span>
+                  {r.company} · <span className="text-gray-500">{r.contact_email}</span>{" "}
+                  <span className="text-xs text-gray-400">{fmt(r.replied_at)}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-1 text-xs text-gray-500">{t.ch.repliesNote}</p>
+          </div>
+        )}
+      </section>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-lg bg-white p-5 shadow">
           <h2 className="mb-1 font-semibold text-yellow-900">{t.oppTitle}</h2>

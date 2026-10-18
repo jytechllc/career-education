@@ -22,7 +22,19 @@ const YOUTUBE = {
 type JmSummary = {
   contacts: Record<string, number>;
   outreach: Record<string, number>;
-  replies: { company: string; contact_email: string; replied_at: string }[];
+  replies: { company: string; contact_email: string; replied_at: string; source?: string }[];
+  channels?: {
+    channel: string;
+    companies: number;
+    with_email: number;
+    contacted: number;
+    replied: number;
+    awaiting: number;
+    opted_out: number;
+    last_sent: string | null;
+    active: boolean | null;
+    daily_limit: number | null;
+  }[];
   signups: { company: string; contact_name: string; city: string | null; roles: string; created_at: string }[];
   deadlines: { firm: string; programme: string; deadline: string; url: string }[];
   pipelines: Record<string, string | null>;
@@ -147,6 +159,8 @@ export async function loadOps(t: {
     pipelines,
     opportunities,
     signups: jm?.signups ?? [],
+    channels: jm?.channels ?? [],
+    replies: jm?.replies ?? [],
     deadlines: jm?.deadlines ?? [],
     jmOk: !!jm,
   };
