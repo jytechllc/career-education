@@ -329,3 +329,37 @@ export const contractEvents = pgTable("contract_events", {
 });
 
 export type ContractEventRow = typeof contractEvents.$inferSelect;
+
+// Student profiles built from a resume a counsellor uploads at /admin/profiles.
+// The model only fills what the resume states; everything else stays null for
+// staff to complete. redacted_resume_md is the resume with name and contact
+// details removed — the source of the de-identified PDF download.
+export const studentProfiles = pgTable("student_profiles", {
+  id: serial("id").primaryKey(),
+  name: text("name"),
+  gender: text("gender"),
+  age: integer("age"),
+  masterSchool: text("master_school"),
+  phdSchool: text("phd_school"),
+  specialties: text("specialties"),
+  targetRoles: text("target_roles"),
+  visa: text("visa"),
+  hobbies: text("hobbies"),
+  email: text("email"),
+  phone: text("phone"),
+  redactedResumeMd: text("redacted_resume_md"),
+  resumeR2Key: text("resume_r2_key"),
+  resumeFileName: text("resume_file_name"),
+  resumeMime: text("resume_mime"),
+  // Drive "Talents" subfolder it was imported from; one profile per folder.
+  talentFolderId: text("talent_folder_id").unique(),
+  // Where each filled field came from: "resume" | "site_profile" | "staff".
+  fieldSources: jsonb("field_sources").$type<Record<string, string>>(),
+  model: text("model"),
+  createdBy: text("created_by").notNull(),
+  updatedBy: text("updated_by"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type StudentProfile = typeof studentProfiles.$inferSelect;

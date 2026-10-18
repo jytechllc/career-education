@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     // forbidden() → app/admin/forbidden.tsx with a real 403 status.
     authInterrupts: true,
   },
+  // The de-identified profile PDF embeds Noto Sans SC from assets/fonts.
+  outputFileTracingIncludes: {
+    "/admin/profiles/[id]/pdf": ["./assets/fonts/**"],
+  },
   turbopack: {
     root: path.resolve(__dirname),
   },

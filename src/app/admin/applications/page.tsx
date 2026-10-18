@@ -144,7 +144,15 @@ export default async function AdminApplicationsPage({
                   )}
                 />
               ) : (
-                <TrashButton confirmText={t.confirmTrash} id={app.id} label={t.trash} />
+                <div className="flex items-center gap-2">
+                  <Link
+                    className="rounded-md border border-yellow-300 px-3 py-1.5 text-sm text-yellow-800 hover:bg-yellow-50"
+                    href={`/admin/applications/${app.id}/edit`}
+                  >
+                    {t.edit}
+                  </Link>
+                  <TrashButton confirmText={t.confirmTrash} id={app.id} label={t.trash} />
+                </div>
               )}
             </ApplicationCard>
           ))}

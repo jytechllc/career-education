@@ -21,6 +21,7 @@ const NAV = [
   { href: "/admin/applications", key: "applications" },
   { href: "/admin/students", key: "students" },
   { href: "/admin/partners", key: "partners" },
+  { href: "/admin/profiles", key: "profiles" },
   { href: "/admin/talents", key: "talents" },
   { href: "/admin/internships", key: "internships" },
   { href: "/admin/contacts", key: "contacts" },

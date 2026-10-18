@@ -127,3 +127,25 @@ export async function getSignedInlineUrl(
     { expiresIn: 60 * 10 },
   );
 }
+
+/** Presigned browser PUT for an exact key (same body-size reasoning as getUploadUrl). */
+export async function getSignedPutUrl(key: string, contentType: string): Promise<string> {
+  return getSignedUrl(
+    getClient(),
+    new PutObjectCommand({ Bucket: BUCKET(), Key: key, ContentType: contentType }),
+    { expiresIn: 60 * 10 },
+  );
+}
+
+/** Object bytes, or null when the key doesn't exist. */
+export async function getObjectBytes(key: string): Promise<Buffer | null> {
+  try {
+    const res = await getClient().send(new GetObjectCommand({ Bucket: BUCKET(), Key: key }));
+    const bytes = await res.Body?.transformToByteArray();
+
+    return bytes ? Buffer.from(bytes) : null;
+  } catch (e) {
+    if ((e as { name?: string }).name === "NoSuchKey") return null;
+    throw e;
+  }
+}
