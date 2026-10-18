@@ -27,6 +27,10 @@ export type Learner = {
   candidateId: number | null;
   profileId: number | null;
   profileCode: string | null;
+  /** Case handling from the profile: new / active / closed, owner (partner or JYEdu), POC. */
+  caseStatus: string | null;
+  owner: string | null;
+  poc: string | null;
   updatedAt: Date;
 };
 
@@ -70,6 +74,9 @@ export async function listLearners(): Promise<Learner[]> {
     cur.candidateId ??= base.candidateId;
     cur.profileId ??= base.profileId;
     cur.profileCode ??= base.profileCode;
+    cur.caseStatus ??= base.caseStatus;
+    cur.owner ??= base.owner;
+    cur.poc ??= base.poc;
     if (base.updatedAt > cur.updatedAt) cur.updatedAt = base.updatedAt;
     return cur;
   };
@@ -89,6 +96,9 @@ export async function listLearners(): Promise<Learner[]> {
         candidateId: null,
         profileId: p.id,
         profileCode: profileCode(p.id),
+        caseStatus: p.caseStatus ?? null,
+        owner: p.caseStatus || p.poc ? (p.ownerPartnerId ? (partnerName.get(p.ownerPartnerId) ?? null) : "JYEdu") : null,
+        poc: p.poc ?? null,
         updatedAt: p.updatedAt,
       },
       "profile",
@@ -107,6 +117,9 @@ export async function listLearners(): Promise<Learner[]> {
         candidateId: null,
         profileId: null,
         profileCode: null,
+        caseStatus: null,
+        owner: a.partnerId ? (partnerName.get(a.partnerId) ?? null) : null,
+        poc: null,
         updatedAt: a.createdAt,
       },
       "application",
@@ -126,6 +139,9 @@ export async function listLearners(): Promise<Learner[]> {
         candidateId: c.id,
         profileId: null,
         profileCode: null,
+        caseStatus: null,
+        owner: null,
+        poc: null,
         updatedAt: c.updatedAt,
       },
       "site",

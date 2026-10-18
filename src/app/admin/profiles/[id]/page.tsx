@@ -8,9 +8,10 @@ import { Download, FileText, FolderOpen } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/admin-auth";
 import { getAdminDict } from "@/lib/admin-i18n";
-import { studentProfiles } from "@/lib/schema";
+import { partners, studentProfiles } from "@/lib/schema";
 import { PROFILE_FIELDS, profileCode, scrubPii } from "@/lib/student-profiles";
 
+import { CaseControls } from "./CaseControls";
 import { ProfileForm } from "./ProfileForm";
 
 export default async function AdminProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -24,6 +25,7 @@ export default async function AdminProfilePage({ params }: { params: Promise<{ i
   if (!p) notFound();
   const { t: d } = await getAdminDict();
   const t = d.profiles;
+  const partnerList = await db.select({ id: partners.id, name: partners.name }).from(partners).orderBy(partners.id);
   const sources = p.fieldSources ?? {};
   const redacted = p.redactedResumeMd ? scrubPii(p.redactedResumeMd, p) : null;
   const btn =
@@ -69,6 +71,15 @@ export default async function AdminProfilePage({ params }: { params: Promise<{ i
         </div>
       </div>
       <p className="text-xs text-gray-500 -mt-2">{t.redactedNote}</p>
+
+      <CaseControls
+        id={p.id}
+        ownerPartnerId={p.ownerPartnerId}
+        partners={partnerList}
+        poc={p.poc}
+        status={p.caseStatus}
+        t={d.profileCase}
+      />
 
       <ProfileForm
         fields={PROFILE_FIELDS.map((k) => ({

@@ -160,3 +160,36 @@ export async function updateProfileAction(
 
   return { saved: true, error: null };
 }
+
+export type CaseResult = { ok: true } | { ok: false };
+
+/** Status / owner / POC for a profile. Any staff member; logged. */
+export async function updateCaseAction(
+  id: number,
+  caseStatus: string | null,
+  ownerPartnerId: number | null,
+  poc: string | null,
+): Promise<CaseResult> {
+  const email = await staffEmail();
+
+  if (!email) return { ok: false };
+  const status = caseStatus && ["new", "active", "closed"].includes(caseStatus) ? caseStatus : null;
+  const pocClean = poc?.trim().slice(0, 100) || null;
+
+  await db
+    .update(studentProfiles)
+    .set({ caseStatus: status, ownerPartnerId, poc: pocClean, updatedBy: email, updatedAt: new Date() })
+    .where(eq(studentProfiles.id, id));
+  await logActivity({
+    actorType: "staff",
+    actor: email,
+    action: "profile.case",
+    targetType: "profile",
+    targetId: id,
+    detail: { caseStatus: status, ownerPartnerId, poc: pocClean },
+  });
+  revalidatePath(`/admin/profiles/${id}`);
+  revalidatePath("/admin/learners");
+
+  return { ok: true };
+}

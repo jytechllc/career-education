@@ -34,10 +34,13 @@ export default async function AdminLearnersPage({
   const all = await listLearners();
   const needle = q.toLowerCase();
   const matchesQ = (l: (typeof all)[number]) =>
-    !needle || [l.name, l.email, l.school, l.goal, l.profileCode, l.partner].some((v) => v?.toLowerCase().includes(needle));
+    !needle || [l.name, l.email, l.school, l.goal, l.profileCode, l.partner, l.owner, l.poc].some((v) => v?.toLowerCase().includes(needle));
   const searched = all.filter(matchesQ);
-  const rows = source ? searched.filter((l) => l.sources.includes(source)) : searched;
-  const count = (s?: LearnerSource) => (s ? searched.filter((l) => l.sources.includes(s)).length : searched.length);
+  // A profile whose case is marked 新申请 counts as a new application too.
+  const inSource = (l: (typeof all)[number], s: LearnerSource) =>
+    l.sources.includes(s) || (s === "application" && l.caseStatus === "new");
+  const rows = source ? searched.filter((l) => inSource(l, source)) : searched;
+  const count = (s?: LearnerSource) => (s ? searched.filter((l) => inSource(l, s)).length : searched.length);
   const chip = (active: boolean) =>
     `rounded-full px-3 py-1 text-sm ${active ? "bg-yellow-700 text-white" : "bg-white text-yellow-900 hover:bg-yellow-100"}`;
 
@@ -89,6 +92,7 @@ export default async function AdminLearnersPage({
                 <th className="px-4 py-2">{t.col.source}</th>
                 <th className="px-4 py-2">{t.col.school}</th>
                 <th className="px-4 py-2">{t.col.goal}</th>
+                <th className="px-4 py-2">{t.col.owner}</th>
                 <th className="px-4 py-2">{t.col.contact}</th>
                 <th className="px-4 py-2">{t.col.updated}</th>
                 <th className="px-4 py-2">{t.col.open}</th>
@@ -100,6 +104,11 @@ export default async function AdminLearnersPage({
                   <td className="px-4 py-2">
                     <div className="font-medium">{l.name}</div>
                     {l.profileCode && <div className="text-xs text-gray-400">{l.profileCode}</div>}
+                    {l.caseStatus && (
+                      <span className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-xs ${l.caseStatus === "new" ? "bg-red-50 text-red-700" : l.caseStatus === "active" ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                        {t.caseStatus[l.caseStatus as "new" | "active" | "closed"] ?? l.caseStatus}
+                      </span>
+                    )}
                     {l.partner && <div className="text-xs text-gray-500">{t.via(l.partner)}</div>}
                   </td>
                   <td className="px-4 py-2">
@@ -113,6 +122,10 @@ export default async function AdminLearnersPage({
                   </td>
                   <td className="max-w-64 px-4 py-2 text-xs text-gray-700">{l.school ?? "—"}</td>
                   <td className="max-w-56 px-4 py-2 text-xs text-gray-700">{l.goal ?? "—"}</td>
+                  <td className="px-4 py-2 text-xs text-gray-700">
+                    <div>{l.owner ?? "—"}</div>
+                    {l.poc && <div className="text-gray-500">POC：{l.poc}</div>}
+                  </td>
                   <td className="px-4 py-2 text-xs text-gray-600">
                     <div>{l.email ?? "—"}</div>
                     {l.phone && <div>{l.phone}</div>}

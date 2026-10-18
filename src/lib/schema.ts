@@ -356,6 +356,11 @@ export const studentProfiles = pgTable("student_profiles", {
   // Where each filled field came from: "resume" | "site_profile" | "staff".
   fieldSources: jsonb("field_sources").$type<Record<string, string>>(),
   model: text("model"),
+  // Case handling: status (new / active / closed), who owns the case (a
+  // partner, or null = JYEdu directly) and the counsellor point of contact.
+  caseStatus: text("case_status"),
+  ownerPartnerId: integer("owner_partner_id"),
+  poc: text("poc"),
   createdBy: text("created_by").notNull(),
   updatedBy: text("updated_by"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
