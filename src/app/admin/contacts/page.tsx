@@ -3,9 +3,9 @@ import Link from "next/link";
 import { requireStaff } from "@/lib/admin-auth";
 import { getAdminDict } from "@/lib/admin-i18n";
 import { logActivity } from "@/lib/activity";
-import { CONTACT_REGIONS, CONTACT_TYPES, fetchContacts, type ContactPage } from "@/lib/contacts";
+import { CONTACT_CATEGORIES, CONTACT_REGIONS, fetchContacts, type ContactPage } from "@/lib/contacts";
 
-import { RegionEditor } from "./RegionEditor";
+import { CategoryPicker, RegionEditor } from "./RegionEditor";
 
 export default async function AdminContactsPage({
   searchParams,
@@ -13,7 +13,7 @@ export default async function AdminContactsPage({
   searchParams: Promise<{ type?: string; region?: string; q?: string; page?: string }>;
 }) {
   const sp = await searchParams;
-  const type = CONTACT_TYPES.find((x) => x === sp.type);
+  const type = CONTACT_CATEGORIES.find((x) => x === sp.type);
   const region = CONTACT_REGIONS.find((x) => x === sp.region);
   const q = (sp.q ?? "").trim().slice(0, 100);
   const page = Math.max(1, Number(sp.page) || 1);
@@ -38,10 +38,11 @@ export default async function AdminContactsPage({
   // Internal resource: record who looked at which slice.
   await logActivity({ actorType: "staff", actor: email, action: "contact.view", detail: { type, region, q, page } });
 
-  const count = (r: string | undefined, ty: string | undefined) =>
-    (data?.counts ?? [])
-      .filter((c) => (r ? c.region === r : c.region === "hong kong" || c.region === "shenzhen") && (!ty || c.type === ty))
-      .reduce((n, c) => n + c.n, 0);
+  // Per-region counts are exact; across all regions a cross-border contact
+  // would be counted once per region, so the total comes from the query.
+  const inCategory = (ty: string, cat: string | undefined) => !cat || (cat === "hr" ? ty !== "headhunter" : ty === cat);
+  const count = (r: string, cat: string | undefined) =>
+    (data?.counts ?? []).filter((c) => c.region === r && inCategory(c.type, cat)).reduce((n, c) => n + c.n, 0);
   const pages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
   const chip = (active: boolean) =>
     `rounded-full px-3 py-1 text-sm ${active ? "bg-yellow-700 text-white" : "bg-white text-yellow-900 hover:bg-yellow-100"}`;
@@ -61,17 +62,19 @@ export default async function AdminContactsPage({
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-2">
           <Link className={chip(!type)} href={params({ type: undefined, page: undefined })}>
-            {t.allTypes} <span className="opacity-70">{count(region, undefined)}</span>
+            {t.allTypes}
+            {region && <span className="opacity-70"> {count(region, undefined)}</span>}
           </Link>
-          {CONTACT_TYPES.map((ty) => (
-            <Link key={ty} className={chip(type === ty)} href={params({ type: ty, page: undefined })}>
-              {t.types[ty]} <span className="opacity-70">{count(region, ty)}</span>
+          {CONTACT_CATEGORIES.map((cat) => (
+            <Link key={cat} className={chip(type === cat)} href={params({ type: cat, page: undefined })}>
+              {t.categories[cat]}
+              {region && <span className="opacity-70"> {count(region, cat)}</span>}
             </Link>
           ))}
         </div>
         <div className="flex flex-wrap gap-2">
           <Link className={chip(!region)} href={params({ region: undefined, page: undefined })}>
-            {t.hkSz}
+            {t.allRegions}
           </Link>
           {CONTACT_REGIONS.map((r) => (
             <Link key={r} className={chip(region === r)} href={params({ region: r, page: undefined })}>
@@ -118,15 +121,22 @@ export default async function AdminContactsPage({
                   </tr>
                 )}
                 {data.rows.map((c) => (
-                  <tr key={`${c.type}-${c.id}`} className="border-t border-gray-100 align-top">
+                  <tr key={`${c.origin}-${c.id}`} className="border-t border-gray-100 align-top">
                     <td className="px-4 py-2">
-                      <div className="font-medium">{c.name ?? t.types[c.type]}</div>
+                      <div className="font-medium">{c.name ?? t.officialInbox}</div>
                       <div className="text-xs text-gray-500">{c.title ?? ""}</div>
                       {c.city && <div className="text-xs text-gray-400">{c.city}</div>}
                     </td>
                     <td className="px-4 py-2">
                       <div>{c.company ?? "—"}</div>
-                      <div className="text-xs text-gray-400">{t.types[c.type]}</div>
+                      <div className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-gray-400">
+                        {c.origin === "recruiter" ? (
+                          <CategoryPicker id={c.id} labels={t.categories} value={c.type === "headhunter" ? "headhunter" : "hr"} />
+                        ) : (
+                          <span>{t.categories.hr}</span>
+                        )}
+                        {c.type === "company_inbox" && <span className="rounded bg-gray-100 px-1">{t.officialInbox}</span>}
+                      </div>
                     </td>
                     <td className="px-4 py-2">
                       <div>{c.email}</div>
@@ -155,7 +165,7 @@ export default async function AdminContactsPage({
                         manual={c.regionSource === "manual"}
                         regions={c.regions}
                         t={t.editor}
-                        type={c.type}
+                        origin={c.origin}
                       />
                     </td>
                     <td className="px-4 py-2 text-xs text-gray-600 whitespace-nowrap">

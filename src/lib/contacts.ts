@@ -9,9 +9,14 @@ export const CONTACT_REGIONS = ["hong kong", "shenzhen", "china", "singapore", "
 export type ContactRegion = (typeof CONTACT_REGIONS)[number];
 export const CONTACT_TYPES = ["headhunter", "company_inbox", "inhouse"] as const;
 export type ContactType = (typeof CONTACT_TYPES)[number];
+/** The two categories staff filter by: agency headhunters, and company HR (in-house people + official inboxes). */
+export const CONTACT_CATEGORIES = ["headhunter", "hr"] as const;
+export type ContactCategory = (typeof CONTACT_CATEGORIES)[number];
+export type ContactOrigin = "recruiter" | "employer_inbox" | "employer_contact";
 
 export type Contact = {
   type: ContactType;
+  origin: ContactOrigin;
   id: string;
   name: string | null;
   title: string | null;
@@ -58,11 +63,11 @@ export async function fetchContacts(q: { type?: string; region?: string; q?: str
   return (await res.json()) as ContactPage;
 }
 
-export async function saveContactRegions(type: ContactType, id: string, regions: string[]): Promise<void> {
+export async function saveContactRegions(origin: ContactOrigin, id: string, regions: string[]): Promise<void> {
   const res = await fetch(`${BASE}/api/contacts/regions`, {
     method: "POST",
     headers: { ...auth(), "content-type": "application/json" },
-    body: JSON.stringify({ type, id, regions }),
+    body: JSON.stringify({ origin, id, regions }),
     cache: "no-store",
   });
   if (!res.ok) throw new Error(`job-matching ${res.status}: ${await res.text()}`);
@@ -93,4 +98,14 @@ export async function importContacts(
   });
   if (!res.ok) throw new Error(`job-matching ${res.status}: ${await res.text()}`);
   return (await res.json()) as ImportResult;
+}
+
+export async function saveContactCategory(id: string, category: ContactCategory): Promise<void> {
+  const res = await fetch(`${BASE}/api/contacts/category`, {
+    method: "POST",
+    headers: { ...auth(), "content-type": "application/json" },
+    body: JSON.stringify({ id, category }),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`job-matching ${res.status}: ${await res.text()}`);
 }

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 
-import { saveRegionsAction } from "./actions";
+import { saveCategoryAction, saveRegionsAction } from "./actions";
 
 export type RegionEditorText = {
   edit: string;
@@ -14,7 +14,7 @@ export type RegionEditorText = {
 };
 
 export function RegionEditor({
-  type,
+  origin,
   id,
   regions,
   manual,
@@ -22,7 +22,7 @@ export function RegionEditor({
   labels,
   t,
 }: {
-  type: "headhunter" | "company_inbox" | "inhouse";
+  origin: "recruiter" | "employer_inbox" | "employer_contact";
   id: string;
   regions: string[];
   manual: boolean;
@@ -81,7 +81,7 @@ export function RegionEditor({
           type="button"
           onClick={() =>
             start(async () => {
-              const res = await saveRegionsAction(type, id, picked);
+              const res = await saveRegionsAction(origin, id, picked);
               if (res.ok) setOpen(false);
               else setError(t.errors[res.error]);
             })
@@ -94,5 +94,39 @@ export function RegionEditor({
         </button>
       </div>
     </div>
+  );
+}
+
+/** 猎头 ↔ 企业人力资源 for contacts on the recruiter list. */
+export function CategoryPicker({
+  id,
+  value,
+  labels,
+}: {
+  id: string;
+  value: "headhunter" | "hr";
+  labels: { headhunter: string; hr: string };
+}) {
+  const [cur, setCur] = useState(value);
+  const [pending, start] = useTransition();
+
+  return (
+    <select
+      className="rounded border border-gray-200 bg-white px-1 py-0.5 text-xs text-gray-600 disabled:opacity-50"
+      disabled={pending}
+      value={cur}
+      onChange={(e) => {
+        const next = e.target.value as "headhunter" | "hr";
+        const prev = cur;
+        setCur(next);
+        start(async () => {
+          const res = await saveCategoryAction(id, next);
+          if (!res.ok) setCur(prev);
+        });
+      }}
+    >
+      <option value="headhunter">{labels.headhunter}</option>
+      <option value="hr">{labels.hr}</option>
+    </select>
   );
 }
