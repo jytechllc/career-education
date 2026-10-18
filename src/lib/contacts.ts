@@ -25,6 +25,10 @@ export type Contact = {
   lastSeen: string | null;
   contactedAt: string | null;
   repliedAt: string | null;
+  phone: string | null;
+  wechat: string | null;
+  notes: string | null;
+  addedBy: string | null;
 };
 
 export type ContactPage = {
@@ -62,4 +66,31 @@ export async function saveContactRegions(type: ContactType, id: string, regions:
     cache: "no-store",
   });
   if (!res.ok) throw new Error(`job-matching ${res.status}: ${await res.text()}`);
+}
+
+export type ImportResult = { added: number; updated: number; failed: { row: number; email: string; error: string }[] };
+
+export async function importContacts(
+  actor: string,
+  contacts: {
+    type: "headhunter" | "inhouse";
+    email: string;
+    name: string | null;
+    title: string | null;
+    company: string | null;
+    phone: string | null;
+    wechat: string | null;
+    linkedin: string | null;
+    regions: string[];
+    notes: string | null;
+  }[],
+): Promise<ImportResult> {
+  const res = await fetch(`${BASE}/api/contacts`, {
+    method: "POST",
+    headers: { ...auth(), "content-type": "application/json" },
+    body: JSON.stringify({ actor, contacts }),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`job-matching ${res.status}: ${await res.text()}`);
+  return (await res.json()) as ImportResult;
 }

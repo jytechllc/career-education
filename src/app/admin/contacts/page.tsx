@@ -49,7 +49,12 @@ export default async function AdminContactsPage({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-2xl font-bold text-yellow-900">{t.title}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold text-yellow-900">{t.title}</h1>
+          <Link className="rounded bg-yellow-700 px-3 py-1.5 text-sm text-white" href="/admin/contacts/new">
+            {t.addLink}
+          </Link>
+        </div>
         <p className="mt-1 text-sm text-gray-500">{t.subtitle}</p>
       </div>
 
@@ -125,6 +130,10 @@ export default async function AdminContactsPage({
                     </td>
                     <td className="px-4 py-2">
                       <div>{c.email}</div>
+                      {(c.phone || c.wechat) && (
+                        <div className="text-xs text-gray-500">{[c.phone, c.wechat && `WeChat ${c.wechat}`].filter(Boolean).join(" · ")}</div>
+                      )}
+                      {c.notes && <div className="text-xs text-gray-500 whitespace-pre-wrap">{c.notes}</div>}
                       <div className="flex gap-2 text-xs">
                         {c.linkedin && (
                           <a className="text-yellow-800 underline" href={c.linkedin} rel="noreferrer" target="_blank">
