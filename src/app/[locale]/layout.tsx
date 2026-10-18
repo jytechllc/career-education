@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import type { Metadata } from "next";
 import { hasLocale, locales } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
@@ -10,6 +11,8 @@ import { Footer } from "@/components/Footer";
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export async function generateMetadata({
   params,
@@ -63,6 +66,15 @@ export default async function LocaleLayout({
       <Navbar locale={locale} dict={dict} user={user} isStaff={isStaff} />
       <main className="flex-1">{children}</main>
       <Footer locale={locale} dict={dict} />
+      {/* Public pages only (admin has its own layout); staff visits are left out of the numbers. */}
+      {GA_ID && !isStaff && (
+        <>
+          <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+          <Script id="ga4" strategy="afterInteractive">
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA_ID}');`}
+          </Script>
+        </>
+      )}
     </>
   );
 }
