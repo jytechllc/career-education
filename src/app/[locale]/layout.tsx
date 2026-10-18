@@ -20,20 +20,16 @@ export async function generateMetadata({
   if (!hasLocale(locale)) return {};
   const dict = await getDictionary(locale);
   const baseUrl = process.env.APP_BASE_URL || "http://localhost:3000";
+  // No canonical here: a layout's alternates are inherited by every page
+  // under it, which told Google that all pages (blog posts included) were
+  // copies of the home page. Pages that need one set their own.
   return {
+    metadataBase: new URL(baseUrl),
     title: dict.meta.title,
     description: dict.meta.description,
-    alternates: {
-      canonical: `${baseUrl}/${locale}`,
-      languages: {
-        zh: `${baseUrl}/zh`,
-        en: `${baseUrl}/en`,
-      },
-    },
     openGraph: {
       title: dict.meta.title,
       description: dict.meta.description,
-      url: `${baseUrl}/${locale}`,
       locale: locale === "zh" ? "zh_CN" : "en_US",
     },
   };
