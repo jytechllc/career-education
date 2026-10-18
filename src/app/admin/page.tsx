@@ -162,7 +162,15 @@ export default async function AdminDashboard() {
             <tbody>
               {ops.pipelines.map((x) => (
                 <tr key={x.key} className="border-t border-gray-100">
-                  <td className="py-1.5 pr-2">{t.pipelines[x.key as keyof typeof t.pipelines]}</td>
+                  <td className="py-1.5 pr-2">
+                    {x.href ? (
+                      <a className="hover:underline" href={x.href} {...(x.href.startsWith("/") ? {} : { rel: "noreferrer", target: "_blank" })}>
+                        {t.pipelines[x.key as keyof typeof t.pipelines]} <span className="text-xs text-gray-400">↗</span>
+                      </a>
+                    ) : (
+                      t.pipelines[x.key as keyof typeof t.pipelines]
+                    )}
+                  </td>
                   <td className="py-1.5 pr-2 text-xs text-gray-500 tabular-nums whitespace-nowrap">{fmt(x.last)}</td>
                   <td className="py-1.5 text-right">
                     <span className={`rounded px-1.5 py-0.5 text-xs ${x.ok ? "bg-green-50 text-green-700" : x.ok === false ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-500"}`}>

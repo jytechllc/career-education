@@ -62,6 +62,42 @@ async function hkNews(): Promise<{ updatedAt: string; items: NewsItem[] } | null
   }
 }
 
+/**
+ * Shenzhen government notice lists (科创局 / 市政府 / 前海). They publish no
+ * feed, so the newest links are read from each list page and filtered to
+ * calls for applications, funding, talent and events.
+ */
+const SZ_LISTS = [
+  { url: "https://stic.sz.gov.cn/xxgk/tzgg/", source: "深圳市科技创新局" },
+  { url: "http://www.sz.gov.cn/cn/xxgk/zfxxgj/tzgg/", source: "深圳市人民政府" },
+  { url: "http://qh.sz.gov.cn/sygnan/qhzx/tzgg/", source: "前海管理局" },
+];
+const SZ_WANTED = /申报|申请指南|资助|扶持|补贴|人才|招聘|招募|创业|大赛|比赛|竞赛|活动|论坛|峰会|博览|展会|深港|港澳|青年|人工智能|AI|机器人|低空|实习|就业/;
+const SZ_NOISE = /规划许可|宗地|总平面|中标|成交|采购|城市更新|拟兑现|拟资助|批前公示|土地|招标|配租|获奖名单|结果/;
+
+async function szNews(): Promise<NewsItem[]> {
+  const lists = await Promise.all(
+    SZ_LISTS.map(async ({ url, source }) => {
+      try {
+        const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" }, signal: AbortSignal.timeout(10_000), next: { revalidate: 3600 } });
+        if (!res.ok) return [];
+        const html = (await res.text()).replace(/\s+/g, " ");
+        const items: NewsItem[] = [];
+        for (const m of Array.from(html.matchAll(/<a [^>]*href="([^"]*post_\d+\.html)"[^>]*>([^<]{6,200})<\/a>(?=(.{0,400}))/g))) {
+          const title = (m[0].match(/title="([^"]+)"/)?.[1] ?? m[2]).trim();
+          const d = m[3].match(/(20\d\d)[-年](\d\d)[-月](\d\d)/);
+          if (!d || !SZ_WANTED.test(title) || SZ_NOISE.test(title)) continue;
+          items.push({ title, link: new URL(m[1], url).href, source, tags: ["深圳"], date: `${d[1]}-${d[2]}-${d[3]}T00:00:00+08:00` });
+        }
+        return items;
+      } catch {
+        return [];
+      }
+    }),
+  );
+  return lists.flat();
+}
+
 /** Newest upload on a channel, from YouTube's public RSS feed. */
 async function latestVideo(channelId: string): Promise<{ title: string; published: string } | null> {
   try {
@@ -81,7 +117,7 @@ async function latestVideo(channelId: string): Promise<{ title: string; publishe
 
 export type Priority = "high" | "medium";
 export type Task = { priority: Priority; kind: string; text: string; href?: string };
-export type Pipeline = { key: string; last: string | null; maxHours: number; ok: boolean | null };
+export type Pipeline = { key: string; last: string | null; maxHours: number; ok: boolean | null; href?: string };
 
 const hoursSince = (iso: string | null | undefined) => (iso ? (Date.now() - new Date(iso).getTime()) / 3600e3 : null);
 const OPPORTUNITY_TAGS = /AI|創科|创科|初創|初创|人才|北都|河套|大灣區|大湾区|招聘|展|活動|活动|論壇|论坛|比賽|比赛|資助|资助/;
@@ -91,9 +127,10 @@ export async function loadOps(t: {
   pipelines: Record<string, string>;
 }) {
   const weekAgo = new Date(Date.now() - 7 * 864e5);
-  const [jm, news, ytJytech, ytJyedu, learners, appsWeek, profilesNoResume, partnersNoEmail, postsWeek, lastPost] = await Promise.all([
+  const [jm, news, sz, ytJytech, ytJyedu, learners, appsWeek, profilesNoResume, partnersNoEmail, postsWeek, lastPost] = await Promise.all([
     jmSummary(),
     hkNews(),
+    szNews(),
     latestVideo(YOUTUBE.jytech),
     latestVideo(YOUTUBE.jyedu),
     listLearners().catch(() => []),
@@ -106,17 +143,17 @@ export async function loadOps(t: {
 
   const p = jm?.pipelines ?? {};
   const pipelines: Pipeline[] = [
-    { key: "shenzhenDiscovery", last: p.shenzhen_discovery ?? null, maxHours: 48 },
-    { key: "outreachSent", last: p.outreach_sent ?? null, maxHours: 24 * 4 },
-    { key: "hkszRecruiters", last: p.hksz_recruiters ?? null, maxHours: 48 },
-    { key: "companyBoards", last: p.company_boards ?? null, maxHours: 48 },
-    { key: "simplifyFeeds", last: p.simplify_feeds ?? null, maxHours: 48 },
-    { key: "curated", last: p.curated ?? null, maxHours: 48 },
-    { key: "headhunterLeads", last: p.headhunter_leads ?? null, maxHours: 72 },
-    { key: "hkNews", last: news?.updatedAt ?? null, maxHours: 48 },
-    { key: "blog", last: lastPost[0]?.at?.toISOString() ?? null, maxHours: 72 },
-    { key: "youtubeJytech", last: ytJytech?.published ?? null, maxHours: 48 },
-    { key: "youtubeJyedu", last: ytJyedu?.published ?? null, maxHours: 48 },
+    { key: "shenzhenDiscovery", last: p.shenzhen_discovery ?? null, maxHours: 48, href: `${JM}/zh/admin/employers/shenzhen` },
+    { key: "outreachSent", last: p.outreach_sent ?? null, maxHours: 24 * 4, href: `${JM}/zh/admin/employers/shenzhen` },
+    { key: "hkszRecruiters", last: p.hksz_recruiters ?? null, maxHours: 48, href: "/admin/contacts" },
+    { key: "companyBoards", last: p.company_boards ?? null, maxHours: 48, href: `${JM}/zh/admin/jobs` },
+    { key: "simplifyFeeds", last: p.simplify_feeds ?? null, maxHours: 48, href: `${JM}/zh/admin/jobs` },
+    { key: "curated", last: p.curated ?? null, maxHours: 48, href: "/admin/internships" },
+    { key: "headhunterLeads", last: p.headhunter_leads ?? null, maxHours: 72, href: "/admin/contacts" },
+    { key: "hkNews", last: news?.updatedAt ?? null, maxHours: 48, href: "https://hk.jytech.us" },
+    { key: "blog", last: lastPost[0]?.at?.toISOString() ?? null, maxHours: 72, href: "/zh/blog" },
+    { key: "youtubeJytech", last: ytJytech?.published ?? null, maxHours: 48, href: `https://www.youtube.com/channel/${YOUTUBE.jytech}` },
+    { key: "youtubeJyedu", last: ytJyedu?.published ?? null, maxHours: 48, href: `https://www.youtube.com/channel/${YOUTUBE.jyedu}` },
   ].map((x) => {
     const h = hoursSince(x.last);
     return { ...x, ok: h == null ? null : h <= x.maxHours };
@@ -138,9 +175,10 @@ export async function loadOps(t: {
   if (appsWeek[0].n) tasks.push({ priority: "medium", kind: "applications", text: t.tasks.applications(String(appsWeek[0].n)), href: "/admin/applications" });
   tasks.sort((a, b) => (a.priority === b.priority ? 0 : a.priority === "high" ? -1 : 1));
 
-  const opportunities = (news?.items ?? [])
-    .filter((n) => (hoursSince(n.date) ?? 999) < 24 * 14 && (n.tags.some((tg) => OPPORTUNITY_TAGS.test(tg)) || OPPORTUNITY_TAGS.test(n.title)))
-    .slice(0, 10);
+  const recent = (n: NewsItem) => (hoursSince(n.date) ?? 999) < 24 * 14;
+  const hk = (news?.items ?? []).filter((n) => recent(n) && (n.tags.some((tg) => OPPORTUNITY_TAGS.test(tg)) || OPPORTUNITY_TAGS.test(n.title)));
+  // Newest first, but keep both cities on the list.
+  const opportunities = [...hk.slice(0, 8), ...sz.filter(recent).slice(0, 8)].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 14);
 
   return {
     kpis: {
