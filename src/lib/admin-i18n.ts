@@ -23,11 +23,13 @@ export async function getAdminLang(): Promise<AdminLang> {
 
 const zh = {
   brand: "杰圆教育 · 管理后台",
+  navGroups: { learners: "学员", resources: "资源与机会", admin: "管理" },
   nav: {
     overview: "概览",
     learners: "学员",
-    applications: "学生申请",
-    students: "站内学员",
+    allLearners: "全部学员",
+    applications: "新申请",
+    students: "站内注册",
     partners: "合作机构",
     profiles: "学生档案",
     talents: "学生文件",
@@ -330,11 +332,13 @@ export type AdminDict = typeof zh;
 
 const en: AdminDict = {
   brand: "JYEdu · Admin",
+  navGroups: { learners: "Students", resources: "Resources", admin: "Admin" },
   nav: {
     overview: "Overview",
     learners: "Students",
-    applications: "Applications",
-    students: "Site students",
+    allLearners: "All students",
+    applications: "New applications",
+    students: "Site sign-ups",
     partners: "Partners",
     profiles: "Student profiles",
     talents: "Student files",

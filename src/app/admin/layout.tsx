@@ -16,15 +16,47 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const dynamic = "force-dynamic";
 
-const NAV = [
+type NavKey =
+  | "overview" | "allLearners" | "applications" | "students" | "profiles" | "talents"
+  | "internships" | "contacts" | "partners" | "contracts" | "staff" | "activity";
+type GroupKey = "learners" | "resources" | "admin";
+type NavItem = { href: string; key: NavKey };
+type NavGroup = { group: GroupKey; items: NavItem[] };
+type NavEntry = NavItem | NavGroup;
+
+/** Top-level entries; groups open to show their pages. */
+const NAV: NavEntry[] = [
   { href: "/admin", key: "overview" },
-  { href: "/admin/learners", key: "learners" },
-  { href: "/admin/partners", key: "partners" },
-  { href: "/admin/talents", key: "talents" },
-  { href: "/admin/internships", key: "internships" },
-  { href: "/admin/contacts", key: "contacts" },
+  {
+    group: "learners",
+    items: [
+      { href: "/admin/learners", key: "allLearners" },
+      { href: "/admin/applications", key: "applications" },
+      { href: "/admin/students", key: "students" },
+      { href: "/admin/profiles", key: "profiles" },
+      { href: "/admin/talents", key: "talents" },
+    ],
+  },
+  {
+    group: "resources",
+    items: [
+      { href: "/admin/internships", key: "internships" },
+      { href: "/admin/contacts", key: "contacts" },
+      { href: "/admin/partners", key: "partners" },
+    ],
+  },
   { href: "/admin/contracts", key: "contracts" },
-] as const;
+];
+
+const ADMIN_GROUP: NavGroup = {
+  group: "admin",
+  items: [
+    { href: "/admin/staff", key: "staff" },
+    { href: "/admin/activity", key: "activity" },
+  ],
+};
+
+const isGroup = (e: NavEntry): e is NavGroup => "group" in e;
 
 export default async function AdminLayout({
   children,
@@ -41,21 +73,10 @@ export default async function AdminLayout({
 
   const { lang, t } = await getAdminDict();
   const path = (await headers()).get("x-pathname") ?? "/admin";
-  const nav = [
-    ...NAV,
-    ...(role === "admin"
-      ? ([
-          { href: "/admin/activity", key: "activity" },
-          { href: "/admin/staff", key: "staff" },
-        ] as const)
-      : []),
-  ];
-
-  const links = nav.map((n) => ({
-    ...n,
-    // "/admin" only matches itself; sections also match their subpages.
-    active: n.href === "/admin" ? path === "/admin" : path === n.href || path.startsWith(`${n.href}/`),
-  }));
+  // "/admin" only matches itself; sections also match their subpages.
+  const on = (href: string) => (href === "/admin" ? path === "/admin" : path === href || path.startsWith(`${href}/`));
+  const entries = role === "admin" ? [...NAV, ADMIN_GROUP] : NAV;
+  const activeGroup = entries.find((e): e is NavGroup => isGroup(e) && e.items.some((it) => on(it.href)));
   const langHref = `/admin/lang?to=${lang === "en" ? "zh" : "en"}&back=${encodeURIComponent(path)}`;
 
   // Sidebar on large screens, so the menu can grow and English labels never
@@ -67,16 +88,39 @@ export default async function AdminLayout({
           {t.brand}
         </Link>
         <nav className="flex-1 overflow-y-auto px-3 flex flex-col gap-0.5 text-sm">
-          {links.map((n) => (
-            <Link
-              key={n.href}
-              aria-current={n.active ? "page" : undefined}
-              className={`rounded-md px-3 py-2 ${n.active ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
-              href={n.href}
-            >
-              {t.nav[n.key]}
-            </Link>
-          ))}
+          {entries.map((e) =>
+            isGroup(e) ? (
+              <details key={e.group} className="group/nav" open={activeGroup === e}>
+                <summary className="flex cursor-pointer list-none items-center justify-between rounded-md px-3 py-2 hover:bg-white/15 [&::-webkit-details-marker]:hidden">
+                  <span className={activeGroup === e ? "font-medium" : ""}>{t.navGroups[e.group]}</span>
+                  <span aria-hidden className="text-xs transition-transform group-open/nav:rotate-90">
+                    ▸
+                  </span>
+                </summary>
+                <div className="ml-3 mt-0.5 flex flex-col gap-0.5 border-l border-white/20 pl-2">
+                  {e.items.map((it) => (
+                    <Link
+                      key={it.href}
+                      aria-current={on(it.href) ? "page" : undefined}
+                      className={`rounded-md px-3 py-1.5 ${on(it.href) ? "bg-white text-yellow-800 font-medium" : "text-yellow-50 hover:bg-white/15"}`}
+                      href={it.href}
+                    >
+                      {t.nav[it.key]}
+                    </Link>
+                  ))}
+                </div>
+              </details>
+            ) : (
+              <Link
+                key={e.href}
+                aria-current={on(e.href) ? "page" : undefined}
+                className={`rounded-md px-3 py-2 ${on(e.href) ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
+                href={e.href}
+              >
+                {t.nav[e.key]}
+              </Link>
+            ),
+          )}
         </nav>
         <div className="border-t border-white/20 px-5 py-4 flex flex-col gap-2 text-xs text-yellow-100">
           <div className="min-w-0">
@@ -117,17 +161,36 @@ export default async function AdminLayout({
           className="flex gap-1 overflow-x-auto whitespace-nowrap px-3 py-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           id="admin-nav-mobile"
         >
-          {links.map((n) => (
-            <Link
-              key={n.href}
-              aria-current={n.active ? "page" : undefined}
-              className={`rounded-full px-3 py-1 ${n.active ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
-              href={n.href}
-            >
-              {t.nav[n.key]}
-            </Link>
-          ))}
+          {entries.map((e) => {
+            const href = isGroup(e) ? e.items[0].href : e.href;
+            const active = isGroup(e) ? activeGroup === e : on(e.href);
+
+            return (
+              <Link
+                key={href}
+                aria-current={active ? "page" : undefined}
+                className={`rounded-full px-3 py-1 ${active ? "bg-white text-yellow-800 font-medium" : "hover:bg-white/15"}`}
+                href={href}
+              >
+                {isGroup(e) ? t.navGroups[e.group] : t.nav[e.key]}
+              </Link>
+            );
+          })}
         </nav>
+        {activeGroup && (
+          <nav className="flex gap-1 overflow-x-auto whitespace-nowrap bg-black/10 px-3 py-1.5 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {activeGroup.items.map((it) => (
+              <Link
+                key={it.href}
+                aria-current={on(it.href) ? "page" : undefined}
+                className={`rounded-full px-2.5 py-0.5 ${on(it.href) ? "bg-white/90 text-yellow-800 font-medium" : "hover:bg-white/15"}`}
+                href={it.href}
+              >
+                {t.nav[it.key]}
+              </Link>
+            ))}
+          </nav>
+        )}
         <ActiveNavIntoView navId="admin-nav-mobile" />
       </header>
 
