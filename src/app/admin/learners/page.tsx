@@ -36,9 +36,7 @@ export default async function AdminLearnersPage({
   const matchesQ = (l: (typeof all)[number]) =>
     !needle || [l.name, l.email, l.school, l.goal, l.profileCode, l.partner, l.owner, l.poc].some((v) => v?.toLowerCase().includes(needle));
   const searched = all.filter(matchesQ);
-  // A profile whose case is marked 新申请 counts as a new application too.
-  const inSource = (l: (typeof all)[number], s: LearnerSource) =>
-    l.sources.includes(s) || (s === "application" && l.caseStatus === "new");
+  const inSource = (l: (typeof all)[number], s: LearnerSource) => l.sources.includes(s);
   const rows = source ? searched.filter((l) => inSource(l, source)) : searched;
   const count = (s?: LearnerSource) => (s ? searched.filter((l) => inSource(l, s)).length : searched.length);
   const chip = (active: boolean) =>
