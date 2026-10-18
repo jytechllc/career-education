@@ -1,0 +1,65 @@
+import "server-only";
+
+/**
+ * JY Tech's recruiter and employer contacts, read from job-matching
+ * (GET /api/contacts). Internal resource: view only, one page at a time,
+ * no export. Region tags can be edited (POST /api/contacts/regions).
+ */
+export const CONTACT_REGIONS = ["hong kong", "shenzhen", "china", "singapore", "us", "uk", "india", "other"] as const;
+export type ContactRegion = (typeof CONTACT_REGIONS)[number];
+export const CONTACT_TYPES = ["headhunter", "company_inbox", "inhouse"] as const;
+export type ContactType = (typeof CONTACT_TYPES)[number];
+
+export type Contact = {
+  type: ContactType;
+  id: string;
+  name: string | null;
+  title: string | null;
+  company: string | null;
+  email: string;
+  regions: string[];
+  regionSource: string | null;
+  linkedin: string | null;
+  city: string | null;
+  emailSource: string | null;
+  lastSeen: string | null;
+  contactedAt: string | null;
+  repliedAt: string | null;
+};
+
+export type ContactPage = {
+  rows: Contact[];
+  total: number;
+  page: number;
+  pageSize: number;
+  counts: { region: string; type: ContactType; n: number }[];
+};
+
+const BASE = process.env.JOB_MATCHING_URL ?? "https://jobmatching.us";
+
+function auth(): Record<string, string> {
+  const token = process.env.JOB_MATCHING_API_TOKEN;
+  if (!token) throw new Error("JOB_MATCHING_API_TOKEN is not set");
+  return { authorization: `Bearer ${token}` };
+}
+
+export async function fetchContacts(q: { type?: string; region?: string; q?: string; page?: number }): Promise<ContactPage> {
+  const qs = new URLSearchParams();
+  if (q.type) qs.set("type", q.type);
+  if (q.region) qs.set("region", q.region);
+  if (q.q) qs.set("q", q.q);
+  if (q.page && q.page > 1) qs.set("page", String(q.page));
+  const res = await fetch(`${BASE}/api/contacts?${qs}`, { headers: auth(), cache: "no-store" });
+  if (!res.ok) throw new Error(`job-matching ${res.status}`);
+  return (await res.json()) as ContactPage;
+}
+
+export async function saveContactRegions(type: ContactType, id: string, regions: string[]): Promise<void> {
+  const res = await fetch(`${BASE}/api/contacts/regions`, {
+    method: "POST",
+    headers: { ...auth(), "content-type": "application/json" },
+    body: JSON.stringify({ type, id, regions }),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`job-matching ${res.status}: ${await res.text()}`);
+}
