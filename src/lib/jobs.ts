@@ -29,7 +29,10 @@ export type JobBoard = {
   items: BoardJob[];
 };
 
-export type JobFilters = { type: BoardTab; q: string; loc: string; category: string; sponsor: boolean; page: number };
+export type JobRegion = "us" | "hk" | "cn" | "sg" | "uk" | "remote";
+export const JOB_REGIONS: JobRegion[] = ["hk", "cn", "sg", "us", "uk", "remote"];
+
+export type JobFilters = { type: BoardTab; q: string; loc: string; category: string; sponsor: boolean; region: JobRegion | ""; page: number };
 
 const JOB_MATCHING_URL = process.env.JOB_MATCHING_URL ?? "https://jobmatching.us";
 
@@ -43,6 +46,7 @@ export async function fetchJobBoard(f: JobFilters): Promise<JobBoard> {
     ...(f.loc && { loc: f.loc }),
     ...(f.category && { category: f.category }),
     ...(f.sponsor && { sponsor: "1" }),
+    ...(f.region && { region: f.region }),
     page: String(f.page),
   });
   const res = await fetch(`${JOB_MATCHING_URL}/api/listings/board?${qs}`, {

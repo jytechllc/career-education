@@ -206,7 +206,8 @@ const zh = {
     curatedLink: "香港银行暑期实习追踪 →",
     searchPlaceholder: "职位、公司或关键词",
     locPlaceholder: "地点，如 Hong Kong",
-    quickLocs: [["香港", "Hong Kong"], ["深圳", "Shenzhen"], ["新加坡", "Singapore"], ["美国", "United States"], ["远程", "Remote"]] as [string, string][],
+    allRegions: "全部地区",
+    regions: { hk: "香港", cn: "内地", sg: "新加坡", us: "美国", uk: "英国", remote: "远程" },
     allCategories: "全部方向",
     sponsor: "只看可办签证",
     search: "搜索",
@@ -221,6 +222,11 @@ const zh = {
     next: "下一页 →",
   },
   internships: {
+    regionTabs: { hk: "香港", us: "美国" },
+    usTitle: "美国实习",
+    usSubtitle: "jobmatching.us 上所有美国地区的在招实习，来自企业招聘系统、公司官网和实习汇总源，每天更新。按方向筛选，点职位名打开原始招聘页。",
+    liveHk: "其他香港实习（实时）",
+    liveHkMore: "在「岗位」里查看全部 →",
     title: "香港银行 2027 暑期实习",
     subtitle: (date: string) =>
       `外资行、中资行、本地银行和金管局的 2027 年香港暑期实习，数据来自 jobmatching.us，调研截至 ${date}。过了截止日的岗位会自动归入「已截止」；标「去年」的日期是上一轮的时间，仅供参考。`,
@@ -625,7 +631,8 @@ const en: AdminDict = {
     curatedLink: "Hong Kong bank summer internship tracker →",
     searchPlaceholder: "Title, company or keyword",
     locPlaceholder: "Location, e.g. Hong Kong",
-    quickLocs: [["Hong Kong", "Hong Kong"], ["Shenzhen", "Shenzhen"], ["Singapore", "Singapore"], ["US", "United States"], ["Remote", "Remote"]] as [string, string][],
+    allRegions: "All regions",
+    regions: { hk: "Hong Kong", cn: "Mainland China", sg: "Singapore", us: "United States", uk: "United Kingdom", remote: "Remote" },
     allCategories: "All fields",
     sponsor: "Visa sponsorship only",
     search: "Search",
@@ -640,6 +647,11 @@ const en: AdminDict = {
     next: "Next →",
   },
   internships: {
+    regionTabs: { hk: "Hong Kong", us: "United States" },
+    usTitle: "US internships",
+    usSubtitle: "Every open US internship on jobmatching.us, from employer ATSs, company career pages and internship feeds, updated daily. Filter by field; click a role to open the original posting.",
+    liveHk: "Other Hong Kong internships (live)",
+    liveHkMore: "See all in Jobs →",
     title: "Hong Kong bank summer internships 2027",
     subtitle: (date: string) =>
       `Summer 2027 internships in Hong Kong at foreign, Chinese and local banks and the HKMA, from jobmatching.us, researched ${date}. Roles move to Closed automatically once the deadline passes; dates marked "Last cycle" are from the previous round and only a guide.`,
