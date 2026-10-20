@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 
 type NavKey =
   | "overview" | "allLearners" | "applications" | "students" | "profiles" | "talents"
-  | "internships" | "contacts" | "partners" | "contracts" | "staff" | "activity";
+  | "jobs" | "internships" | "contacts" | "partners" | "contracts" | "staff" | "activity";
 type GroupKey = "learners" | "resources" | "admin";
 type NavItem = { href: string; key: NavKey };
 type NavGroup = { group: GroupKey; items: NavItem[] };
