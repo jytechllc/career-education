@@ -67,6 +67,7 @@ export default async function AdminInternshipsPage({
   return (
     <div className="flex flex-col gap-5">
       <div>
+        <Link className="text-sm text-gray-500 hover:text-yellow-800" href="/admin/jobs">← {d.jobs.title}</Link>
         <h1 className="text-2xl font-bold text-yellow-900">{t.title}</h1>
         <p className="text-sm text-gray-500 mt-1">
           {t.subtitle(data?.checkedAt ?? "—")}

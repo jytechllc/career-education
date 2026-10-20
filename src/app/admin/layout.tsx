@@ -40,7 +40,7 @@ const NAV: NavEntry[] = [
   {
     group: "resources",
     items: [
-      { href: "/admin/internships", key: "internships" },
+      { href: "/admin/jobs", key: "jobs" },
       { href: "/admin/contacts", key: "contacts" },
       { href: "/admin/partners", key: "partners" },
     ],
@@ -74,7 +74,11 @@ export default async function AdminLayout({
   const { lang, t } = await getAdminDict();
   const path = (await headers()).get("x-pathname") ?? "/admin";
   // "/admin" only matches itself; sections also match their subpages.
-  const on = (href: string) => (href === "/admin" ? path === "/admin" : path === href || path.startsWith(`${href}/`));
+  // The Hong Kong bank tracker (/admin/internships) lives under 岗位.
+  const on = (href: string) =>
+    href === "/admin"
+      ? path === "/admin"
+      : path === href || path.startsWith(`${href}/`) || (href === "/admin/jobs" && path.startsWith("/admin/internships"));
   const entries = role === "admin" ? [...NAV, ADMIN_GROUP] : NAV;
   const activeGroup = entries.find((e): e is NavGroup => isGroup(e) && e.items.some((it) => on(it.href)));
   const langHref = `/admin/lang?to=${lang === "en" ? "zh" : "en"}&back=${encodeURIComponent(path)}`;
