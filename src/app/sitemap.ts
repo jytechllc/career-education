@@ -17,6 +17,7 @@ const PAGES = [
   "/accounting-us-plan",
   "/china-us-study-market",
   "/etiquette",
+  "/join",
   "/performing-arts-funding",
   "/personality-careers",
   "/press",
