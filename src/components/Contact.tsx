@@ -44,7 +44,7 @@ export const Contact = ({ dict }: { dict: Dictionary }) => {
   const contactInfo = [
     { icon: Phone, title: dict.contact.phoneTitle, content: ["17318011997"] },
     { icon: MessageCircle, title: dict.contact.wechatTitle, content: ["HELENLAN998"] },
-    { icon: MapPin, title: dict.contact.addressTitle, content: [dict.contact.address] },
+    { icon: MapPin, title: dict.contact.addressTitle, content: [dict.contact.company, dict.contact.address] },
     {
       icon: Clock,
       title: dict.contact.hoursTitle,

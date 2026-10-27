@@ -77,7 +77,7 @@ export const Footer = ({ dict, locale }: { dict: Dictionary; locale: string }) =
         <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
           <p>
             &copy; {new Date().getFullYear()}{" "}
-            {locale === "zh" ? "杰圆教育" : "JYEdu"}.{" "}
+            {locale === "zh" ? "杰圆教育" : "JYEdu"} · {dict.contact.company}.{" "}
             {dict.footer.rights}
           </p>
         </div>
