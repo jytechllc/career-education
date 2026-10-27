@@ -34,6 +34,10 @@ export const Footer = ({ dict, locale }: { dict: Dictionary; locale: string }) =
                 <MapPin className="h-4 w-4 text-yellow-500 flex-shrink-0 mt-0.5" />
                 <span>{dict.contact.address}</span>
               </div>
+              <div className="flex items-start space-x-2 text-sm">
+                <MapPin className="h-4 w-4 text-yellow-500 flex-shrink-0 mt-0.5" />
+                <span>{dict.contact.usAddress}</span>
+              </div>
             </div>
           </div>
 
