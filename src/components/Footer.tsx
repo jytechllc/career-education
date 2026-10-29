@@ -71,6 +71,9 @@ export const Footer = ({ dict, locale }: { dict: Dictionary; locale: string }) =
               <Link href={`/${locale}/cases`} className="block hover:text-yellow-400 transition-colors">
                 {dict.nav.cases}
               </Link>
+              <Link href={`/${locale}/blog`} className="block hover:text-yellow-400 transition-colors">
+                {dict.nav.blog}
+              </Link>
               <Link href={`/${locale}/press`} className="block hover:text-yellow-400 transition-colors">
                 {locale === "zh" ? "媒体资料" : "Press kit"}
               </Link>

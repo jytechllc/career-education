@@ -7,9 +7,13 @@ import { Services } from "@/components/Services";
 import { Stats } from "@/components/Stats";
 import { SuccessStories } from "@/components/SuccessStories";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
+import { LatestPosts } from "@/components/LatestPosts";
 import { CTA } from "@/components/CTA";
 import { Contact } from "@/components/Contact";
 import { Chatbot } from "@/components/Chatbot";
+
+// Revalidate hourly so the latest blog posts show up on the homepage.
+export const revalidate = 3600;
 
 export default async function HomePage({
   params,
@@ -35,6 +39,7 @@ export default async function HomePage({
       <Stats dict={dict} />
       <SuccessStories dict={dict} />
       <WhyChooseUs dict={dict} />
+      <LatestPosts dict={dict} locale={locale} />
       <CTA dict={dict} locale={locale} />
       <Contact dict={dict} />
       <Chatbot dict={dict} />
