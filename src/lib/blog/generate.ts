@@ -36,9 +36,27 @@ function slugify(input: string): string {
   );
 }
 
+// The model has no clock: without today's date it frames "current" trends in
+// its training-era year (a 2026 post went out titled "2024热门行业…").
+function today() {
+  const d = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }),
+  );
+  return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
+}
+
+/** A 20xx year earlier than this year, i.e. a stale "current" framing. */
+function staleYear(text: string, year: number): string | null {
+  const m = text.match(/20\d{2}/g)?.find((y) => Number(y) < year);
+  return m ?? null;
+}
+
 function buildPrompt(locale: Locale, category: string, brief: string) {
+  const { year, month, day } = today();
   if (locale === "zh") {
     return `你是「杰圆职场教育」的资深职业规划顾问，为求职者撰写一篇职场资讯博客。
+
+今天是 ${year} 年 ${month} 月 ${day} 日。内容要反映当下（${year} 年）的求职环境；标题和摘要如出现年份，只能写 ${year} 或 ${year + 1}（展望），不得把往年当作「今年」或「最新」。
 
 主题分类：${category}
 本期角度：${brief}
@@ -52,6 +70,8 @@ function buildPrompt(locale: Locale, category: string, brief: string) {
 通过 save_post 工具返回结果（slug 用英文 kebab-case，3-6 个词）。`;
   }
   return `You are a senior career advisor at "JY Career". Write a job-market blog post for job seekers.
+
+Today is ${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}. Reflect the job market as of ${year}; if the title or summary names a year, it must be ${year} or ${year + 1} (outlook). Never present an earlier year as "this year" or "latest".
 
 Category: ${category}
 Angle for this issue: ${brief}
@@ -114,17 +134,25 @@ export async function generatePost(locale: Locale = "zh"): Promise<Post> {
   const topic = pickTopic(count ?? 0);
   const { category, brief } = topicLabel(topic, locale);
 
-  const message = await client().messages.create({
-    model: MODEL,
-    max_tokens: 4096,
-    tools: [SAVE_POST_TOOL],
-    tool_choice: { type: "tool", name: "save_post" },
-    messages: [{ role: "user", content: buildPrompt(locale, category, brief) }],
-  });
+  const { year } = today();
+  let gen: Generated | undefined;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const message = await client().messages.create({
+      model: MODEL,
+      max_tokens: 4096,
+      tools: [SAVE_POST_TOOL],
+      tool_choice: { type: "tool", name: "save_post" },
+      messages: [{ role: "user", content: buildPrompt(locale, category, brief) }],
+    });
 
-  const toolUse = message.content.find((b) => b.type === "tool_use");
-  if (!toolUse) throw new Error("model did not return a save_post tool call");
-  const gen = toolUse.input as Generated;
+    const toolUse = message.content.find((b) => b.type === "tool_use");
+    if (!toolUse) throw new Error("model did not return a save_post tool call");
+    gen = toolUse.input as Generated;
+    const stale = staleYear(`${gen.title ?? ""} ${gen.summary ?? ""}`, year);
+    if (!stale) break;
+    if (attempt === 3) throw new Error(`title/summary still names past year ${stale}: ${gen.title}`);
+  }
+  if (!gen) throw new Error("no post generated");
 
   const baseSlug = slugify(gen.slug || gen.title);
   const slug = await uniqueSlug(baseSlug);
