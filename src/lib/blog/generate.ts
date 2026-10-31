@@ -45,10 +45,15 @@ function today() {
   return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
 }
 
-/** A 20xx year earlier than this year, i.e. a stale "current" framing. */
+/**
+ * A past year named without this year (or the next) alongside it, i.e. a stale
+ * "current" framing. Comparisons like "2024 vs 2026" are fine.
+ */
 function staleYear(text: string, year: number): string | null {
-  const m = text.match(/20\d{2}/g)?.find((y) => Number(y) < year);
-  return m ?? null;
+  const years = (text.match(/20\d{2}/g) ?? []).map(Number);
+  if (years.some((y) => y >= year)) return null;
+  const past = years.find((y) => y < year);
+  return past ? String(past) : null;
 }
 
 function buildPrompt(locale: Locale, category: string, brief: string) {
@@ -56,7 +61,7 @@ function buildPrompt(locale: Locale, category: string, brief: string) {
   if (locale === "zh") {
     return `你是「杰圆职场教育」的资深职业规划顾问，为求职者撰写一篇职场资讯博客。
 
-今天是 ${year} 年 ${month} 月 ${day} 日。内容要反映当下（${year} 年）的求职环境；标题和摘要如出现年份，只能写 ${year} 或 ${year + 1}（展望），不得把往年当作「今年」或「最新」。
+今天是 ${year} 年 ${month} 月 ${day} 日。内容要反映当下（${year} 年）的求职环境；标题和摘要如出现年份，只能写 ${year} 或 ${year + 1}（展望），可以拿往年做对比，但不得只写往年、把往年当作「今年」或「最新」。
 
 主题分类：${category}
 本期角度：${brief}
@@ -71,7 +76,7 @@ function buildPrompt(locale: Locale, category: string, brief: string) {
   }
   return `You are a senior career advisor at "JY Career". Write a job-market blog post for job seekers.
 
-Today is ${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}. Reflect the job market as of ${year}; if the title or summary names a year, it must be ${year} or ${year + 1} (outlook). Never present an earlier year as "this year" or "latest".
+Today is ${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}. Reflect the job market as of ${year}; if the title or summary names a year, it must be ${year} or ${year + 1} (outlook). Comparing with earlier years is fine, but never name only an earlier year or present it as "this year" or "latest".
 
 Category: ${category}
 Angle for this issue: ${brief}
