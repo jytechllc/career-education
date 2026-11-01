@@ -57,8 +57,14 @@ function staleYear(text: string, year: number): string | null {
   return past ? String(past) : null;
 }
 
-function buildPrompt(locale: Locale, category: string, brief: string) {
+function buildPrompt(
+  locale: Locale,
+  category: string,
+  brief: string,
+  recent: string[],
+) {
   const { year, month, day } = today();
+  const recentList = recent.map((t) => `- ${t}`).join("\n");
   if (locale === "zh") {
     return `你是「杰圆职场教育」的资深职业规划顾问，为求职者撰写一篇职场资讯博客。
 
@@ -66,7 +72,7 @@ function buildPrompt(locale: Locale, category: string, brief: string) {
 
 主题分类：${category}
 本期角度：${brief}
-
+${recent.length ? `\n本分类近期已发表以下文章。请另选一个它们没有覆盖的具体切入点（例如某个细分岗位、人群、场景或决策），标题、结构和主要观点都不要与之雷同：\n${recentList}\n` : ""}
 要求：
 - 用简体中文写作，语气专业、务实、对求职者有实际帮助。
 - 内容为「常青」分析与可操作建议，不要编造具体的统计数字、百分比、日期或来源；如需提及数据，用"通常""普遍""多数情况下"等定性表述。
@@ -82,7 +88,7 @@ Today is ${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0"
 
 Category: ${category}
 Angle for this issue: ${brief}
-
+${recent.length ? `\nRecently published in this category. Pick a specific angle none of them covers (a particular role, audience, scenario or decision); do not echo their titles, structure or main points:\n${recentList}\n` : ""}
 Requirements:
 - Write in English, professional, practical, genuinely useful to job seekers.
 - Keep it evergreen and advisory. Do NOT fabricate specific statistics, percentages, dates or sources; use qualitative phrasing ("typically", "in most cases") instead.
@@ -142,6 +148,17 @@ export async function generatePost(locale: Locale = "zh"): Promise<Post> {
   const topic = pickTopic(count ?? 0);
   const { category, brief } = topicLabel(topic, locale);
 
+  // Each topic's brief never changes, so without this the model rewrites the
+  // same article every rotation ("AI 对岗位的影响" went out five times).
+  const recent = (
+    await db
+      .select({ title: posts.title })
+      .from(posts)
+      .where(sql`${posts.locale} = ${locale} and ${posts.topic} = ${topic.key}`)
+      .orderBy(sql`${posts.publishedAt} desc`)
+      .limit(10)
+  ).map((r) => r.title);
+
   const { year } = today();
   let gen: Generated | undefined;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -150,7 +167,7 @@ export async function generatePost(locale: Locale = "zh"): Promise<Post> {
       max_tokens: 4096,
       tools: [SAVE_POST_TOOL],
       tool_choice: { type: "tool", name: "save_post" },
-      messages: [{ role: "user", content: buildPrompt(locale, category, brief) }],
+      messages: [{ role: "user", content: buildPrompt(locale, category, brief, recent) }],
     });
 
     const toolUse = message.content.find((b) => b.type === "tool_use");
