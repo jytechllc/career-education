@@ -24,7 +24,7 @@ export const LatestPosts = async ({
     });
 
   return (
-    <section className="py-20 md:py-24 bg-yellow-50/40" id="blog">
+    <section className="py-20 md:py-24 bg-white border-b border-gray-100" id="blog">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-yellow-900 mb-4">

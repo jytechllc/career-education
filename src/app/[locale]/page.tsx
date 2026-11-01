@@ -36,10 +36,10 @@ export default async function HomePage({
       </Link>
       <Hero dict={dict} locale={locale} />
       <Services dict={dict} />
+      <LatestPosts dict={dict} locale={locale} />
       <Stats dict={dict} />
       <SuccessStories dict={dict} />
       <WhyChooseUs dict={dict} />
-      <LatestPosts dict={dict} locale={locale} />
       <CTA dict={dict} locale={locale} />
       <Contact dict={dict} />
       <Chatbot dict={dict} />
