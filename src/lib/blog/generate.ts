@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { posts, type Post } from "@/lib/schema";
 import { pickTopic, topicLabel } from "./topics";
+import { stripLeadingHeader } from "./content";
 import type { Locale } from "@/lib/i18n";
 
 // Claude on Amazon Bedrock. Model IDs are anthropic.-prefixed; cross-region
@@ -69,6 +70,7 @@ function buildPrompt(locale: Locale, category: string, brief: string) {
 要求：
 - 用简体中文写作，语气专业、务实、对求职者有实际帮助。
 - 内容为「常青」分析与可操作建议，不要编造具体的统计数字、百分比、日期或来源；如需提及数据，用"通常""普遍""多数情况下"等定性表述。
+- 正文不要重复文章标题，也不要写作者署名或日期（页面已显示）。
 - 结构清晰，使用 Markdown：2-4 个 ## 小标题，含要点列表，结尾给出一段「实操建议」。
 - 约 600-900 字。
 
@@ -84,6 +86,7 @@ Angle for this issue: ${brief}
 Requirements:
 - Write in English, professional, practical, genuinely useful to job seekers.
 - Keep it evergreen and advisory. Do NOT fabricate specific statistics, percentages, dates or sources; use qualitative phrasing ("typically", "in most cases") instead.
+- Do not repeat the title or add a byline/date in the body (the page shows them).
 - Clear structure in Markdown: 2-4 ## headings with bullet lists, ending with an "Actionable takeaway" paragraph.
 - About 600-900 words.
 
@@ -169,7 +172,7 @@ export async function generatePost(locale: Locale = "zh"): Promise<Post> {
       locale,
       title: gen.title?.trim() || category,
       summary: gen.summary?.trim() || null,
-      content: gen.content?.trim() || "",
+      content: stripLeadingHeader(gen.content ?? "").trim(),
       category,
       topic: topic.key,
       tags: Array.isArray(gen.tags) ? gen.tags.slice(0, 6) : [],

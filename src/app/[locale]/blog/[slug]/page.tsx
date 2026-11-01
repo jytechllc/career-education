@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ReactMarkdown from "react-markdown";
+import { stripLeadingHeader } from "@/lib/blog/content";
 import remarkGfm from "remark-gfm";
 import { hasLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
@@ -77,7 +78,7 @@ export default async function BlogPost({
 
         <div className="prose prose-yellow mt-8 max-w-none prose-headings:font-semibold prose-a:text-yellow-700">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {post.content}
+            {stripLeadingHeader(post.content)}
           </ReactMarkdown>
         </div>
 
