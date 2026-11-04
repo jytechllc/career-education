@@ -21,7 +21,7 @@ const orgLD = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
   name: "杰圆职场教育",
-  alternateName: "JY Education and Career Center",
+  alternateName: "JYCareerEdu",
   url: "https://edu.jytech.us",
   logo: "https://edu.jytech.us/logo.svg",
   contactPoint: {
@@ -45,7 +45,7 @@ export async function generateMetadata({
     title: {
       absolute: locale === "zh"
         ? "杰圆职场教育 | 职业规划 · 留学申请 · 求职辅导"
-        : "JY Education and Career Center | Career Planning, Study Abroad & Job Coaching",
+        : "JYCareerEdu | Career Planning, Study Abroad & Job Coaching",
     },
     description: dict.meta.description,
     ...pageMeta(locale, ""),

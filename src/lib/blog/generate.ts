@@ -82,7 +82,7 @@ ${recent.length ? `\n本分类近期已发表以下文章。请另选一个它�
 
 通过 save_post 工具返回结果（slug 用英文 kebab-case，3-6 个词）。`;
   }
-  return `You are a senior career advisor at "JY Career". Write a job-market blog post for job seekers.
+  return `You are a senior career advisor at "JYCareerEdu". Write a job-market blog post for job seekers.
 
 Today is ${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}. Reflect the job market as of ${year}; if the title or summary names a year, it must be ${year} or ${year + 1} (outlook). Comparing with earlier years is fine, but never name only an earlier year or present it as "this year" or "latest".
 

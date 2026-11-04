@@ -6,11 +6,11 @@ import { pageMeta } from "@/lib/seo";
 
 const copy = {
   zh: {
-    metaTitle: "招募实习生：网站内容运营 | 杰圆教育",
-    metaDesc: "杰圆教育招募网站内容运营实习生，协助维护 edu.jytech.us 的日常内容更新：职场资讯、留学与求职指南、案例与活动信息。",
+    metaTitle: "招募实习生：网站内容运营",
+    metaDesc: "杰圆职场教育招募网站内容运营实习生，协助维护 edu.jytech.us 的日常内容更新：职场资讯、留学与求职指南、案例与活动信息。",
     badge: "正在招募",
     title: "网站内容运营实习生",
-    lead: "杰圆教育正在招募实习生，协助维护 edu.jytech.us 的日常内容更新。适合对留学、求职、教育内容感兴趣，希望积累内容运营和 AI 工具实战经验的同学。",
+    lead: "杰圆职场教育正在招募实习生，协助维护 edu.jytech.us 的日常内容更新。适合对留学、求职、教育内容感兴趣，希望积累内容运营和 AI 工具实战经验的同学。",
     dutiesTitle: "工作内容",
     duties: [
       "更新网站上的职场资讯、留学与求职指南，校对中英文内容",
@@ -41,11 +41,11 @@ const copy = {
     phone: "电话",
   },
   en: {
-    metaTitle: "Internship: Website Content Assistant | JYEdu",
-    metaDesc: "JYEdu is hiring interns to help keep edu.jytech.us up to date: career articles, study-abroad and job-search guides, case studies and events.",
+    metaTitle: "Internship: Website Content Assistant",
+    metaDesc: "JYCareerEdu is hiring interns to help keep edu.jytech.us up to date: career articles, study-abroad and job-search guides, case studies and events.",
     badge: "Now hiring",
     title: "Website Content Intern",
-    lead: "JYEdu is looking for interns to help with day-to-day content updates on edu.jytech.us. A good fit if you're interested in study-abroad, careers and education content and want hands-on experience in content operations and AI tools.",
+    lead: "JYCareerEdu is looking for interns to help with day-to-day content updates on edu.jytech.us. A good fit if you're interested in study-abroad, careers and education content and want hands-on experience in content operations and AI tools.",
     dutiesTitle: "What you'll do",
     duties: [
       "Update career articles and study-abroad / job-search guides; proofread Chinese and English copy",

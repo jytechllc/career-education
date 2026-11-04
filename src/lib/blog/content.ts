@@ -2,7 +2,7 @@
 // blockquote, which the post page already renders above the content.
 const LEADING_H1 = /^\s*#\s+[^\n]*\n+/;
 const LEADING_BYLINE =
-  /^\s*>[^\n]*(作者|撰写|杰圆|JY Career|Written by|\bBy\b)[^\n]*\n(>[^\n]*\n)*\n*/i;
+  /^\s*>[^\n]*(作者|撰写|杰圆|JY ?Career|Written by|\bBy\b)[^\n]*\n(>[^\n]*\n)*\n*/i;
 const LEADING_RULE = /^\s*(-{3,}|\*{3,})\s*\n+/;
 
 /** Strip a leading title, byline and divider that duplicate the page header. */

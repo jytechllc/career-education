@@ -31,7 +31,7 @@ export default async function AccountingUsPlanPage({
   return (
     <MarkdownReport
       locale={locale}
-      eyebrow="JYEdu 杰圆教育 · 专业方向规划 · 就业方向"
+      eyebrow="杰圆职场教育 · 专业方向规划 · 就业方向"
       title={TITLE}
       description={DESCRIPTION}
       content={content}

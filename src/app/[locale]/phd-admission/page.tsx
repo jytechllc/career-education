@@ -70,7 +70,7 @@ type Copy = {
 };
 
 const zh: Copy = {
-  eyebrow: "PhD 留学申请 · JYEdu 杰圆教育",
+  eyebrow: "PhD 留学申请 · 杰圆职场教育",
   title: "From Profile to Funded PhD Admission",
   subtitle: "从背景画像到带资助录取——一站式博士（PhD）留学申请规划",
   stats: [
@@ -193,7 +193,7 @@ const zh: Copy = {
 };
 
 const en: Copy = {
-  eyebrow: "PhD Admissions · JYEdu",
+  eyebrow: "PhD Admissions · JYCareerEdu",
   title: "From Profile to Funded PhD Admission",
   subtitle: "A structured path from academic profile to funded PhD offers",
   stats: [

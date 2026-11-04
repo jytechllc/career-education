@@ -59,11 +59,11 @@ type Copy = {
 
 const zh: Copy = {
   meta: {
-    title: "美国 QS 前 100 名校申请 · 保 Offer 计划 | JYEdu 杰圆教育",
+    title: "美国 QS 前 100 名校申请 · 保 Offer 计划",
     description:
       "美国 QS 前 100 名校申请计划：麻省理工、斯坦福、哈佛、加州理工等 19 所目标院校。当季未取得目标院校录取的，继续服务后续申请季，不再另收咨询服务费。",
   },
-  eyebrow: "美国名校申请 · JYEdu 杰圆教育",
+  eyebrow: "美国名校申请 · 杰圆职场教育",
   title: "冲刺美国 QS 前 100，保你拿到 Offer",
   subtitle:
     "从麻省理工、斯坦福、哈佛到卡内基梅隆、杜克，19 所美国名校任你冲刺；当季未取得录取的，继续为你服务，直至下一申请季，不再另收咨询服务费。",
@@ -165,11 +165,11 @@ const zh: Copy = {
 
 const en: Copy = {
   meta: {
-    title: "US QS Top 100 Admissions · Offer Guarantee | JYEdu",
+    title: "US QS Top 100 Admissions · Offer Guarantee",
     description:
       "Admissions program for 19 US universities in the QS World Top 100, including MIT, Stanford, Harvard and Caltech. If no offer comes through that season, we keep working on later seasons at no extra counselling fee.",
   },
-  eyebrow: "US Admissions · JYEdu",
+  eyebrow: "US Admissions · JYCareerEdu",
   title: "Aim for the US QS Top 100 — with an offer guarantee",
   subtitle:
     "From MIT, Stanford and Harvard to Carnegie Mellon and Duke — 19 US universities to aim for. No offer that season? We keep working with you into the next one, at no extra counselling fee.",

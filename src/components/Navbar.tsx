@@ -82,7 +82,7 @@ export const Navbar = ({ locale, dict, user, isStaff = false }: NavbarProps) => 
         <Link href={`/${locale}`} className="flex items-center space-x-2">
           <GraduationCap className="h-8 w-8" />
           <span className="text-xl md:text-2xl font-bold">
-            {locale === "zh" ? "杰圆教育" : "JYEdu"}
+            {locale === "zh" ? "杰圆职场教育" : "JYCareerEdu"}
           </span>
         </Link>
 

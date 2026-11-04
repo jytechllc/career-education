@@ -63,11 +63,11 @@ type Copy = {
 
 const zh: Copy = {
   meta: {
-    title: "研究生与直博留学申请服务与价格 | JYEdu 杰圆教育",
+    title: "研究生与直博留学申请服务与价格",
     description:
       "研究生留学申请三档服务：申请助力 ¥88,000、超级 VIP ¥128,000、长线规划 VIP ¥158,000；另有本科直博（全额资助 PhD）申请服务 ¥180,000。",
   },
-  eyebrow: "研究生留学申请 · JYEdu 杰圆教育",
+  eyebrow: "研究生留学申请 · 杰圆职场教育",
   title: "研究生留学申请服务",
   subtitle: "硕士申请三档服务，从申请季冲刺到大一起的四年规划；另有本科直博服务",
   currency: "人民币",
@@ -199,11 +199,11 @@ const zh: Copy = {
 
 const en: Copy = {
   meta: {
-    title: "Graduate & Direct-PhD Admissions Services and Pricing | JYEdu",
+    title: "Graduate & Direct-PhD Admissions Services and Pricing",
     description:
       "Three master's admissions packages: Application Boost ¥88,000, Super VIP ¥128,000 and Long-Term VIP ¥158,000 — plus a direct-PhD (fully funded) admissions program at ¥180,000.",
   },
-  eyebrow: "Graduate Admissions · JYEdu",
+  eyebrow: "Graduate Admissions · JYCareerEdu",
   title: "Graduate Admissions Services",
   subtitle: "Three master's packages, from an application-season sprint to four-year planning — plus a direct-PhD program",
   currency: "RMB",

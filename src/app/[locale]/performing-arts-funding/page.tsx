@@ -31,7 +31,7 @@ export default async function PerformingArtsFundingPage({
   return (
     <MarkdownReport
       locale={locale}
-      eyebrow="JYEdu 杰圆教育 · 艺术类留学指南"
+      eyebrow="杰圆职场教育 · 艺术类留学指南"
       title={TITLE}
       description={DESCRIPTION}
       content={content}

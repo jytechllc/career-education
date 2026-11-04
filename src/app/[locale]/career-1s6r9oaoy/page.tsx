@@ -37,7 +37,7 @@ export default async function Career1s6r9oaoyPage({
   return (
     <MarkdownReport
       locale={locale}
-      eyebrow="JYCareer 杰圆求职 · 职业规划报告 · 编号 1s6r9oaoy"
+      eyebrow="杰圆职场教育 · 职业规划报告 · 编号 1s6r9oaoy"
       title={TITLE}
       description={DESCRIPTION}
       content={content}

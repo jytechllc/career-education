@@ -123,16 +123,16 @@ const zh = {
 };
 
 const en: typeof zh = {
-  metaTitle: "Press Kit | JYCareer",
-  metaDesc: "JYCareer press kit: company description, logos, brand film and short videos, free for media partners to download and share.",
+  metaTitle: "Press Kit",
+  metaDesc: "JYCareerEdu press kit: company description, logos, brand film and short videos, free for media partners to download and share.",
   badge: "Press",
   title: "Press kit",
-  lead: "Media and partners are welcome to download and share the videos, logos and descriptions below. Please credit “JYCareer, edu.jytech.us”.",
+  lead: "Media and partners are welcome to download and share the videos, logos and descriptions below. Please credit “JYCareerEdu, edu.jytech.us”.",
   kit: "Download brand kit (logos + descriptions)",
   kitNote: "ZIP · about 84 KB",
   aboutTitle: "About",
   oneLine: "One line",
-  oneLineText: "JYCareer — career planning, job-search coaching and admissions advising.",
+  oneLineText: "JYCareerEdu — career planning, job-search coaching and admissions advising.",
   aboutZh: "中文简介",
   aboutEn: "English",
   copy: "Copy",
@@ -144,9 +144,9 @@ const en: typeof zh = {
   colorsTitle: "Brand colors",
   rulesTitle: "Usage",
   rules: [
-    "The videos, images and text on this page may be shared free of charge with the credit “JYCareer, edu.jytech.us”.",
+    "The videos, images and text on this page may be shared free of charge with the credit “JYCareerEdu, edu.jytech.us”.",
     "Keep the on-screen branding and footage credits. Excerpts are fine as long as the meaning isn't changed.",
-    "Not for use in advertising, and don't imply that JYCareer endorses any third-party product or service.",
+    "Not for use in advertising, and don't imply that JYCareerEdu endorses any third-party product or service.",
     "For interviews, fact-checking, source files or custom content, contact us below.",
   ],
   contactTitle: "Media contact",
@@ -166,6 +166,6 @@ const en: typeof zh = {
 export const pressCopy = (l: Locale) => (l === "en" ? en : zh);
 
 export const boilerplate = {
-  zh: "杰圆职场教育（JYCareer / JY Education and Career Center）是一家职业发展与升学咨询机构，为学生和职场人提供职业规划、简历优化、面试辅导，以及研究生与直博申请指导，并持续发布薪资行情、签证政策、行业岗位等职场内容。官网：edu.jytech.us",
-  en: "JYCareer (JY Education and Career Center) is a career development and admissions advisory service. It helps students and professionals with career planning, résumé improvement, interview coaching and graduate and PhD applications, and publishes short explainers on salaries, work visas and industry roles. Website: edu.jytech.us",
+  zh: "杰圆职场教育（JYCareerEdu）是一家职业发展与升学咨询机构，为学生和职场人提供职业规划、简历优化、面试辅导，以及研究生与直博申请指导，并持续发布薪资行情、签证政策、行业岗位等职场内容。官网：edu.jytech.us",
+  en: "JYCareerEdu is a career development and admissions advisory service. It helps students and professionals with career planning, résumé improvement, interview coaching and graduate and PhD applications, and publishes short explainers on salaries, work visas and industry roles. Website: edu.jytech.us",
 };

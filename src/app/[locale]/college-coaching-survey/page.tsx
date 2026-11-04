@@ -10,13 +10,13 @@ type Copy = {
 };
 
 const zh: Copy = {
-  eyebrow: "教育项目 · JYEdu 杰圆教育",
+  eyebrow: "教育项目 · 杰圆职场教育",
   title: "College Coaching 申请表",
   subtitle: "填写以下信息，帮助我们了解你的背景、目标院校方向与支持需求",
 };
 
 const en: Copy = {
-  eyebrow: "Education Program · JYEdu",
+  eyebrow: "Education Program · JYCareerEdu",
   title: "College Coaching Application",
   subtitle: "Complete the sections below so we can understand your background, goals, and support needs",
 };

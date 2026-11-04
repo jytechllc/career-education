@@ -27,7 +27,7 @@ export async function generateMetadata({
   if (!t) return {};
   const roles = t.careers.flatMap((c) => c.roles).slice(0, 5).join("、");
   return {
-    title: `${t.code} ${t.name}适合什么工作？职业推荐 | 杰圆职场教育`,
+    title: `${t.code} ${t.name}适合什么工作？职业推荐`,
     description: `${t.code}（${t.name}）的职业推荐：${roles}等。${t.summary}`,
   };
 }

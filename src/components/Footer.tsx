@@ -11,7 +11,7 @@ export const Footer = ({ dict, locale }: { dict: Dictionary; locale: string }) =
             <div className="flex items-center space-x-2 mb-4">
               <GraduationCap className="h-7 w-7 text-yellow-500" />
               <span className="text-xl font-bold text-white">
-                {locale === "zh" ? "杰圆教育" : "JYEdu"}
+                {locale === "zh" ? "杰圆职场教育" : "JYCareerEdu"}
               </span>
             </div>
             <p className="text-sm leading-relaxed">{dict.footer.tagline}</p>
@@ -87,7 +87,7 @@ export const Footer = ({ dict, locale }: { dict: Dictionary; locale: string }) =
         <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
           <p>
             &copy; {new Date().getFullYear()}{" "}
-            {locale === "zh" ? "杰圆教育" : "JYEdu"} · {dict.contact.company}.{" "}
+            {locale === "zh" ? "杰圆职场教育" : "JYCareerEdu"} · {dict.contact.company}.{" "}
             {dict.footer.rights}
           </p>
         </div>

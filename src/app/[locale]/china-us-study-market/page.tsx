@@ -34,7 +34,7 @@ export default async function ChinaUsStudyMarketPage({
   return (
     <MarkdownReport
       locale={locale}
-      eyebrow="JYEdu 杰圆教育 · 市场研究"
+      eyebrow="杰圆职场教育 · 市场研究"
       title={TITLE}
       description={DESCRIPTION}
       content={content}

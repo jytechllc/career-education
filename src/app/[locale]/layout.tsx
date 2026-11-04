@@ -31,10 +31,10 @@ export async function generateMetadata({
     metadataBase: new URL(baseUrl),
     title: locale === "zh"
       ? { template: "%s | 杰圆职场教育", default: "杰圆职场教育" }
-      : { template: "%s | JY Education and Career Center", default: "JY Education and Career Center" },
+      : { template: "%s | JYCareerEdu", default: "JYCareerEdu" },
     description: dict.meta.description,
     openGraph: {
-      title: locale === "zh" ? "杰圆职场教育" : "JY Education and Career Center",
+      title: locale === "zh" ? "杰圆职场教育" : "JYCareerEdu",
       description: dict.meta.description,
       locale: locale === "zh" ? "zh_CN" : "en_US",
       images: [DEFAULT_OG_IMAGE],

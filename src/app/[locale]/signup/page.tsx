@@ -18,7 +18,7 @@ type Copy = {
 
 const zh: Copy = {
   meta: {
-    title: "注册账号 | 杰圆职场教育",
+    title: "注册账号",
     description: "注册杰圆账号，建立个人资料，咨询时顾问可直接据此了解你的背景。",
   },
   title: "注册账号",
@@ -36,7 +36,7 @@ const zh: Copy = {
 
 const en: Copy = {
   meta: {
-    title: "Sign up | JY Education and Career Center",
+    title: "Sign up",
     description: "Create a JY account and set up your profile so our advisors know your background before you talk.",
   },
   title: "Create your account",

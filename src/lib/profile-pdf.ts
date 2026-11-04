@@ -265,7 +265,7 @@ export async function buildRedactedPdf(p: StudentProfile, labels: ProfilePdfLabe
   );
 
   doc.setTitle(`${labels.title} ${code}`);
-  doc.setAuthor("JYEdu");
+  doc.setAuthor("JYCareerEdu");
   doc.setProducer("edu.jytech.us");
   doc.setCreator("edu.jytech.us");
 

@@ -38,8 +38,10 @@ Hard limits
   the `meta` sections of `src/lib/dictionaries/*.json`, and `docs/seo/**`.
 - Don't touch admin, api, auth, sign, contracts, the database, or blog post content. Don't add
   dependencies. Don't rename routes or delete pages.
-- Don't change brand names (杰圆职场教育 / JY Education and Career Center / JYEdu / JYCareer); the
-  naming decision is pending with the owner. Report naming inconsistencies in the summary instead.
+- Brand names (owner's decision, 2026-11-04): Chinese pages use 杰圆职场教育, English pages use
+  JYCareerEdu. Fix stray old names (杰圆教育, JYEdu, JYCareer, JY Education and Career Center) only in
+  metadata; report ones in rendered copy. Never edit the footer's `usCompany` line: it lists the
+  company's registered DBA names, a legal statement.
 - Don't use git; the workflow commits for you.
 - Keep the total diff under ~600 changed lines; if the work is bigger, do the highest-impact part and
   list the rest in the summary for the next run.
