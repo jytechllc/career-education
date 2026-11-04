@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   Briefcase,
   DollarSign,
@@ -13,6 +14,27 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(locale)) return {};
+  return locale === "zh"
+    ? {
+        title: "2026 新加坡工作签证申请全攻略——EP、SP 与 ONE Pass",
+        description: "2026 年新加坡六种工作准证（EP、SP、ONE Pass、PEP、WP、EntrePass）的申请条件、薪资门槛、COMPASS 评分与申请流程详解。",
+        ...pageMeta(locale, "/singapore-work-visa-guide"),
+      }
+    : {
+        title: "Singapore Work Visa Guide 2026 — EP, SP & ONE Pass",
+        description: "Eligibility, salary thresholds, COMPASS scores, and step-by-step process for Singapore's six work pass types: EP, SP, ONE Pass, PEP, WP, and EntrePass.",
+        ...pageMeta(locale, "/singapore-work-visa-guide"),
+      };
+}
 
 const visaTypes = [
   {

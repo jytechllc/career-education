@@ -1,0 +1,198 @@
+name: SEO Agent
+
+# Weekly: audit production, have Claude (Bedrock) refresh docs/seo/rules.md from Google Search Central
+# and fix what the audit found, then open a PR. When Vercel finishes that PR's preview, the preview is
+# audited and the PR is merged if it has no more errors than production and only touched SEO paths.
+# Every production deploy is re-audited and an issue is opened if errors went up.
+# Monday 15:00 UTC = 07:00 PST / 08:00 PDT.
+on:
+  schedule:
+    - cron: "0 15 * * 1"
+  workflow_dispatch:
+    inputs:
+      focus:
+        description: "Extra instructions for this run (optional)"
+        required: false
+  deployment_status:
+
+permissions:
+  id-token: write # AWS OIDC for Bedrock
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  SITE: https://edu.jytech.us
+  VERCEL_PROJECT: career-education
+  # Paths the agent may change for a PR to merge without review (see scripts/seo/agent-prompt.md)
+  ALLOWED: '^(src/app/.*(page|layout)\.tsx|src/app/(sitemap|robots)\.ts|src/lib/seo\.ts|src/lib/dictionaries/(zh|en)\.json|docs/seo/.*)$'
+  MAX_CHANGED_LINES: 800
+
+jobs:
+  fix:
+    if: github.event_name != 'deployment_status'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: seo-agent
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Audit production
+        run: mkdir -p .seo && node scripts/seo/audit.mjs "$SITE" --json .seo/prod.json --md .seo/prod.md
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Run Claude
+        env:
+          CLAUDE_CODE_USE_BEDROCK: "1"
+          ANTHROPIC_MODEL: us.anthropic.claude-sonnet-4-6
+          ANTHROPIC_SMALL_FAST_MODEL: us.anthropic.claude-sonnet-4-6 # the role only allows this model
+          FOCUS: ${{ inputs.focus }}
+        run: |
+          prompt="$(cat scripts/seo/agent-prompt.md)
+
+          Today is $(date -u +%F).${FOCUS:+ Extra instructions for this run: $FOCUS}"
+          npx -y @anthropic-ai/claude-code@latest -p "$prompt" \
+            --max-turns 120 \
+            --allowedTools "Read,Glob,Grep,Edit,Write,WebFetch,Bash(npx tsc:*),Bash(npx eslint:*)"
+
+      - name: Open PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain -- . ':!.seo')" ]; then echo "No changes."; exit 0; fi
+          branch="seo/auto-$(date -u +%Y%m%d-%H%M)"
+          git switch -c "$branch"
+          git add -A -- . ':!.seo'
+          # Commit as the owner so Vercel accepts the deployment from a team member
+          git -c user.name="Weijing Jay Lin" -c user.email="weijingjaylin@gmail.com" \
+            commit -q -m "SEO agent: weekly fixes $(date -u +%F)"
+          git push -q origin "$branch"
+          { echo "Automated by \`.github/workflows/seo-agent.yml\`. Merges itself once the preview audit passes."
+            echo; cat .seo/summary.md 2>/dev/null || echo "_No summary written._"
+            echo; echo "<details><summary>Production audit before this change</summary>"; echo
+            sed -n '1,/^## Issues/p' .seo/prod.md | sed '$d'; echo "</details>"
+          } > .seo/pr.md
+          gh label create seo-agent --color 1D76DB --force >/dev/null
+          gh pr create --head "$branch" --title "SEO agent: weekly fixes $(date -u +%F)" --body-file .seo/pr.md --label seo-agent
+
+  verify-preview:
+    if: >-
+      github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment.environment, 'Preview') && contains(github.event.deployment.environment, 'career-education')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Find the agent PR for this commit
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.deployment.sha }}
+        run: |
+          pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" \
+            --jq '[.[] | select(.state=="open" and (.labels | map(.name) | index("seo-agent")))][0].number // empty')
+          echo "number=$pr" >> "$GITHUB_OUTPUT"
+          [ -n "$pr" ] || echo "Not an SEO agent PR; nothing to do."
+
+      - uses: actions/checkout@v4
+        if: steps.pr.outputs.number
+        with:
+          ref: main
+
+      - name: Audit preview against production
+        if: steps.pr.outputs.number
+        id: audit
+        env:
+          VERCEL_BYPASS: ${{ secrets.VERCEL_BYPASS }}
+          PREVIEW: ${{ github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
+        run: |
+          mkdir -p .seo
+          node scripts/seo/audit.mjs "$SITE" --json .seo/prod.json --md .seo/prod.md > /dev/null
+          set +e
+          node scripts/seo/audit.mjs "$PREVIEW" --json .seo/preview.json --md .seo/preview.md --baseline .seo/prod.json | tee .seo/preview-summary.txt
+          echo "regressed=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Merge or hold
+        if: steps.pr.outputs.number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+          REGRESSED: ${{ steps.audit.outputs.regressed }}
+        run: |
+          files=$(gh pr diff "$PR" --name-only)
+          outside=$(echo "$files" | grep -Ev "$ALLOWED" || true)
+          lines=$(gh pr view "$PR" --json additions,deletions --jq '.additions + .deletions')
+          reasons=""
+          [ "$REGRESSED" = "0" ] || reasons="$reasons\n- Preview has more audit errors than production."
+          [ -z "$outside" ] || reasons="$reasons\n- Files outside the allowed SEO paths:\n\`\`\`\n$outside\n\`\`\`"
+          [ "$lines" -le "$MAX_CHANGED_LINES" ] || reasons="$reasons\n- $lines changed lines (limit $MAX_CHANGED_LINES)."
+          { echo "### Preview audit"; echo '```'; cat .seo/preview-summary.txt; echo '```'; } > .seo/comment.md
+          if [ -z "$reasons" ]; then
+            gh pr comment "$PR" --body-file .seo/comment.md
+            # rebase keeps the owner as commit author, which Vercel needs to deploy production
+            gh pr merge "$PR" --rebase --delete-branch
+          else
+            { printf "**Held for review:**%b\n\n" "$reasons"; cat .seo/comment.md; } > .seo/hold.md
+            gh pr comment "$PR" --body-file .seo/hold.md
+          fi
+
+  verify-production:
+    if: >-
+      github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment.environment, 'Production') && contains(github.event.deployment.environment, 'career-education')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: seo-verify-production
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Previous production audit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .seo/prev
+          url=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=seo-prod-audit&per_page=1" --jq '.artifacts[0].archive_download_url // empty')
+          [ -z "$url" ] || (gh api "$url" > .seo/prev.zip && unzip -q -o .seo/prev.zip -d .seo/prev) || true
+
+      - name: Audit production
+        id: audit
+        run: |
+          set +e
+          if [ -f .seo/prev/prod.json ]; then base="--baseline .seo/prev/prod.json"; fi
+          node scripts/seo/audit.mjs "$SITE" --json .seo/prod.json --md .seo/prod.md $base | tee .seo/summary.txt
+          echo "regressed=$?" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seo-prod-audit
+          path: .seo/prod.json
+          retention-days: 90
+
+      - name: Open an issue on regression
+        if: steps.audit.outputs.regressed != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.deployment.sha }}
+        run: |
+          { echo "Production SEO audit errors went up after deploying $SHA."; echo
+            echo '```'; cat .seo/summary.txt; echo '```'; echo
+            echo "Full report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > .seo/issue.md
+          gh label create seo-agent --color 1D76DB --force >/dev/null
+          gh issue create --title "SEO audit regression ($(date -u +%F))" --body-file .seo/issue.md --label seo-agent

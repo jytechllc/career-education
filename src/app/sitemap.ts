@@ -3,6 +3,7 @@ import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { posts } from "@/lib/schema";
+import { ZH_ONLY_PATHS } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -31,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.APP_BASE_URL || "https://edu.jytech.us";
   const now = new Date();
   const pages = LOCALES.flatMap((l) =>
-    PAGES.map((p) => ({
+    PAGES.filter((p) => l === "zh" || !ZH_ONLY_PATHS.includes(p)).map((p) => ({
       url: `${base}/${l}${p}`,
       lastModified: now,
       changeFrequency: p === "/blog" || p === "" ? ("daily" as const) : ("monthly" as const),

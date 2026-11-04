@@ -7,6 +7,7 @@ import { auth0 } from "@/lib/auth0";
 import { staffRoleOf } from "@/lib/admin-auth";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -28,12 +29,15 @@ export async function generateMetadata({
   // copies of the home page. Pages that need one set their own.
   return {
     metadataBase: new URL(baseUrl),
-    title: dict.meta.title,
+    title: locale === "zh"
+      ? { template: "%s | 杰圆职场教育", default: "杰圆职场教育" }
+      : { template: "%s | JY Education and Career Center", default: "JY Education and Career Center" },
     description: dict.meta.description,
     openGraph: {
-      title: dict.meta.title,
+      title: locale === "zh" ? "杰圆职场教育" : "JY Education and Career Center",
       description: dict.meta.description,
       locale: locale === "zh" ? "zh_CN" : "en_US",
+      images: [DEFAULT_OG_IMAGE],
     },
   };
 }

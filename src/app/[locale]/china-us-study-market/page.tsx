@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { hasLocale } from "@/lib/i18n";
+import { zhOnlyMeta } from "@/lib/seo";
 import MarkdownReport, { readReport } from "@/components/MarkdownReport";
 // Written by docs/student-plans/publish.py from the report's H1, so the
 // edition year in the title follows the data (e.g. "（2025）" -> "（2026）").
@@ -19,7 +20,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(locale)) return {};
-  return { title: TITLE, description: DESCRIPTION };
+  return { title: TITLE, description: DESCRIPTION, ...zhOnlyMeta("/china-us-study-market") };
 }
 
 export default async function ChinaUsStudyMarketPage({

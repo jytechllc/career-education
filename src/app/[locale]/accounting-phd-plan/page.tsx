@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { hasLocale } from "@/lib/i18n";
+import { zhOnlyMeta } from "@/lib/seo";
 import MarkdownReport, { readReport } from "@/components/MarkdownReport";
 
 const content = readReport("accounting-phd-plan.zh.md");
@@ -16,7 +17,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(locale)) return {};
-  return { title: TITLE, description: DESCRIPTION };
+  return { title: TITLE, description: DESCRIPTION, ...zhOnlyMeta("/accounting-phd-plan") };
 }
 
 export default async function AccountingPhdPlanPage({

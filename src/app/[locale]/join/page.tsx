@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { CheckCircle2, Mail, MessageCircle, Phone, Sparkles } from "lucide-react";
 import { hasLocale, locales, type Locale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/seo";
 
 const copy = {
   zh: {
@@ -89,7 +90,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t.metaTitle,
     description: t.metaDesc,
-    alternates: { languages: { zh: "/zh/join", en: "/en/join" } },
+    ...pageMeta(locale, "/join"),
   };
 }
 

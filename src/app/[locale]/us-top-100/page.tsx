@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { pageMeta } from "@/lib/seo";
 import {
   ArrowRight,
   Check,
@@ -276,7 +277,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const c = locale === "en" ? en : zh;
 
-  return { title: c.meta.title, description: c.meta.description };
+  return { title: c.meta.title, description: c.meta.description, ...pageMeta(locale, "/us-top-100") };
 }
 
 const stepIcons = [ClipboardCheck, FileSignature, RefreshCw];

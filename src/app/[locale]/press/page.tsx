@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Archive, Download, Film, MessageCircle, Newspaper, Palette, Phone, ShieldCheck, Youtube } from "lucide-react";
 import { hasLocale, locales, type Locale } from "@/lib/i18n";
 import { boilerplate, brandColors, MEDIA_CONTACT, pressCopy, pressLogos, pressUrl, pressVideos } from "@/lib/press";
+import { pageMeta } from "@/lib/seo";
 import { CopyButton } from "@/components/press/CopyButton";
 import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t.metaTitle,
     description: t.metaDesc,
-    alternates: { languages: { zh: "/zh/press", en: "/en/press" } },
+    ...pageMeta(locale, "/press"),
     openGraph: { title: t.metaTitle, description: t.metaDesc, images: [pressUrl("jycareer-brand-film-16x9.jpg")] },
   };
 }

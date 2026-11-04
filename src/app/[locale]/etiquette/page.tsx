@@ -5,6 +5,7 @@ import { ArrowRight, Clock, Handshake } from "lucide-react";
 import { hasLocale, locales, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { listLessons } from "@/lib/etiquette";
+import { pageMeta } from "@/lib/seo";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -19,8 +20,9 @@ export async function generateMetadata({
   if (!hasLocale(locale)) return {};
   const dict = await getDictionary(locale as Locale);
   return {
-    title: `${dict.etiquette.title} | ${locale === "zh" ? "杰圆职场教育" : "JY Career"}`,
+    title: dict.etiquette.title,
     description: dict.etiquette.subtitle,
+    ...pageMeta(locale, "/etiquette"),
   };
 }
 

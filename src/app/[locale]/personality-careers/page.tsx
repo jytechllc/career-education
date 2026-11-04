@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowRight, Compass } from "lucide-react";
 import { hasLocale, locales, type Locale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/seo";
 import {
   temperaments,
   typesByTemperament,
@@ -26,7 +27,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(locale)) return {};
-  return { title: `${TITLE} | 杰圆职场教育`, description: DESCRIPTION };
+  return locale === "zh"
+    ? { title: TITLE, description: DESCRIPTION, ...pageMeta(locale, "/personality-careers") }
+    : {
+        title: "Careers by 16 Personality Types",
+        description: "Career recommendations by 16 personality types (MBTI): suitable roles, reasons they fit, roles to approach with caution, and the A vs. T variant differences. Written for the Chinese job market.",
+        ...pageMeta(locale, "/personality-careers"),
+      };
 }
 
 export default async function PersonalityCareersIndex({

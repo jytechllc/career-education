@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   FileText,
   TrendingUp,
@@ -11,7 +12,28 @@ import {
   BarChart3,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/seo";
 import marketMeta from "../../../../content/reports/china-us-study-market.meta.json";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(locale)) return {};
+  return locale === "zh"
+    ? {
+        title: "案例研究——专业报告与留学就业指南",
+        description: "探索杰圆职场教育的专业报告和指南，涵盖美国留学市场、会计专业规划、新加坡签证与悉尼就业市场等主题。",
+        ...pageMeta(locale, "/cases"),
+      }
+    : {
+        title: "Case Studies — Reports and Guides",
+        description: "Reports and guides on studying in the US, accounting career paths, Singapore work visas, and the Sydney job market.",
+        ...pageMeta(locale, "/cases"),
+      };
+}
 
 interface CaseItem {
   title: string;

@@ -1,9 +1,26 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { hasLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { listPosts } from "@/lib/blog/queries";
+import { pageMeta } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(locale)) return {};
+  const dict = await getDictionary(locale as Locale);
+  return {
+    title: dict.blog.title,
+    description: dict.blog.subtitle,
+    ...pageMeta(locale, "/blog"),
+  };
+}
 
 export const dynamic = "force-dynamic";
 

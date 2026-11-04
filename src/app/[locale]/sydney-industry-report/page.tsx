@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   TrendingUp,
   Briefcase,
@@ -11,7 +12,28 @@ import {
   Building,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/seo";
 import { IndustryPieChart } from "@/components/IndustryPieChart";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(locale)) return {};
+  return locale === "zh"
+    ? {
+        title: "2024 悉尼就业市场分析报告",
+        description: "2024 年悉尼热门行业、薪资水平、就业趋势与机遇全面分析，助力赴澳职业发展规划。",
+        ...pageMeta(locale, "/sydney-industry-report"),
+      }
+    : {
+        title: "2024 Sydney Job Market Report",
+        description: "2024 Sydney job market: top industries, salary ranges, hiring trends and opportunities to support your career in Australia.",
+        ...pageMeta(locale, "/sydney-industry-report"),
+      };
+}
 
 export default async function SydneyIndustryReportPage({
   params,

@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import { hasLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { getPost } from "@/lib/blog/queries";
+import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function generateMetadata({
     title: post.title,
     description: post.summary ?? undefined,
     alternates: { canonical: `/${locale}/blog/${slug}` },
-    openGraph: { title: post.title, description: post.summary ?? undefined, type: "article", url: `/${locale}/blog/${slug}` },
+    openGraph: { title: post.title, description: post.summary ?? undefined, type: "article", url: `/${locale}/blog/${slug}`, images: [DEFAULT_OG_IMAGE] },
   };
 }
 

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   GraduationCap,
   Target,
@@ -21,6 +22,27 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { hasLocale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(locale)) return {};
+  return locale === "zh"
+    ? {
+        title: "一站式 PhD 留学申请——从背景分析到带资助录取",
+        description: "从背景画像到带资助博士录取的系统化申请规划：方向确认、竞争力档案打造与全程申请支持，三阶段覆盖选校、套磁、文书与面试。",
+        ...pageMeta(locale, "/phd-admission"),
+      }
+    : {
+        title: "Structured PhD Admissions Planning — Profile to Funded Offer",
+        description: "A three-phase PhD admissions program: explore the right research direction, build a competitive profile, and apply with end-to-end support from a research mentor and editorial team.",
+        ...pageMeta(locale, "/phd-admission"),
+      };
+}
 
 type Phase = {
   icon: LucideIcon;
