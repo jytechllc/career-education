@@ -84,19 +84,19 @@ type Copy = {
 
 const zh: Copy = {
   meta: {
-    title: "研究生与直博留学申请服务与价格",
+    title: "研究生与直博留学申请服务",
     description:
-      "研究生留学申请三档服务：申请助力 ¥88,000、超级 VIP ¥128,000、长线规划 VIP ¥158,000；另有本科直博（全额资助 PhD）申请服务 ¥180,000。",
+      "研究生留学申请三档服务：申请助力、超级 VIP、长线规划 VIP，覆盖带奖学金的硕士、硕博连读与全额资助 PhD 申请；按 Explore、Build、Apply 三阶段推进，预约一对一咨询获取方案与报价。",
   },
   eyebrow: "研究生留学申请 · 杰圆职场教育",
   title: "研究生留学申请服务",
   subtitle: "硕士申请三档服务，从申请季冲刺到大一起的四年规划；另有本科直博服务",
-  currency: "人民币",
+  currency: "",
   notIncluded: "不含",
   tiers: [
     {
       name: "申请助力",
-      price: "¥88,000",
+      price: "咨询报价",
       tagline: "申请季辅导 · 1 个专业 8 个项目",
       rows: [
         { label: "服务周期", value: "申请季辅导" },
@@ -119,7 +119,7 @@ const zh: Copy = {
     },
     {
       name: "超级 VIP",
-      price: "¥128,000",
+      price: "咨询报价",
       tagline: "名校定向冲刺 · 资深导师全程督导 · 1 段实习",
       badge: "推荐",
       featured: true,
@@ -144,7 +144,7 @@ const zh: Copy = {
     },
     {
       name: "长线规划 VIP",
-      price: "¥158,000",
+      price: "咨询报价",
       tagline: "大一入学起全程规划 · 2 段实习 · 一路负责到申请",
       badge: "旗舰 · 四年全程",
       rows: [
@@ -170,8 +170,8 @@ const zh: Copy = {
   phd: {
     eyebrow: "本科直博",
     name: "全额资助 PhD 申请",
-    price: "¥180,000",
-    currency: "人民币",
+    price: "咨询报价",
+    currency: "",
     tagline: "本科毕业直接申请博士，目标是全球名校全额资助录取",
     points: [
       "约 6 个月、三个阶段：明确研究方向 → 打造竞争力档案 → 全程申请支持",
@@ -179,7 +179,7 @@ const zh: Copy = {
       "个人陈述、推荐信策略、奖学金与资金规划、面试辅导、行前指导",
       "当季未取得 Top 100 全额资助录取的，在满足合同约定配合条件的前提下继续服务后续申请季，不再另收咨询服务费",
     ],
-    addons: "可选：GRE 备考辅导 ¥30,000；论文写作/发表协助 ¥30,000 / 篇",
+    addons: "可选服务：GRE 备考辅导；论文写作/发表协助（按篇计费）",
     link: "查看直博服务详情",
   },
   timeline: {
@@ -348,12 +348,12 @@ const zh: Copy = {
     ],
   },
   exclusion:
-    "以上费用不含院校申请费、标准化考试报名费、成绩寄送费等第三方费用，该等费用由学生/家庭直接支付给相关机构。具体服务内容以签署的服务协议为准。",
+    "服务费用不含院校申请费、标准化考试报名费、成绩寄送费等第三方费用，该等费用由学生/家庭直接支付给相关机构。具体服务内容以签署的服务协议为准。",
   disclaimer:
     "本服务提供的是升学咨询与申请支持，我们将尽最大努力（Best Efforts）为学生服务；实习与科研项目以实际匹配到的机会为准。院校录取与否的最终决定权在目标院校，不作任何保证或承诺。",
   cta: {
     title: "预约一对一咨询",
-    body: "根据你的年级、专业和目标院校，推荐合适的服务档位",
+    body: "根据你的年级、专业和目标院校，推荐合适的服务档位并提供报价",
     phone: "电话：17318011997",
     wechat: "微信：HELENLAN998",
   },
@@ -361,19 +361,19 @@ const zh: Copy = {
 
 const en: Copy = {
   meta: {
-    title: "Graduate & Direct-PhD Admissions Services and Pricing",
+    title: "Graduate & Direct-PhD Admissions Services",
     description:
-      "Three master's admissions packages: Application Boost ¥88,000, Super VIP ¥128,000 and Long-Term VIP ¥158,000 — plus a direct-PhD (fully funded) admissions program at ¥180,000.",
+      "Three master's admissions packages — Application Boost, Super VIP and Long-Term VIP — covering scholarship MS, MS + PhD and fully funded PhD applications through an Explore, Build and Apply roadmap. Book a 1-on-1 consultation for a plan and quote.",
   },
   eyebrow: "Graduate Admissions · JYCareerEdu",
   title: "Graduate Admissions Services",
   subtitle: "Three master's packages, from an application-season sprint to four-year planning — plus a direct-PhD program",
-  currency: "RMB",
+  currency: "",
   notIncluded: "Not included",
   tiers: [
     {
       name: "Application Boost",
-      price: "¥88,000",
+      price: "Quote on request",
       tagline: "Application season · 1 field, 8 programs",
       rows: [
         { label: "Service period", value: "Application season" },
@@ -396,7 +396,7 @@ const en: Copy = {
     },
     {
       name: "Super VIP",
-      price: "¥128,000",
+      price: "Quote on request",
       tagline: "Top-school sprint · senior advisor oversight · 1 internship",
       badge: "Recommended",
       featured: true,
@@ -421,7 +421,7 @@ const en: Copy = {
     },
     {
       name: "Long-Term VIP",
-      price: "¥158,000",
+      price: "Quote on request",
       tagline: "Planning from freshman year · 2 internships · through applications",
       badge: "Flagship · 4 years",
       rows: [
@@ -447,8 +447,8 @@ const en: Copy = {
   phd: {
     eyebrow: "Direct PhD",
     name: "Fully Funded PhD Admissions",
-    price: "¥180,000",
-    currency: "RMB",
+    price: "Quote on request",
+    currency: "",
     tagline: "Apply to PhD programs straight from undergrad, aiming for fully funded offers at top universities",
     points: [
       "About 6 months in three phases: research direction → competitive profile → full application support",
@@ -456,7 +456,7 @@ const en: Copy = {
       "Statement of purpose, recommendation strategy, scholarship and funding planning, interview prep, pre-departure guidance",
       "If no Top 100 fully funded offer is secured that season, service continues into later seasons at no extra counselling fee, subject to the conditions in the agreement",
     ],
-    addons: "Optional: GRE prep ¥30,000; research paper writing/publication support ¥30,000 per paper",
+    addons: "Optional: GRE prep; research paper writing/publication support (per paper)",
     link: "See the direct-PhD program",
   },
   timeline: {
@@ -627,12 +627,12 @@ const en: Copy = {
     ],
   },
   exclusion:
-    "Fees exclude application fees, test registration and score-report fees and other third-party costs, which the student/family pays directly. The signed service agreement governs the exact scope.",
+    "Service fees exclude application fees, test registration and score-report fees and other third-party costs, which the student/family pays directly. The signed service agreement governs the exact scope.",
   disclaimer:
     "We provide admissions counselling and application support on a best-efforts basis; internships and research projects depend on the opportunities actually matched. Admission decisions rest solely with the universities — no outcome is guaranteed or promised.",
   cta: {
     title: "Book a 1-on-1 Consultation",
-    body: "We'll recommend a package based on your year, field and target schools",
+    body: "We'll recommend a package and give you a quote based on your year, field and target schools",
     phone: "Phone: 17318011997",
     wechat: "WeChat: HELENLAN998",
   },
@@ -670,10 +670,10 @@ function TierCard({ tier, c }: { tier: Tier; c: Copy }) {
       <div className="border-b border-yellow-100 p-5 sm:p-6">
         <h2 className="text-lg font-bold text-yellow-900">{tier.name}</h2>
         <p className="mt-3 flex items-baseline gap-1.5">
-          <span className="text-3xl sm:text-4xl font-bold text-yellow-900 tabular-nums">
+          <span className="text-2xl sm:text-3xl font-bold text-yellow-900">
             {tier.price}
           </span>
-          <span className="text-xs font-medium text-gray-500">{c.currency}</span>
+          {c.currency ? <span className="text-xs font-medium text-gray-500">{c.currency}</span> : null}
         </p>
         <p className="mt-2 text-sm text-gray-600">{tier.tagline}</p>
       </div>
@@ -883,10 +883,10 @@ export default async function GraduateAdmissionPage({
             </p>
             <h2 className="mt-1 text-xl sm:text-2xl font-bold text-yellow-900">{c.phd.name}</h2>
             <p className="mt-3 flex items-baseline gap-1.5">
-              <span className="text-3xl sm:text-4xl font-bold text-yellow-900 tabular-nums">
+              <span className="text-2xl sm:text-3xl font-bold text-yellow-900">
                 {c.phd.price}
               </span>
-              <span className="text-xs font-medium text-gray-500">{c.phd.currency}</span>
+              {c.phd.currency ? <span className="text-xs font-medium text-gray-500">{c.phd.currency}</span> : null}
             </p>
             <p className="mt-2 text-sm text-gray-600">{c.phd.tagline}</p>
             <Link

@@ -160,27 +160,27 @@ const zh: Copy = {
     ],
   },
   fees: {
-    title: "费用说明",
-    subtitle: "以下费用经个案评估后确定，具体以签署的服务协议为准",
+    title: "服务项目与报价",
+    subtitle: "费用根据学生背景个案评估后确定，预约一对一咨询获取方案与报价；具体以签署的服务协议为准",
     cards: [
       {
         title: "PhD 申请咨询服务费",
-        price: "¥180,000",
+        price: "咨询报价",
         note: "一次性收取，覆盖第一至第三阶段全部咨询服务内容",
       },
       {
         title: "GRE 备考辅导（可选）",
-        price: "¥30,000",
+        price: "咨询报价",
         note: "如学生需要，单独计费",
       },
       {
         title: "论文写作/发表协助（可选，按篇计费）",
-        price: "¥30,000 / 篇",
+        price: "咨询报价",
         note: "协助推进、撰写并投递一篇可用于申请的研究论文",
       },
     ],
     exclusion:
-      "以上费用不含院校申请费、期刊/会议论文版面费及审稿费、标准化考试报名费等第三方费用，该等费用由学生/家庭直接支付给相关第三方机构。",
+      "服务费用不含院校申请费、期刊/会议论文版面费及审稿费、标准化考试报名费等第三方费用，该等费用由学生/家庭直接支付给相关第三方机构。",
   },
   disclaimer:
     "本项目提供的是升学咨询与申请支持服务，我们将尽最大努力（Best Efforts）为学生服务，但院校录取、奖学金/资助发放与否及具体金额，最终决定权在目标院校及资助方，不作任何保证或承诺。",
@@ -283,27 +283,27 @@ const en: Copy = {
     ],
   },
   fees: {
-    title: "Program Fees",
-    subtitle: "Fees below are confirmed after individual case assessment; the signed service agreement governs",
+    title: "Services & Quotes",
+    subtitle: "Fees are set after an individual assessment of each student's profile — book a 1-on-1 consultation for a plan and quote; the signed service agreement governs",
     cards: [
       {
         title: "PhD Admissions Counselling Program",
-        price: "¥180,000",
+        price: "Quote on request",
         note: "One-time fee, covers all counselling services across Phases 1–3",
       },
       {
         title: "GRE Preparation (optional)",
-        price: "¥30,000",
+        price: "Quote on request",
         note: "Billed separately if needed",
       },
       {
         title: "Research Paper Writing/Publication Support (optional, per paper)",
-        price: "¥30,000 / paper",
+        price: "Quote on request",
         note: "Support to develop, write, and submit one research paper for the application",
       },
     ],
     exclusion:
-      "Fees above exclude application charges, journal/conference publication and review fees, and standardised test registration fees — these third-party costs are paid directly by the student/family.",
+      "Service fees exclude application charges, journal/conference publication and review fees, and standardised test registration fees — these third-party costs are paid directly by the student/family.",
   },
   disclaimer:
     "This program provides admissions counselling and application support. We work on a best-efforts basis, but final decisions on admission, funding, and scholarship amounts rest solely with the target university and funding bodies — no outcome is guaranteed or promised.",
