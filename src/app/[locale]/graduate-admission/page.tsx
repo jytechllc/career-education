@@ -4,6 +4,7 @@ import Link from "next/link";
 import { pageMeta } from "@/lib/seo";
 import {
   ArrowRight,
+  Award,
   Check,
   CheckCircle,
   GraduationCap,
@@ -55,6 +56,26 @@ type Copy = {
     title: string;
     years: { name: string; focus: string }[];
     tracks: { name: string; steps: (string | null)[] }[];
+  };
+  eligibility: {
+    title: string;
+    subtitle: string;
+    programs: { name: string; points: string[] }[];
+    resultsTitle: string;
+    results: string[];
+  };
+  roadmap: {
+    title: string;
+    subtitle: string;
+    outcomeLabel: string;
+    phases: {
+      tag: string;
+      name: string;
+      goal: string;
+      intro: string;
+      items: { title: string; body?: string; points?: string[] }[];
+      outcome: string;
+    }[];
   };
   exclusion: string;
   disclaimer: string;
@@ -182,6 +203,147 @@ const zh: Copy = {
       {
         name: "超级 VIP · 申请助力",
         steps: [null, null, "申请季启动 · 实习 · 选校", "文书 · 网申 · 面试"],
+      },
+    ],
+  },
+  eligibility: {
+    title: "项目申请条件",
+    subtitle: "带奖学金或资助的项目竞争激烈，我们会先评估学生是否符合以下条件",
+    programs: [
+      {
+        name: "带奖学金或资助的硕士项目（MS）",
+        points: [
+          "至少在申请截止日期前 6 个月启动申请流程",
+          "愿意考虑美国及其他国家的院校",
+          "学术成绩较好，并愿意参加 GRE 考试",
+          "具备一定的科研背景；暂无科研经历的，需愿意参加科研项目",
+        ],
+      },
+      {
+        name: "硕博连读（MS + PhD）或全额资助博士项目（Funded PhD）",
+        points: [
+          "已发表学术研究论文",
+          "GPA 3.0 及以上",
+          "愿意参加 GRE 考试",
+          "至少在申请截止日期前 6 个月报名申请服务",
+          "愿意配合团队联系教授，并参与较为严格的邮件沟通与面试流程",
+          "愿意考虑美国及其他国家的院校",
+        ],
+      },
+    ],
+    resultsTitle: "过往录取成果",
+    results: [
+      "帮助已发表科研论文的本科毕业生，直接获得美国带科研资助的博士项目录取",
+      "帮助具备相关背景与经历的学生，获得理科及管理学领域带资助的硕士与博士项目录取",
+    ],
+  },
+  roadmap: {
+    title: "大学申请服务路线图",
+    subtitle:
+      "申请服务分为探索（Explore）、提升（Build）、申请（Apply）三个阶段，按学生背景定制，以录取结果为导向",
+    outcomeLabel: "阶段成果：",
+    phases: [
+      {
+        tag: "Explore",
+        name: "第一阶段 · 探索",
+        goal: "背景评估、院校定位、科研及资助机会分析",
+        intro:
+          "为学生建立个人背景档案，围绕目标学位、科研资助、国家、院校、财务预算及奖学金机会进行全面分析。",
+        items: [
+          { title: "了解学生的个人背景、学术经历及科研方向" },
+          { title: "根据现有背景和成绩，研究提供奖学金的硕士项目、带资助的硕博连读及博士项目" },
+          { title: "根据目标院校的录取要求，规划需要参加的标准化考试" },
+          { title: "在多所大学中寻找与学生科研方向匹配的教授，并持续开展联系" },
+          { title: "针对每位教授制定联系方案、撰写针对性邮件，了解教授或实验室可提供的科研资助" },
+        ],
+        outcome:
+          "结合科研调研与背景分析完成差距分析（Gap Analysis），明确学生需要提升的方面，为申请目标学位项目和院校做好准备。",
+      },
+      {
+        tag: "Build",
+        name: "第二阶段 · 背景提升",
+        goal: "背景提升、申请规划、申请材料准备",
+        intro: "在约 6 个月内系统完善学生的申请背景，在正式申请前尽可能弥补各项不足。",
+        items: [
+          {
+            title: "综合背景分析",
+            body: "对照目标院校的申请要求，建立完整的学生背景框架，确保各项申请条件与材料准备充分。",
+          },
+          {
+            title: "差距分析（Gap Analysis）",
+            body: "全面比对学生现有背景与目标院校录取要求，明确截止日期前 6 个月内需要完成的提升事项。",
+          },
+          {
+            title: "申请路线图",
+            body: "根据各院校截止日期、申请轮次及 GRE 备考计划，制定完整的申请时间表与行动方案。",
+          },
+          {
+            title: "文书、推荐信、科研及论文展示指导",
+            body: "在标准化成绩与个人经历之外，申请文书和补充材料是竞争激烈的院校评估申请者综合能力的重要依据。专业文书编辑帮助学生：",
+            points: [
+              "挖掘个人兴趣、专业技能与实践经历",
+              "展示个人特点、学术能力与职业目标",
+              "梳理科研经历与论文成果",
+              "构建有竞争力的申请叙事",
+              "向招生官有效呈现个人优势",
+            ],
+          },
+        ],
+        outcome:
+          "形成符合目标院校要求的完整申请背景，包括申请文书、推荐信、个人陈述的框架及教授联系资源，确保在截止日期前完成申请提交。",
+      },
+      {
+        tag: "Apply",
+        name: "第三阶段 · 正式申请",
+        goal: "正式申请、奖学金申请、面试及录取",
+        intro: "向目标院校提交有竞争力的申请材料，争取实现预期录取目标。",
+        items: [
+          {
+            title: "个人陈述 / 学习目的陈述（SOP）",
+            body: "阐述申请者对目标项目的兴趣、相关经历，以及未来能为学校和行业带来的价值。文书编辑深入分析学生背景，用有意义的个人经历展示其成长过程与综合能力，契合目标院校重视的核心能力。",
+          },
+          {
+            title: "硕士申请文书（Master's Essays）",
+            body: "针对各研究生院的特定题目进行写作指导，展示申请者的沟通能力、适应能力等个人特质与软实力，以及与目标项目和专业方向的匹配度。",
+          },
+          {
+            title: "推荐信（Letters of Recommendation）",
+            body: "通过真实、可靠的事例，证明申请者在学术与职业发展中展现的知识水平、专业能力与综合素质。编辑与学生深入讨论，充分呈现个人成就与背景优势。",
+          },
+          {
+            title: "奖学金及教育贷款协助",
+            body: "持续提供可申请的奖学金信息；通过行业合作伙伴提供教育贷款申请协助，并由顾问指导学生做好教育资金规划。",
+          },
+          {
+            title: "大学申请支持",
+            body: "升学顾问全程支持正式申请与提交：",
+            points: [
+              "申请表填写指导",
+              "申请材料准备与审核",
+              "银行存款证明样本指导",
+              "成绩单准备指导",
+              "就申请过程中的问题代表学生与大学沟通",
+              "正式提交前的全面检查",
+            ],
+          },
+          {
+            title: "面试准备（如适用）",
+            body: "针对常见面试问题、回答策略、表达方式及语言语气进行辅导，帮助学生简洁、得体且有说服力地展示个人优势。",
+          },
+          {
+            title: "行前指导",
+            body: "帮助学生适应新的国家、院校与独立生活：",
+            points: [
+              "海外生活与文化适应",
+              "当地日常生活规则",
+              "医疗保险与旅行保险",
+              "医疗与财务常识",
+              "国际机票安排",
+              "签证办理指导",
+            ],
+          },
+        ],
+        outcome: "完成全部申请，争取目标院校录取。",
       },
     ],
   },
@@ -321,6 +483,149 @@ const en: Copy = {
       },
     ],
   },
+  eligibility: {
+    title: "Who These Programs Fit",
+    subtitle:
+      "Scholarship and funded programs are highly competitive, so we first check whether a student meets these requirements",
+    programs: [
+      {
+        name: "Master's (MS) with Scholarship or Funding",
+        points: [
+          "Start the process at least 6 months before the application deadline",
+          "Open to universities in the US and other countries",
+          "Strong academic record and willing to take the GRE",
+          "Some research background — or willing to join a research project if none yet",
+        ],
+      },
+      {
+        name: "MS + PhD or Fully Funded PhD",
+        points: [
+          "Has published research papers",
+          "GPA of 3.0 or above",
+          "Willing to take the GRE",
+          "Enrolls at least 6 months before the application deadline",
+          "Works with the team on professor outreach, including rigorous email exchanges and interviews",
+          "Open to universities in the US and other countries",
+        ],
+      },
+    ],
+    resultsTitle: "Past Results",
+    results: [
+      "Helped undergraduates with published research gain direct admission to research-funded PhD programs in the US",
+      "Helped students with relevant backgrounds gain funded master's and PhD admissions in science and management",
+    ],
+  },
+  roadmap: {
+    title: "College Admissions Roadmap",
+    subtitle:
+      "Our College Admissions Program runs in three phases — Explore, Build and Apply — personalized to each student and focused on results",
+    outcomeLabel: "Phase outcome: ",
+    phases: [
+      {
+        tag: "Explore",
+        name: "Phase 1 · Explore",
+        goal: "Profile assessment, school positioning, research and funding opportunities",
+        intro:
+          "We build the student's profile and analyze target degrees, research funding, countries, universities, budget and scholarship opportunities.",
+        items: [
+          { title: "Understand the student's background, academic history and research interests" },
+          { title: "Research scholarship master's programs and funded MS + PhD and PhD programs that fit the student's record" },
+          { title: "Plan the standardized tests required by target programs" },
+          { title: "Find professors whose research matches the student's across multiple universities, and keep outreach going" },
+          { title: "Tailor an outreach plan and email for each professor to learn what research funding their lab can offer" },
+        ],
+        outcome:
+          "A gap analysis based on research findings and the student's profile, defining what to strengthen before applying to target programs and universities.",
+      },
+      {
+        tag: "Build",
+        name: "Phase 2 · Build",
+        goal: "Profile building, application planning, materials preparation",
+        intro:
+          "Over about 6 months, we systematically strengthen the student's profile and close as many gaps as possible before applying.",
+        items: [
+          {
+            title: "Comprehensive profile analysis",
+            body: "Build a complete profile framework against target schools' requirements so every condition and document is covered.",
+          },
+          {
+            title: "Gap analysis",
+            body: "Compare the current profile with admission requirements and set the improvements to finish in the 6 months before the deadline.",
+          },
+          {
+            title: "Application roadmap",
+            body: "A full timeline and action plan based on deadlines, application rounds and the GRE prep plan.",
+          },
+          {
+            title: "Essays, recommendations, research and publications",
+            body: "Beyond test scores and experience, essays and supplements are how competitive schools judge overall ability. Our editors help students:",
+            points: [
+              "Uncover interests, skills and hands-on experience",
+              "Show personal qualities, academic ability and career goals",
+              "Organize research experience and publications",
+              "Build a competitive application narrative",
+              "Present strengths clearly to admissions officers",
+            ],
+          },
+        ],
+        outcome:
+          "A complete profile matching target schools, with frameworks for essays, recommendations and the personal statement plus professor contacts — ready to submit before deadlines.",
+      },
+      {
+        tag: "Apply",
+        name: "Phase 3 · Apply",
+        goal: "Applications, scholarships, interviews and admission",
+        intro: "We present competitive applications to universities to reach the admission goals.",
+        items: [
+          {
+            title: "Personal Statement / Statement of Purpose (SOP)",
+            body: "Explains the student's interest in the program, relevant experience and the value they will bring. Editors draw on meaningful experiences to show growth and the core competencies target schools look for.",
+          },
+          {
+            title: "Master's essays",
+            body: "Guidance on each graduate school's prompts, showing soft skills such as communication and adaptability, and fit with the program and field.",
+          },
+          {
+            title: "Letters of recommendation",
+            body: "Credible, concrete examples of the student's knowledge, skills and character. Editors work closely with students to bring out achievements and strengths.",
+          },
+          {
+            title: "Scholarships and education loans",
+            body: "Ongoing scholarship leads, plus education loan support through industry partners and advice on funding plans.",
+          },
+          {
+            title: "Application support",
+            body: "Advisors support the full submission process:",
+            points: [
+              "Application form guidance",
+              "Materials preparation and review",
+              "Bank statement sample guidance",
+              "Transcript preparation",
+              "Communicating with universities on the student's behalf",
+              "Full check before final submission",
+            ],
+          },
+          {
+            title: "Interview preparation (if applicable)",
+            body: "Coaching on common questions, answer strategy, delivery, language and tone, so students present themselves concisely and persuasively.",
+          },
+          {
+            title: "Pre-departure orientation",
+            body: "Helping students adjust to a new country, school and independent life:",
+            points: [
+              "Life overseas and cultural adjustment",
+              "Everyday local rules",
+              "Health and travel insurance",
+              "Medical and financial basics",
+              "International flights",
+              "Visa guidance",
+            ],
+          },
+        ],
+        outcome: "All applications submitted, aiming for admission to target universities.",
+      },
+    ],
+  },
   exclusion:
     "Fees exclude application fees, test registration and score-report fees and other third-party costs, which the student/family pays directly. The signed service agreement governs the exact scope.",
   disclaimer:
@@ -427,6 +732,44 @@ export default async function GraduateAdmissionPage({
           <p className="text-base sm:text-xl text-gray-600">{c.subtitle}</p>
         </div>
 
+        <section className="mb-10 sm:mb-16">
+          <h2 className="text-xl sm:text-2xl font-bold text-yellow-900 text-center">
+            {c.eligibility.title}
+          </h2>
+          <p className="mt-2 mb-6 text-center text-sm sm:text-base text-gray-600">
+            {c.eligibility.subtitle}
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {c.eligibility.programs.map((p) => (
+              <div key={p.name} className="rounded-xl border border-yellow-100 bg-white p-5 sm:p-6 shadow-lg">
+                <h3 className="text-base sm:text-lg font-bold text-yellow-900">{p.name}</h3>
+                <ul className="mt-4 space-y-2.5">
+                  {p.points.map((pt) => (
+                    <li key={pt} className="flex items-start gap-2 text-sm text-gray-800">
+                      <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-yellow-600" />
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 rounded-xl bg-yellow-800 p-5 sm:p-6 text-white">
+            <h3 className="inline-flex items-center gap-2 text-base sm:text-lg font-bold">
+              <Award aria-hidden className="h-5 w-5" />
+              {c.eligibility.resultsTitle}
+            </h3>
+            <ul className="mt-3 space-y-2">
+              {c.eligibility.results.map((r) => (
+                <li key={r} className="flex items-start gap-2 text-sm text-yellow-50">
+                  <Star aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-yellow-300" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-16">
           {c.tiers.map((tier) => (
             <TierCard key={tier.name} c={c} tier={tier} />
@@ -479,6 +822,58 @@ export default async function GraduateAdmissionPage({
             </table>
           </div>
         </div>
+
+        <section className="mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-bold text-yellow-900 text-center">
+            {c.roadmap.title}
+          </h2>
+          <p className="mt-2 mb-6 text-center text-sm sm:text-base text-gray-600">
+            {c.roadmap.subtitle}
+          </p>
+          <ol className="space-y-6">
+            {c.roadmap.phases.map((phase, i) => (
+              <li key={phase.tag} className="rounded-xl border border-yellow-100 bg-white p-5 sm:p-8 shadow-lg">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-yellow-600 text-sm font-bold text-white">
+                    {i + 1}
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-bold text-yellow-900">{phase.name}</h3>
+                  <span className="text-xs font-semibold uppercase tracking-wide text-yellow-700">
+                    {phase.tag}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm font-medium text-yellow-800">{phase.goal}</p>
+                <p className="mt-2 text-sm text-gray-700 leading-relaxed">{phase.intro}</p>
+                <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                  {phase.items.map((item) => (
+                    <li key={item.title} className="flex items-start gap-2 text-sm">
+                      <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-yellow-600" />
+                      <div>
+                        <p className={item.body ? "font-semibold text-yellow-900" : "text-gray-800"}>
+                          {item.title}
+                        </p>
+                        {item.body ? (
+                          <p className="mt-1 text-gray-600 leading-relaxed">{item.body}</p>
+                        ) : null}
+                        {item.points ? (
+                          <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-gray-600 marker:text-yellow-500">
+                            {item.points.map((pt) => (
+                              <li key={pt}>{pt}</li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-5 rounded-lg bg-yellow-50 px-4 py-3 text-sm text-gray-800">
+                  <span className="font-semibold text-yellow-900">{c.roadmap.outcomeLabel}</span>
+                  {phase.outcome}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
 
         <div className="bg-white rounded-xl shadow-lg border border-yellow-100 p-5 sm:p-8 mb-8 sm:mb-12 grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
           <div>
